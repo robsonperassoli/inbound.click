@@ -1,19 +1,17 @@
+import { ConvexAuthProvider } from "@convex-dev/auth/react"
+import { TanStackDevtools } from "@tanstack/react-devtools"
 import {
+  createRootRouteWithContext,
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
-} from "@tanstack/react-router";
-import { ConvexAuthProvider } from "@convex-dev/auth/react";
-import type { ConvexReactClient } from "convex/react";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import ConvexProvider, {
-  convexQueryClient,
-} from "../integrations/convex/provider";
-import appCss from "../styles.css?url";
+} from "@tanstack/react-router"
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import type { ConvexReactClient } from "convex/react"
+import { convexQueryClient } from "../integrations/convex/provider"
+import appCss from "../styles.css?url"
 
 interface AppContext {
-  convex: ConvexReactClient;
+  convex: ConvexReactClient
 }
 
 export const Route = createRootRouteWithContext<AppContext>()({
@@ -38,7 +36,7 @@ export const Route = createRootRouteWithContext<AppContext>()({
     ],
   }),
   shellComponent: RootDocument,
-});
+})
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -65,5 +63,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }

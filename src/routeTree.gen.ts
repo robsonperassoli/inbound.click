@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoConvexRouteImport } from './routes/demo/convex'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -26,6 +27,11 @@ const SigninRoute = SigninRouteImport.update({
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTableRoute = DemoTableRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
+  '/u/$username': typeof UUsernameRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
+  '/u/$username': typeof UUsernameRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
+  '/u/$username': typeof UUsernameRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/demo/convex'
     | '/demo/table'
+    | '/u/$username'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/dashboard/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/demo/convex'
     | '/demo/table'
+    | '/u/$username'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/dashboard'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/demo/convex'
     | '/demo/table'
+    | '/u/$username'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/_authenticated/dashboard/'
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   SigninRoute: typeof SigninRoute
   DemoConvexRoute: typeof DemoConvexRoute
   DemoTableRoute: typeof DemoTableRoute
+  UUsernameRoute: typeof UUsernameRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
 }
@@ -156,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/table': {
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   SigninRoute: SigninRoute,
   DemoConvexRoute: DemoConvexRoute,
   DemoTableRoute: DemoTableRoute,
+  UUsernameRoute: UUsernameRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
 }

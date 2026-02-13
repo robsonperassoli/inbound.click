@@ -1,6 +1,6 @@
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-import { convexQueryClient } from "./integrations/convex/provider";
+import { createRouter } from "@tanstack/react-router"
+import { convexQueryClient } from "./integrations/convex/provider"
+import { routeTree } from "./routeTree.gen"
 
 export function getRouter() {
   const router = createRouter({
@@ -9,7 +9,7 @@ export function getRouter() {
     context: {
       convex: convexQueryClient.convexClient,
     },
-  });
+  })
 
-  return router;
+  return router
 }

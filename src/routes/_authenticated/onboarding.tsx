@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { getDefaultTheme } from "@/lib/themes"
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   component: RouteComponent,
@@ -44,11 +45,20 @@ function RouteComponent() {
       bio: "",
     },
     onSubmit: async ({ value }) => {
-      console.log(value)
+      const defaultTheme = getDefaultTheme()
       await createProfileMutation({
         username: value.username,
         title: value.title,
         bio: value.bio,
+        theme: defaultTheme.name,
+        backgroundColor: defaultTheme.backgroundColor,
+        backgroundImage: undefined,
+        fontFamily: defaultTheme.fontFamily,
+        textColor: defaultTheme.textColor,
+        buttonShape: defaultTheme.buttonShape,
+        buttonStyle: defaultTheme.buttonStyle,
+        buttonColor: defaultTheme.buttonColor,
+        buttonTextColor: defaultTheme.buttonTextColor,
       })
 
       navigate({ to: "/dashboard" })
