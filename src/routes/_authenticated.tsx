@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   component: RouteComponent,
+  ssr: false,
 });
 
 function RouteComponent() {

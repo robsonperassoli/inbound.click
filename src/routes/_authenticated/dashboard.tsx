@@ -14,5 +14,5 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 function RouteComponent() {
   const { profile } = Route.useLoaderData();
 
-  return <Outlet />;
+  return profile ? <Outlet /> : <OnboardingDialog />;
 }

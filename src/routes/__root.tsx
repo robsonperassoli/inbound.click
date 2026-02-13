@@ -3,16 +3,14 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import type { ConvexReactClient } from "convex/react";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import ConvexProvider, {
   convexQueryClient,
 } from "../integrations/convex/provider";
 import appCss from "../styles.css?url";
-import { ConvexAuthProvider } from "@convex-dev/auth/react";
-import Header from "../components/Header";
-
-import type { ConvexReactClient } from "convex/react";
 
 interface AppContext {
   convex: ConvexReactClient;
@@ -49,23 +47,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ConvexProvider>
-          <ConvexAuthProvider client={convexQueryClient.convexClient}>
-            <Header />
-            {children}
-            <TanStackDevtools
-              config={{
-                position: "bottom-right",
-              }}
-              plugins={[
-                {
-                  name: "Tanstack Router",
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-              ]}
-            />
-          </ConvexAuthProvider>
-        </ConvexProvider>
+        <ConvexAuthProvider client={convexQueryClient.convexClient}>
+          {children}
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        </ConvexAuthProvider>
+
         <Scripts />
       </body>
     </html>
