@@ -1,5 +1,7 @@
+providers = ["bun"]
+
 [phases.setup]
-nixPkgs = ["nodejs_22"]
+nixPkgs = ["bun"]
 
 [phases.build]
 cmds = ["bun install", "bunx convex deploy", "bun run build"]
