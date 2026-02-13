@@ -10,7 +10,7 @@
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "start": "node .output/server/index.mjs"
+    "start": "bun .output/server/index.mjs"
   },
   "dependencies": {
     "@auth/core": "0.37.0",

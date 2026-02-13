@@ -1,17 +1,24 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-
-import Header from "../components/Header";
-
 import ConvexProvider, {
   convexQueryClient,
 } from "../integrations/convex/provider";
-
 import appCss from "../styles.css?url";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import Header from "../components/Header";
 
-export const Route = createRootRoute({
+import type { ConvexReactClient } from "convex/react";
+
+interface AppContext {
+  convex: ConvexReactClient;
+}
+
+export const Route = createRootRouteWithContext<AppContext>()({
   head: () => ({
     meta: [
       {

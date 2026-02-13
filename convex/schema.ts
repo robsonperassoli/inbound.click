@@ -4,13 +4,22 @@ import { v } from "convex/values";
 
 export default defineSchema({
   ...authTables,
-  products: defineTable({
+
+  profiles: defineTable({
+    userId: v.id("users"),
+    username: v.string(),
     title: v.string(),
-    imageId: v.string(),
-    price: v.number(),
-  }),
-  todos: defineTable({
-    text: v.string(),
-    completed: v.boolean(),
-  }),
+    bio: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_username", ["username"]),
+
+  links: defineTable({
+    profileId: v.id("profiles"),
+    title: v.string(),
+    url: v.string(),
+    order: v.number(),
+    active: v.boolean(),
+  }).index("by_profile", ["profileId"]),
 });
