@@ -1,5 +1,6 @@
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
 
 const authenticatedUser = async (ctx: MutationCtx | QueryCtx) => {
   const userId = await getAuthUserId(ctx);
@@ -23,17 +24,13 @@ export const getProfile = query({
 });
 
 export const createProfile = mutation({
-  args: {},
-  handler: async (ctx, _args) => {
-    // get authed user
-    // check if user has a profile
-    // create a profile if not
+  args: {
+    username: v.string(),
+    title: v.string(),
+    bio: v.string(),
+  },
+  handler: async (ctx, args) => {
     const userId = await authenticatedUser(ctx);
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_id", (q) => q.eq("_id", userId))
-      .unique();
 
     const profile = await ctx.db
       .query("profiles")
@@ -41,18 +38,14 @@ export const createProfile = mutation({
       .unique();
 
     if (profile) {
-      return profile;
+      throw new Error('Profile already exists for user');
     }
 
-    const username =
-      user?.email?.split("@")[0] ?? new Date().getTime().toString();
-
-    return await ctx.db.insert("profiles", {
+     await ctx.db.insert("profiles", {
       userId,
-      title: user?.name || "My links",
-      username,
-      avatarUrl: user?.image,
-      bio: "Hello",
+      title: args.title,
+      username: args.username,
+      bio: args.bio,
     });
   },
 });
