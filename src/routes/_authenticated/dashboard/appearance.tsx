@@ -1,6 +1,7 @@
 import { api } from "@convex/_generated/api"
 import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation } from "convex/react"
+import { EditTheme } from "@/components/edit-theme"
 import { Button } from "@/components/ui/button"
 import { type Theme, themes } from "@/lib/themes"
 
@@ -29,7 +30,7 @@ function RouteComponent() {
 
   return (
     <div className="grid grid-cols-2">
-      {themes.map((theme) => (
+      {/*{themes.map((theme) => (
         <Button
           key={theme.name}
           variant="ghost"
@@ -39,7 +40,9 @@ function RouteComponent() {
         >
           {theme.name}
         </Button>
-      ))}
+      ))}*/}
+
+      <EditTheme profileId={profileId} />
     </div>
   )
 }
