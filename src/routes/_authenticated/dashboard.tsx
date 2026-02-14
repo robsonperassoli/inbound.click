@@ -55,7 +55,7 @@ function RouteComponent() {
         </Button>
 
         <Button variant="ghost" asChild>
-          <Link to="/dashboard" activeProps={activeProps}>
+          <Link to="/dashboard/analytics" activeProps={activeProps}>
             <HugeiconsIcon icon={Chart03Icon} />
             Analytics
           </Link>

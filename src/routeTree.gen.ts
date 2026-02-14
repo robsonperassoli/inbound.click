@@ -20,6 +20,7 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard/settings'
 import { Route as AuthenticatedDashboardAppearanceRouteImport } from './routes/_authenticated/dashboard/appearance'
+import { Route as AuthenticatedDashboardAnalyticsRouteImport } from './routes/_authenticated/dashboard/analytics'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -78,6 +79,12 @@ const AuthenticatedDashboardAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardAnalyticsRoute =
+  AuthenticatedDashboardAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -112,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/_authenticated/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/_authenticated/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
   '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/demo/table'
     | '/u/$username'
+    | '/dashboard/analytics'
     | '/dashboard/appearance'
     | '/dashboard/settings'
     | '/demo/form/address'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/demo/table'
     | '/u/$username'
+    | '/dashboard/analytics'
     | '/dashboard/appearance'
     | '/dashboard/settings'
     | '/demo/form/address'
@@ -152,6 +164,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/demo/table'
     | '/u/$username'
+    | '/_authenticated/dashboard/analytics'
     | '/_authenticated/dashboard/appearance'
     | '/_authenticated/dashboard/settings'
     | '/demo/form/address'
@@ -247,10 +260,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardAppearanceRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/analytics': {
+      id: '/_authenticated/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof AuthenticatedDashboardAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardAnalyticsRoute: typeof AuthenticatedDashboardAnalyticsRoute
   AuthenticatedDashboardAppearanceRoute: typeof AuthenticatedDashboardAppearanceRoute
   AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
@@ -258,6 +279,7 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardAnalyticsRoute: AuthenticatedDashboardAnalyticsRoute,
     AuthenticatedDashboardAppearanceRoute:
       AuthenticatedDashboardAppearanceRoute,
     AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,

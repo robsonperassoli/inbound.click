@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router"
 
-export const Route = createFileRoute('/_authenticated/dashboard/settings')({
+export const Route = createFileRoute("/_authenticated/dashboard/settings")({
   component: RouteComponent,
+  ssr: false,
 })
 
 function RouteComponent() {
-  return <div>Hello "/_authenticated/dashboard/settings"!</div>
+  return <div>Change page title, bio, username and avatar picture</div>
 }
