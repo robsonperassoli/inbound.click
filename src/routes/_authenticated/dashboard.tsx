@@ -4,10 +4,12 @@ import {
   ListViewIcon,
   PaintBoardIcon,
   Settings05Icon,
+  Share03Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
+import { ShareButton } from "@/components/share-button"
 import { Button } from "@/components/ui/button"
 import { UserPage } from "@/components/user-page"
 
@@ -65,6 +67,10 @@ function RouteComponent() {
             Settings
           </Link>
         </Button>
+
+        <div className="grow" />
+
+        <ShareButton profileId={profileId} />
       </div>
 
       <div className="flex gap-x-6 justify-center pt-8">
