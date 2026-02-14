@@ -13,7 +13,6 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
-import { Route as DemoConvexRouteImport } from './routes/demo/convex'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
@@ -39,11 +38,6 @@ const UUsernameRoute = UUsernameRouteImport.update({
 const DemoTableRoute = DemoTableRouteImport.update({
   id: '/demo/table',
   path: '/demo/table',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoConvexRoute = DemoConvexRouteImport.update({
-  id: '/demo/convex',
-  path: '/demo/convex',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
@@ -90,7 +84,6 @@ export interface FileRoutesByFullPath {
   '/signin': typeof SigninRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -103,7 +96,6 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -118,7 +110,6 @@ export interface FileRoutesById {
   '/signin': typeof SigninRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
   '/_authenticated/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -134,7 +125,6 @@ export interface FileRouteTypes {
     | '/signin'
     | '/dashboard'
     | '/onboarding'
-    | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
     | '/dashboard/appearance'
@@ -147,7 +137,6 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/onboarding'
-    | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
     | '/dashboard/appearance'
@@ -161,7 +150,6 @@ export interface FileRouteTypes {
     | '/signin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
-    | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
     | '/_authenticated/dashboard/appearance'
@@ -174,7 +162,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
-  DemoConvexRoute: typeof DemoConvexRoute
   DemoTableRoute: typeof DemoTableRoute
   UUsernameRoute: typeof UUsernameRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -209,13 +196,6 @@ declare module '@tanstack/react-router' {
       path: '/demo/table'
       fullPath: '/demo/table'
       preLoaderRoute: typeof DemoTableRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/convex': {
-      id: '/demo/convex'
-      path: '/demo/convex'
-      fullPath: '/demo/convex'
-      preLoaderRoute: typeof DemoConvexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/onboarding': {
@@ -306,7 +286,6 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
-  DemoConvexRoute: DemoConvexRoute,
   DemoTableRoute: DemoTableRoute,
   UUsernameRoute: UUsernameRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
