@@ -61,3 +61,35 @@ export const createProfile = mutation({
     });
   },
 });
+
+export const updateTheme = mutation({
+  args: {
+    profileId: v.id('profiles'),
+    ...themeFields
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx);
+
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field('_id'), args.profileId))
+      .unique();
+
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+     await ctx.db.patch(profile._id, {
+       theme: args.theme,
+       backgroundColor: args.backgroundColor,
+       backgroundImage: args.backgroundImage,
+       fontFamily: args.fontFamily,
+       textColor: args.textColor,
+       buttonShape: args.buttonShape,
+       buttonStyle: args.buttonStyle,
+       buttonColor: args.buttonColor,
+       buttonTextColor: args.buttonTextColor,
+    });
+  },
+});

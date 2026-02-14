@@ -15,5 +15,5 @@ export const Route = createFileRoute("/u/$username")({
 
 function RouteComponent() {
   const { profile, links } = Route.useLoaderData()
-  return <UserPage profile={profile} links={links} />
+  return <UserPage profile={profile} links={links} className="h-screen" />
 }

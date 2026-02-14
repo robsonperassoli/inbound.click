@@ -40,3 +40,27 @@ export const addLink = mutation({
     })
   },
 })
+
+export const toggleActive = mutation({
+  args: {
+    linkId: v.id("links"),
+    active: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx);
+
+    const link =  await ctx.db
+      .query("links")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field('_id'), args.linkId))
+      .unique();
+
+    if (!link) {
+      throw new Error('Link not found')
+    }
+
+    await ctx.db.patch(args.linkId, {
+      active: args.active,
+    })
+  },
+})

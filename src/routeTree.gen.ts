@@ -19,6 +19,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
+import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard/settings'
+import { Route as AuthenticatedDashboardAppearanceRouteImport } from './routes/_authenticated/dashboard/appearance'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -70,6 +72,18 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   path: '/demo/form/address',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardSettingsRoute =
+  AuthenticatedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardAppearanceRoute =
+  AuthenticatedDashboardAppearanceRouteImport.update({
+    id: '/appearance',
+    path: '/appearance',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -79,6 +93,8 @@ export interface FileRoutesByFullPath {
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -90,6 +106,8 @@ export interface FileRoutesByTo {
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -103,6 +121,8 @@ export interface FileRoutesById {
   '/demo/convex': typeof DemoConvexRoute
   '/demo/table': typeof DemoTableRoute
   '/u/$username': typeof UUsernameRoute
+  '/_authenticated/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
+  '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -117,6 +137,8 @@ export interface FileRouteTypes {
     | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
+    | '/dashboard/appearance'
+    | '/dashboard/settings'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/dashboard/'
@@ -128,6 +150,8 @@ export interface FileRouteTypes {
     | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
+    | '/dashboard/appearance'
+    | '/dashboard/settings'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/dashboard'
@@ -140,6 +164,8 @@ export interface FileRouteTypes {
     | '/demo/convex'
     | '/demo/table'
     | '/u/$username'
+    | '/_authenticated/dashboard/appearance'
+    | '/_authenticated/dashboard/settings'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/_authenticated/dashboard/'
@@ -227,15 +253,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoFormAddressRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard/settings': {
+      id: '/_authenticated/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/appearance': {
+      id: '/_authenticated/dashboard/appearance'
+      path: '/appearance'
+      fullPath: '/dashboard/appearance'
+      preLoaderRoute: typeof AuthenticatedDashboardAppearanceRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardAppearanceRoute: typeof AuthenticatedDashboardAppearanceRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardAppearanceRoute:
+      AuthenticatedDashboardAppearanceRoute,
+    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 

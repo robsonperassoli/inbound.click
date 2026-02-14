@@ -307,3 +307,33 @@ export function getDefaultTheme() {
 
   return theme
 }
+
+export function createUpThemeStyles(
+  theme: Omit<Theme, "name">,
+): React.CSSProperties {
+  const radiusMap: Record<Theme["buttonShape"], string> = {
+    square: "var(--up-button-radius-square)",
+    rounded: "var(--up-button-radius-rounded)",
+    pill: "var(--up-button-radius-pill)",
+  }
+
+  const font = fonts.find(f => f.name === theme.fontFamily)
+
+
+  return {
+    /* Base */
+    "--up-background-color": theme.backgroundColor,
+    // "--up-background-image": theme.backgroundImage
+    //   ? `url(${theme.backgroundImage})`
+    //   : "none",
+    "--up-font-family": font?.fontFamily,
+    "--up-text-color": theme.textColor,
+
+    /* Button */
+    "--up-button-color": theme.buttonColor,
+    "--up-button-text-color": theme.buttonTextColor,
+
+    /* Shape (resolved) */
+    "--up-button-radius": radiusMap[theme.buttonShape],
+  } as React.CSSProperties
+}
