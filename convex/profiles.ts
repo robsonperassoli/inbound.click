@@ -1,9 +1,9 @@
-import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { ActionCtx, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { themeFields } from "./schema";
 
-export const authenticatedUser = async (ctx: MutationCtx | QueryCtx) => {
+export const authenticatedUser = async (ctx: MutationCtx | QueryCtx | ActionCtx) => {
   const userId = await getAuthUserId(ctx);
 
   if (userId === null) {

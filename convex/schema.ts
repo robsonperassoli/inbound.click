@@ -37,4 +37,20 @@ export default defineSchema({
     active: v.boolean(),
   }).index("by_profile", ["profileId"])
     .index("by_user", ["userId"]),
+
+  chats: defineTable({
+    title: v.string(),
+    model: v.string(),
+    systemPrompt: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  }),
+
+  chatMessages: defineTable({
+    chatId: v.id("chats"),
+    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+    content: v.string(),
+    status: v.union(v.literal("pending"), v.literal("complete"), v.literal("streaming"), v.literal("error")),
+    createdAt: v.number(),
+  }).index("by_chat", ["chatId"])
 });
