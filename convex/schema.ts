@@ -32,6 +32,13 @@ export const formField = v.object({
   options: v.optional(v.array(v.string())),
 })
 
+export const formSubmissionValue = v.union(
+  v.string(),
+  v.number(),
+  v.array(v.string()),
+  v.boolean()
+)
+
 export default defineSchema({
   ...authTables,
 
@@ -88,12 +95,7 @@ export default defineSchema({
     formId: v.id('forms'),
     values: v.record(
       v.string(),
-      v.union(
-        v.string(),
-        v.number(),
-        v.array(v.string()),
-        v.boolean()
-      ),
+      formSubmissionValue,
     ),
     createdAt: v.number(),
     updatedAt: v.number(),
