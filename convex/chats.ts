@@ -1,9 +1,9 @@
-import { mutation, action, query, internalQuery, internalMutation } from "./_generated/server";
+import { mutation, action, query, internalQuery, internalMutation, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { authenticatedUser } from "./profiles";
 import { openai } from '@ai-sdk/openai'
-import { generateText, ModelMessage } from 'ai'
+import { generateText } from 'ai'
 import { Doc } from "./_generated/dataModel";
 
 export const getFullChat = internalQuery({
@@ -102,11 +102,15 @@ export const addMessage = mutation({
       createdAt: new Date().getUTCDate()
     })
 
+    ctx.scheduler.runAfter(0, internal.chats.chatCompletion, {
+      chatId: args.chatId
+    })
+
     return {messageId, assistantMessageId}
   },
 })
 
-export const chat = action({
+export const chatCompletion = internalAction({
   args: {
     chatId: v.id('chats'),
   },
@@ -129,7 +133,19 @@ export const chat = action({
       const { text } = await generateText({
         model: openai("gpt-4o-mini"),
         system: result.chat.systemPrompt,
-        messages: completionMsgs
+        messages: completionMsgs,
+        // tools: {
+        //   weather: tool({
+        //     description: 'Get the weather in a location',
+        //     inputSchema: z.object({
+        //       location: z.string().describe('The location to get the weather for'),
+        //     }),
+        //     execute: async ({ location }) => ({
+        //       location,
+        //       temperature: 72 + Math.floor(Math.random() * 21) - 10,
+        //     }),
+        //   }),
+        // }
       })
 
       await ctx.runMutation(internal.chats.updateMessageContent, {

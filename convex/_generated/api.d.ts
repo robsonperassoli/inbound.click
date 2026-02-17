@@ -10,11 +10,11 @@
 
 import type * as auth from "../auth.js";
 import type * as chats from "../chats.js";
+import type * as forms from "../forms.js";
 import type * as http from "../http.js";
 import type * as links from "../links.js";
 import type * as profiles from "../profiles.js";
 import type * as public_ from "../public.js";
-import type * as todos from "../todos.js";
 
 import type {
   ApiFromModules,
@@ -25,11 +25,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   chats: typeof chats;
+  forms: typeof forms;
   http: typeof http;
   links: typeof links;
   profiles: typeof profiles;
   public: typeof public_;
-  todos: typeof todos;
 }>;
 
 /**

@@ -11,10 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedFormsRouteImport } from './routes/_authenticated/forms'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as UUsernameIndexRouteImport } from './routes/u.$username.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat/index'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
@@ -23,6 +24,8 @@ import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_au
 import { Route as AuthenticatedDashboardAppearanceRouteImport } from './routes/_authenticated/dashboard/appearance'
 import { Route as AuthenticatedDashboardAnalyticsRouteImport } from './routes/_authenticated/dashboard/analytics'
 import { Route as AuthenticatedChatChatIdRouteImport } from './routes/_authenticated/chat/$chatId'
+import { Route as UUsernameFormIndexRouteImport } from './routes/u.$username.form.index'
+import { Route as UUsernameFormSessionIdIndexRouteImport } from './routes/u.$username.form.$sessionId.index'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -31,11 +34,6 @@ const SigninRoute = SigninRouteImport.update({
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UUsernameRoute = UUsernameRouteImport.update({
-  id: '/u/$username',
-  path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTableRoute = DemoTableRouteImport.update({
@@ -48,10 +46,20 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedFormsRoute = AuthenticatedFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
+  id: '/u/$username/',
+  path: '/u/$username/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
@@ -97,14 +105,25 @@ const AuthenticatedChatChatIdRoute = AuthenticatedChatChatIdRouteImport.update({
   path: '/chat/$chatId',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const UUsernameFormIndexRoute = UUsernameFormIndexRouteImport.update({
+  id: '/u/$username/form/',
+  path: '/u/$username/form/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UUsernameFormSessionIdIndexRoute =
+  UUsernameFormSessionIdIndexRouteImport.update({
+    id: '/u/$username/form/$sessionId/',
+    path: '/u/$username/form/$sessionId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/forms': typeof AuthenticatedFormsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
-  '/u/$username': typeof UUsernameRoute
   '/chat/$chatId': typeof AuthenticatedChatChatIdRoute
   '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -113,13 +132,16 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/u/$username/': typeof UUsernameIndexRoute
+  '/u/$username/form/': typeof UUsernameFormIndexRoute
+  '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
+  '/forms': typeof AuthenticatedFormsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
-  '/u/$username': typeof UUsernameRoute
   '/chat/$chatId': typeof AuthenticatedChatChatIdRoute
   '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -128,15 +150,18 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/chat': typeof AuthenticatedChatIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/u/$username': typeof UUsernameIndexRoute
+  '/u/$username/form': typeof UUsernameFormIndexRoute
+  '/u/$username/form/$sessionId': typeof UUsernameFormSessionIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/forms': typeof AuthenticatedFormsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/demo/table': typeof DemoTableRoute
-  '/u/$username': typeof UUsernameRoute
   '/_authenticated/chat/$chatId': typeof AuthenticatedChatChatIdRoute
   '/_authenticated/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/_authenticated/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
@@ -145,6 +170,9 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/u/$username/': typeof UUsernameIndexRoute
+  '/u/$username/form/': typeof UUsernameFormIndexRoute
+  '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,9 +180,9 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/dashboard'
+    | '/forms'
     | '/onboarding'
     | '/demo/table'
-    | '/u/$username'
     | '/chat/$chatId'
     | '/dashboard/analytics'
     | '/dashboard/appearance'
@@ -163,13 +191,16 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/chat/'
     | '/dashboard/'
+    | '/u/$username/'
+    | '/u/$username/form/'
+    | '/u/$username/form/$sessionId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/signin'
+    | '/forms'
     | '/onboarding'
     | '/demo/table'
-    | '/u/$username'
     | '/chat/$chatId'
     | '/dashboard/analytics'
     | '/dashboard/appearance'
@@ -178,14 +209,17 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/chat'
     | '/dashboard'
+    | '/u/$username'
+    | '/u/$username/form'
+    | '/u/$username/form/$sessionId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/signin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/forms'
     | '/_authenticated/onboarding'
     | '/demo/table'
-    | '/u/$username'
     | '/_authenticated/chat/$chatId'
     | '/_authenticated/dashboard/analytics'
     | '/_authenticated/dashboard/appearance'
@@ -194,15 +228,20 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/_authenticated/chat/'
     | '/_authenticated/dashboard/'
+    | '/u/$username/'
+    | '/u/$username/form/'
+    | '/u/$username/form/$sessionId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
   DemoTableRoute: typeof DemoTableRoute
-  UUsernameRoute: typeof UUsernameRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
+  UUsernameIndexRoute: typeof UUsernameIndexRoute
+  UUsernameFormIndexRoute: typeof UUsernameFormIndexRoute
+  UUsernameFormSessionIdIndexRoute: typeof UUsernameFormSessionIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -221,13 +260,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u/$username': {
-      id: '/u/$username'
-      path: '/u/$username'
-      fullPath: '/u/$username'
-      preLoaderRoute: typeof UUsernameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/demo/table': {
       id: '/demo/table'
       path: '/demo/table'
@@ -242,12 +274,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/forms': {
+      id: '/_authenticated/forms'
+      path: '/forms'
+      fullPath: '/forms'
+      preLoaderRoute: typeof AuthenticatedFormsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/u/$username/': {
+      id: '/u/$username/'
+      path: '/u/$username'
+      fullPath: '/u/$username/'
+      preLoaderRoute: typeof UUsernameIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
@@ -305,6 +351,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatChatIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/u/$username/form/': {
+      id: '/u/$username/form/'
+      path: '/u/$username/form'
+      fullPath: '/u/$username/form/'
+      preLoaderRoute: typeof UUsernameFormIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$username/form/$sessionId/': {
+      id: '/u/$username/form/$sessionId/'
+      path: '/u/$username/form/$sessionId'
+      fullPath: '/u/$username/form/$sessionId/'
+      preLoaderRoute: typeof UUsernameFormSessionIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -331,6 +391,7 @@ const AuthenticatedDashboardRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+  AuthenticatedFormsRoute: typeof AuthenticatedFormsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedChatChatIdRoute: typeof AuthenticatedChatChatIdRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
@@ -338,6 +399,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+  AuthenticatedFormsRoute: AuthenticatedFormsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedChatChatIdRoute: AuthenticatedChatChatIdRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
@@ -351,9 +413,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
   DemoTableRoute: DemoTableRoute,
-  UUsernameRoute: UUsernameRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
+  UUsernameIndexRoute: UUsernameIndexRoute,
+  UUsernameFormIndexRoute: UUsernameFormIndexRoute,
+  UUsernameFormSessionIdIndexRoute: UUsernameFormSessionIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

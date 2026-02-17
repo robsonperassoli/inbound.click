@@ -14,6 +14,24 @@ export const themeFields = {
   buttonTextColor: v.string(),
 };
 
+export const formField = v.object({
+  id: v.string(),
+  type: v.union(
+    v.literal('shortText'),
+    v.literal('longText'),
+    v.literal('email'),
+    v.literal('phoneNumber'),
+    v.literal('number'),
+    v.literal('select'),
+    v.literal('checkbox'),
+    v.literal('date'),
+    v.literal('dateTime'),
+  ),
+  label: v.string(),
+  required: v.boolean(),
+  options: v.optional(v.array(v.string())),
+})
+
 export default defineSchema({
   ...authTables,
 
@@ -52,5 +70,44 @@ export default defineSchema({
     content: v.string(),
     status: v.union(v.literal("pending"), v.literal("complete"), v.literal("streaming"), v.literal("error")),
     createdAt: v.number(),
-  }).index("by_chat", ["chatId"])
+  }).index("by_chat", ["chatId"]),
+
+  forms: defineTable({
+    userId: v.id('users'),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    title: v.string(),
+    description: v.optional(v.string()),
+    fields: v.array(formField),
+    publishedAt: v.optional(v.number()),
+  })
+  .index("by_user", ["userId"]),
+
+  formSubmissions : defineTable({
+    userId: v.id('users'),
+    formId: v.id('forms'),
+    values: v.record(
+      v.string(),
+      v.union(
+        v.string(),
+        v.number(),
+        v.array(v.string()),
+        v.boolean()
+      ),
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }),
+
+  formSubmissionChatSessions: defineTable({
+    chatId: v.id('chats'),
+    formId: v.id('forms'),
+    userId: v.id('users'),
+    formSubmissionId: v.optional(v.id('formSubmissions')),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    finishedAt: v.optional(v.number()),
+  })
+  .index('by_form', ['formId'])
+
 });
