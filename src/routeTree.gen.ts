@@ -26,6 +26,7 @@ import { Route as AuthenticatedDashboardAppearanceRouteImport } from './routes/_
 import { Route as AuthenticatedDashboardAnalyticsRouteImport } from './routes/_authenticated/dashboard/analytics'
 import { Route as AuthenticatedChatChatIdRouteImport } from './routes/_authenticated/chat/$chatId'
 import { Route as UUsernameFormIndexRouteImport } from './routes/u.$username.form.index'
+import { Route as AuthenticatedFormsIdIndexRouteImport } from './routes/_authenticated/forms/$id.index'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
 import { Route as UUsernameFormSessionIdIndexRouteImport } from './routes/u.$username.form.$sessionId.index'
@@ -118,6 +119,12 @@ const UUsernameFormIndexRoute = UUsernameFormIndexRouteImport.update({
   path: '/u/$username/form/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedFormsIdIndexRoute =
+  AuthenticatedFormsIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedFormsIdRoute,
+  } as any)
 const AuthenticatedFormsIdSubmissionsRoute =
   AuthenticatedFormsIdSubmissionsRouteImport.update({
     id: '/submissions',
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/u/$username/': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
 }
@@ -168,7 +176,6 @@ export interface FileRoutesByTo {
   '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/appearance': typeof AuthenticatedDashboardAppearanceRoute
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
-  '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/chat': typeof AuthenticatedChatIndexRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/u/$username': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId': typeof UUsernameFormSessionIdIndexRoute
 }
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/u/$username/': typeof UUsernameIndexRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
 }
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/u/$username/'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
+    | '/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
   fileRoutesByTo: FileRoutesByTo
@@ -236,7 +246,6 @@ export interface FileRouteTypes {
     | '/dashboard/analytics'
     | '/dashboard/appearance'
     | '/dashboard/settings'
-    | '/forms/$id'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/chat'
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
+    | '/forms/$id'
     | '/u/$username/form'
     | '/u/$username/form/$sessionId'
   id:
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/u/$username/'
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
+    | '/_authenticated/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
   fileRoutesById: FileRoutesById
@@ -403,6 +414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UUsernameFormIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/forms/$id/': {
+      id: '/_authenticated/forms/$id/'
+      path: '/'
+      fullPath: '/forms/$id/'
+      preLoaderRoute: typeof AuthenticatedFormsIdIndexRouteImport
+      parentRoute: typeof AuthenticatedFormsIdRoute
+    }
     '/_authenticated/forms/$id/submissions': {
       id: '/_authenticated/forms/$id/submissions'
       path: '/submissions'
@@ -451,11 +469,13 @@ const AuthenticatedDashboardRouteWithChildren =
 interface AuthenticatedFormsIdRouteChildren {
   AuthenticatedFormsIdSettingsRoute: typeof AuthenticatedFormsIdSettingsRoute
   AuthenticatedFormsIdSubmissionsRoute: typeof AuthenticatedFormsIdSubmissionsRoute
+  AuthenticatedFormsIdIndexRoute: typeof AuthenticatedFormsIdIndexRoute
 }
 
 const AuthenticatedFormsIdRouteChildren: AuthenticatedFormsIdRouteChildren = {
   AuthenticatedFormsIdSettingsRoute: AuthenticatedFormsIdSettingsRoute,
   AuthenticatedFormsIdSubmissionsRoute: AuthenticatedFormsIdSubmissionsRoute,
+  AuthenticatedFormsIdIndexRoute: AuthenticatedFormsIdIndexRoute,
 }
 
 const AuthenticatedFormsIdRouteWithChildren =
