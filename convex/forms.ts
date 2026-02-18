@@ -94,12 +94,11 @@ export const createForm = mutation({
   },
 })
 
-export const updateForm = mutation({
+export const updateFormHeader = mutation({
   args: {
     id: v.id("forms"),
     title: v.string(),
     description: v.optional(v.string()),
-    fields: v.array(formField),
   },
   handler: async (ctx, args) => {
     const userId = await authenticatedUser(ctx)
@@ -110,12 +109,74 @@ export const updateForm = mutation({
     }
 
     await ctx.db.patch("forms", args.id, {
-      userId,
-      createdAt: Date.now(),
       updatedAt: Date.now(),
       title: args.title,
       description: args.description,
-      fields: args.fields,
+    })
+  },
+})
+
+export const addFormField = mutation({
+  args: {
+    formId: v.id("forms"),
+    field: formField,
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+
+    const form = await getForm(ctx, args.formId)
+    if (form.userId !== userId) {
+      throw new Error("Not found")
+    }
+
+    await ctx.db.patch("forms", args.formId, {
+      updatedAt: Date.now(),
+      fields: [...form.fields, args.field],
+    })
+  },
+})
+
+export const updateFormField = mutation({
+  args: {
+    formId: v.id("forms"),
+    field: formField,
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+
+    const form = await getForm(ctx, args.formId)
+    if (form.userId !== userId) {
+      throw new Error("Not found")
+    }
+
+    const existingField = form.fields.find((f) => f.id === args.field.id)
+    if (!existingField) {
+      throw new Error("Form Field not found")
+    }
+
+    await ctx.db.patch("forms", args.formId, {
+      updatedAt: Date.now(),
+      fields: form.fields.map((f) => (f.id === args.field.id ? args.field : f)),
+    })
+  },
+})
+
+export const removeFormField = mutation({
+  args: {
+    id: v.id("forms"),
+    fieldId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+
+    const form = await getForm(ctx, args.id)
+    if (form.userId !== userId) {
+      throw new Error("Not found")
+    }
+
+    await ctx.db.patch("forms", args.id, {
+      updatedAt: Date.now(),
+      fields: form.fields.filter((f) => f.id !== args.fieldId),
     })
   },
 })
