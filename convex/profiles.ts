@@ -1,95 +1,102 @@
-import { ActionCtx, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
-import { v } from "convex/values";
-import { themeFields } from "./schema";
+import { getAuthUserId } from "@convex-dev/auth/server"
+import { v } from "convex/values"
+import {
+  type ActionCtx,
+  type MutationCtx,
+  mutation,
+  type QueryCtx,
+  query,
+} from "./_generated/server"
+import { themeFields } from "./schema"
 
-export const authenticatedUser = async (ctx: MutationCtx | QueryCtx | ActionCtx) => {
-  const userId = await getAuthUserId(ctx);
+export const authenticatedUser = async (
+  ctx: MutationCtx | QueryCtx | ActionCtx,
+) => {
+  const userId = await getAuthUserId(ctx)
 
   if (userId === null) {
-    throw new Error("Client is not authenticated!");
+    throw new Error("Client is not authenticated!")
   }
 
-  return userId;
-};
+  return userId
+}
 
 export const getProfile = query({
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx);
+    const userId = await authenticatedUser(ctx)
 
     return await ctx.db
       .query("profiles")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .unique();
+      .unique()
   },
-});
+})
 
 export const createProfile = mutation({
   args: {
     username: v.string(),
     title: v.string(),
     bio: v.string(),
-    ...themeFields
+    ...themeFields,
   },
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx);
+    const userId = await authenticatedUser(ctx)
 
     const profile = await ctx.db
       .query("profiles")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .unique();
+      .unique()
 
     if (profile) {
-      throw new Error('Profile already exists for user');
+      throw new Error("Profile already exists for user")
     }
 
-
-     await ctx.db.insert("profiles", {
+    await ctx.db.insert("profiles", {
       userId,
       title: args.title,
       username: args.username,
-       bio: args.bio,
-       theme: args.theme,
-       backgroundColor: args.backgroundColor,
-       backgroundImage: args.backgroundImage,
-       fontFamily: args.fontFamily,
-       textColor: args.textColor,
-       buttonShape: args.buttonShape,
-       buttonStyle: args.buttonStyle,
-       buttonColor: args.buttonColor,
-       buttonTextColor: args.buttonTextColor,
-    });
+      bio: args.bio,
+      theme: args.theme,
+      backgroundColor: args.backgroundColor,
+      backgroundImage: args.backgroundImage,
+      fontFamily: args.fontFamily,
+      textColor: args.textColor,
+      buttonShape: args.buttonShape,
+      buttonStyle: args.buttonStyle,
+      buttonColor: args.buttonColor,
+      buttonTextColor: args.buttonTextColor,
+    })
   },
-});
+})
 
 export const updateTheme = mutation({
   args: {
-    profileId: v.id('profiles'),
-    ...themeFields
+    profileId: v.id("profiles"),
+    ...themeFields,
   },
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx);
+    const userId = await authenticatedUser(ctx)
 
     const profile = await ctx.db
       .query("profiles")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .filter((q) => q.eq(q.field('_id'), args.profileId))
-      .unique();
+      .filter((q) => q.eq(q.field("_id"), args.profileId))
+      .unique()
 
     if (!profile) {
-      throw new Error('Profile not found');
+      throw new Error("Profile not found")
     }
 
-     await ctx.db.patch(profile._id, {
-       theme: args.theme,
-       backgroundColor: args.backgroundColor,
-       backgroundImage: args.backgroundImage,
-       fontFamily: args.fontFamily,
-       textColor: args.textColor,
-       buttonShape: args.buttonShape,
-       buttonStyle: args.buttonStyle,
-       buttonColor: args.buttonColor,
-       buttonTextColor: args.buttonTextColor,
-    });
+    await ctx.db.patch(profile._id, {
+      theme: args.theme,
+      backgroundColor: args.backgroundColor,
+      backgroundImage: args.backgroundImage,
+      fontFamily: args.fontFamily,
+      textColor: args.textColor,
+      buttonShape: args.buttonShape,
+      buttonStyle: args.buttonStyle,
+      buttonColor: args.buttonColor,
+      buttonTextColor: args.buttonTextColor,
+    })
   },
-});
+})

@@ -16,7 +16,6 @@
     "@ai-sdk/openai": "^3.0.29",
     "@ai-sdk/react": "^3.0.88",
     "@auth/core": "0.37.0",
-    "@base-ui/react": "^1.2.0",
     "@convex-dev/auth": "^0.0.90",
     "@convex-dev/react-query": "0.1.0",
     "@faker-js/faker": "^10.0.0",

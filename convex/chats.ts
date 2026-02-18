@@ -1,113 +1,124 @@
-import { mutation, action, query, internalQuery, internalMutation, internalAction, MutationCtx, ActionCtx } from "./_generated/server";
-import { internal } from "./_generated/api";
-import { v } from "convex/values";
-import { authenticatedUser } from "./profiles";
-import { openai } from '@ai-sdk/openai'
-import { generateText } from 'ai'
-import { Doc, Id } from "./_generated/dataModel";
+import { v } from "convex/values"
+import type { Id } from "./_generated/dataModel"
+import {
+  internalMutation,
+  internalQuery,
+  type MutationCtx,
+  mutation,
+  query,
+} from "./_generated/server"
+import { authenticatedUser } from "./profiles"
 
-export async function sendUserMessage(ctx: MutationCtx, chatId: Id<'chats'>, message: string) {
-  const messageId = await ctx.db.insert('chatMessages', {
+export async function sendUserMessage(
+  ctx: MutationCtx,
+  chatId: Id<"chats">,
+  message: string,
+) {
+  const messageId = await ctx.db.insert("chatMessages", {
     chatId,
     content: message,
-    role: 'user',
-    status: 'complete',
-    createdAt: new Date().getUTCDate()
+    role: "user",
+    status: "complete",
+    createdAt: new Date().getUTCDate(),
   })
 
-  const assistantMessageId = await ctx.db.insert('chatMessages', {
+  const assistantMessageId = await ctx.db.insert("chatMessages", {
     chatId,
     content: "",
-    role: 'assistant',
-    status: 'pending',
-    createdAt: new Date().getUTCDate()
+    role: "assistant",
+    status: "pending",
+    createdAt: new Date().getUTCDate(),
   })
 
-  return {messageId, assistantMessageId}
+  return { messageId, assistantMessageId }
 }
-
 
 export const getFullChat = internalQuery({
   args: {
-    chatId: v.id('chats')
+    chatId: v.id("chats"),
   },
   handler: async (ctx, args) => {
-    const chat = await ctx.db.query('chats')
-      .withIndex('by_id', q => q.eq('_id', args.chatId))
+    const chat = await ctx.db
+      .query("chats")
+      .withIndex("by_id", (q) => q.eq("_id", args.chatId))
       .unique()
 
     if (!chat) {
-      throw new Error('chat not found')
+      throw new Error("chat not found")
     }
 
-    const messages = await ctx.db.query('chatMessages')
-      .withIndex('by_chat', q => q.eq('chatId', args.chatId))
+    const messages = await ctx.db
+      .query("chatMessages")
+      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId))
       .collect()
 
     return {
       chat,
-      messages: messages.sort((a, b) => a.createdAt - b.createdAt)
+      messages: messages.sort((a, b) => a.createdAt - b.createdAt),
     }
-  }
+  },
 })
 
 export const updateMessageContent = internalMutation({
   args: {
-    messageId: v.id('chatMessages'),
-    content: v.string()
+    messageId: v.id("chatMessages"),
+    content: v.string(),
   },
   handler: async (ctx, args) => {
-    await ctx.db.patch('chatMessages', args.messageId, {
+    await ctx.db.patch("chatMessages", args.messageId, {
       content: args.content,
-      status: 'complete'
+      status: "complete",
     })
-  }
+  },
 })
 
 export const createChat = mutation({
   args: {
-    message: v.string()
+    message: v.string(),
   },
   handler: async (ctx, args) => {
     const _userId = authenticatedUser(ctx)
 
-    const chatId = await ctx.db.insert('chats', {
-      model: 'gpt-4o-mini',
-      systemPrompt: 'You are a helpful assistant.',
-      title: 'New Chat',
+    const chatId = await ctx.db.insert("chats", {
+      model: "gpt-4o-mini",
+      systemPrompt: "You are a helpful assistant.",
+      title: "New Chat",
       createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate()
+      updatedAt: new Date().getUTCDate(),
     })
 
-    const messageId = await ctx.db.insert('chatMessages', {
+    const messageId = await ctx.db.insert("chatMessages", {
       chatId,
       content: args.message,
-      role: 'user',
-      status: 'complete',
-      createdAt: new Date().getUTCDate()
+      role: "user",
+      status: "complete",
+      createdAt: new Date().getUTCDate(),
     })
 
-    const assistantMessageId = await ctx.db.insert('chatMessages', {
+    const assistantMessageId = await ctx.db.insert("chatMessages", {
       chatId,
       content: "",
-      role: 'assistant',
-      status: 'pending',
-      createdAt: new Date().getUTCDate()
+      role: "assistant",
+      status: "pending",
+      createdAt: new Date().getUTCDate(),
     })
 
-    return {chatId, messageId, assistantMessageId}
+    return { chatId, messageId, assistantMessageId }
   },
 })
 
 export const addMessage = mutation({
   args: {
-    chatId: v.id('chats'),
-    message: v.string()
+    chatId: v.id("chats"),
+    message: v.string(),
   },
   handler: async (ctx, args) => {
     const _userId = authenticatedUser(ctx)
-    const { messageId, assistantMessageId } =
-      await sendUserMessage(ctx, args.chatId, args.message)
+    const { messageId, assistantMessageId } = await sendUserMessage(
+      ctx,
+      args.chatId,
+      args.message,
+    )
 
     // await ctx.scheduler.runAfter(0, internal.chats.chatCompletion, {
     //   chatId: args.chatId,
@@ -120,13 +131,14 @@ export const addMessage = mutation({
 
 export const getChatMessages = query({
   args: {
-    chatId: v.id('chats')
+    chatId: v.id("chats"),
   },
   handler: async (ctx, args) => {
-    const messages = await ctx.db.query('chatMessages')
-      .withIndex('by_chat', q => q.eq('chatId', args.chatId))
+    const messages = await ctx.db
+      .query("chatMessages")
+      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId))
       .collect()
 
     return messages.sort((a, b) => a.createdAt - b.createdAt)
   },
-});
+})

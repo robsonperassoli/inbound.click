@@ -1,24 +1,32 @@
-import { internal } from "./_generated/api";
-import { Doc, Id } from "./_generated/dataModel";
-import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
-import { v } from "convex/values";
-import { sendUserMessage } from "./chats";
-import * as toon from '@toon-format/toon'
-import { getForm, getFormSubmission } from "./forms";
+import * as toon from "@toon-format/toon"
+import { v } from "convex/values"
+import { internal } from "./_generated/api"
+import type { Id } from "./_generated/dataModel"
+import {
+  type MutationCtx,
+  mutation,
+  type QueryCtx,
+  query,
+} from "./_generated/server"
+import { sendUserMessage } from "./chats"
+import { getForm, getFormSubmission } from "./forms"
 
-export const getSession = async (ctx: QueryCtx | MutationCtx, sessionId: Id<'formSubmissionChatSessions'>) => {
-  const session = await ctx.db.get('formSubmissionChatSessions', sessionId)
+export const getSession = async (
+  ctx: QueryCtx | MutationCtx,
+  sessionId: Id<"formSubmissionChatSessions">,
+) => {
+  const session = await ctx.db.get("formSubmissionChatSessions", sessionId)
   if (!session) {
-    throw new Error('Session not found')
+    throw new Error("Session not found")
   }
 
   return session
 }
 
-const getChat = async (ctx: QueryCtx, chatId: Id<'chats'>) => {
-  const chat = await ctx.db.get('chats', chatId)
+const getChat = async (ctx: QueryCtx, chatId: Id<"chats">) => {
+  const chat = await ctx.db.get("chats", chatId)
   if (!chat) {
-    throw new Error('Chat not found')
+    throw new Error("Chat not found")
   }
 
   return chat
@@ -26,7 +34,7 @@ const getChat = async (ctx: QueryCtx, chatId: Id<'chats'>) => {
 
 export const getProfile = query({
   args: {
-    username: v.string()
+    username: v.string(),
   },
   handler: async (ctx, args) => {
     const profile = await ctx.db
@@ -35,45 +43,49 @@ export const getProfile = query({
       .unique()
 
     if (!profile) {
-      throw new Error('Not found')
+      throw new Error("Not found")
     }
 
-    const unsortedLinks = await ctx.db.query("links")
-      .withIndex("by_profile", (q) => q.eq("profileId", profile._id)).collect()
+    const unsortedLinks = await ctx.db
+      .query("links")
+      .withIndex("by_profile", (q) => q.eq("profileId", profile._id))
+      .collect()
 
     const links = unsortedLinks.sort((a, b) => b.order - a.order)
 
     return {
       profile,
-      links
-    };
+      links,
+    }
   },
-});
+})
 
 export const startFormSession = mutation({
   args: {
-    username: v.string()
+    username: v.string(),
   },
   handler: async (ctx, args) => {
-    const profile = await ctx.db.query('profiles')
-      .withIndex('by_username', (q) => q.eq('username', args.username))
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_username", (q) => q.eq("username", args.username))
       .unique()
 
     if (!profile) {
-      throw new Error('user not found')
+      throw new Error("user not found")
     }
 
-    const form = await ctx.db.query('forms')
-      .withIndex('by_user', (q) => q.eq('userId', profile.userId))
+    const form = await ctx.db
+      .query("forms")
+      .withIndex("by_user", (q) => q.eq("userId", profile.userId))
       .unique()
 
     if (!form) {
-      throw new Error('form not found')
+      throw new Error("form not found")
     }
 
-    const chatId = await ctx.db.insert('chats', {
+    const chatId = await ctx.db.insert("chats", {
       title: `${form.title} Form Session`,
-      model: 'gpt-4o-mini',
+      model: "gpt-4o-mini",
       systemPrompt: `You are a helpful assistant. Your name is Hugo.
       Your goal is to help people with form submissions, but never mention it.
       You should capture answers in a friendly casual conversation and fill
@@ -104,49 +116,50 @@ export const startFormSession = mutation({
       - If validation fails, be gentle and encouraging, never critical
       `,
       createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate()
+      updatedAt: new Date().getUTCDate(),
     })
 
-    await ctx.db.insert('chatMessages', {
+    await ctx.db.insert("chatMessages", {
       chatId,
-      role: 'assistant',
+      role: "assistant",
       content: `Hello! Good to have you here. ${profile.username} has a few questions that I'll help you answer! Is now a good time to chat?`,
       createdAt: new Date().getUTCDate(),
-      status: 'complete'
+      status: "complete",
     })
 
-    const sessionId = await ctx.db.insert('formSubmissionChatSessions', {
+    const sessionId = await ctx.db.insert("formSubmissionChatSessions", {
       userId: profile.userId,
       chatId,
       formId: form._id,
       createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate()
+      updatedAt: new Date().getUTCDate(),
     })
 
     return sessionId
-  }
+  },
 })
 
 export const getFormSessionMessages = query({
   args: {
-    sessionId: v.id('formSubmissionChatSessions'),
+    sessionId: v.id("formSubmissionChatSessions"),
   },
   handler: async (ctx, args) => {
     const session = await getSession(ctx, args.sessionId)
     const chat = await getChat(ctx, session.chatId)
 
-    const chatMessages = await ctx.db.query('chatMessages')
-      .withIndex('by_chat', q => q.eq('chatId', chat._id))
+    const chatMessages = await ctx.db
+      .query("chatMessages")
+      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
       .collect()
 
     return chatMessages.sort((a, b) => a.createdAt - b.createdAt)
-  }
+  },
 })
 
 export const sendFormSessionMessage = mutation({
   args: {
-    sessionId: v.id('formSubmissionChatSessions'),
-    message: v.string()
+    sessionId: v.id("formSubmissionChatSessions"),
+    message: v.string(),
   },
   handler: async (ctx, args) => {
     const session = await getSession(ctx, args.sessionId)
@@ -171,5 +184,5 @@ export const sendFormSessionMessage = mutation({
       chatId: chat._id,
       state,
     })
-  }
+  },
 })
