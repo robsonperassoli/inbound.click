@@ -66,8 +66,8 @@ export async function createFormSubmission(
   return await ctx.db.insert("formSubmissions", {
     formId,
     userId,
-    createdAt: new Date().getUTCDate(),
-    updatedAt: new Date().getUTCDate(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
     values: {},
   })
 }
@@ -83,14 +83,40 @@ export const createForm = mutation({
 
     const formId = await ctx.db.insert("forms", {
       userId,
-      createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
       title: args.title,
       description: args.description,
       fields: args.fields,
     })
 
     return formId
+  },
+})
+
+export const updateForm = mutation({
+  args: {
+    id: v.id("forms"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    fields: v.array(formField),
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+
+    const form = await getForm(ctx, args.id)
+    if (form.userId !== userId) {
+      throw new Error("Not found")
+    }
+
+    await ctx.db.patch("forms", args.id, {
+      userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      title: args.title,
+      description: args.description,
+      fields: args.fields,
+    })
   },
 })
 
@@ -152,7 +178,7 @@ export const fillForm = internalMutation({
 
     ctx.db.patch("formSubmissions", formSubmissionId, {
       values: args.values,
-      updatedAt: new Date().getUTCDate(),
+      updatedAt: Date.now(),
     })
 
     return formSubmissionId

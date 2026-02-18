@@ -19,7 +19,7 @@ export async function sendUserMessage(
     content: message,
     role: "user",
     status: "complete",
-    createdAt: new Date().getUTCDate(),
+    createdAt: Date.now(),
   })
 
   const assistantMessageId = await ctx.db.insert("chatMessages", {
@@ -27,7 +27,7 @@ export async function sendUserMessage(
     content: "",
     role: "assistant",
     status: "pending",
-    createdAt: new Date().getUTCDate(),
+    createdAt: Date.now(),
   })
 
   return { messageId, assistantMessageId }
@@ -83,8 +83,8 @@ export const createChat = mutation({
       model: "gpt-4o-mini",
       systemPrompt: "You are a helpful assistant.",
       title: "New Chat",
-      createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     })
 
     const messageId = await ctx.db.insert("chatMessages", {
@@ -92,7 +92,7 @@ export const createChat = mutation({
       content: args.message,
       role: "user",
       status: "complete",
-      createdAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
     })
 
     const assistantMessageId = await ctx.db.insert("chatMessages", {
@@ -100,7 +100,7 @@ export const createChat = mutation({
       content: "",
       role: "assistant",
       status: "pending",
-      createdAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
     })
 
     return { chatId, messageId, assistantMessageId }

@@ -115,15 +115,15 @@ export const startFormSession = mutation({
       - Show enthusiasm and make the user feel good about progressing
       - If validation fails, be gentle and encouraging, never critical
       `,
-      createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     })
 
     await ctx.db.insert("chatMessages", {
       chatId,
       role: "assistant",
       content: `Hello! Good to have you here. ${profile.username} has a few questions that I'll help you answer! Is now a good time to chat?`,
-      createdAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
       status: "complete",
     })
 
@@ -131,8 +131,8 @@ export const startFormSession = mutation({
       userId: profile.userId,
       chatId,
       formId: form._id,
-      createdAt: new Date().getUTCDate(),
-      updatedAt: new Date().getUTCDate(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     })
 
     return sessionId
@@ -169,7 +169,7 @@ export const sendFormSessionMessage = mutation({
 
     const form = await getForm(ctx, session.formId)
 
-    let submission
+    let submission = null
     if (session.formSubmissionId) {
       submission = await getFormSubmission(ctx, session.formSubmissionId)
     }
