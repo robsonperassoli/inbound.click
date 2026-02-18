@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router"
 import { useConvexAuth } from "convex/react"
 import { useEffect } from "react"
+import { AppLayout } from "@/components/app-layout"
 
 export const Route = createFileRoute("/_authenticated")({
   component: RouteComponent,
@@ -21,5 +22,9 @@ function RouteComponent() {
 
   if (!isAuthenticated) return null
 
-  return <Outlet />
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  )
 }

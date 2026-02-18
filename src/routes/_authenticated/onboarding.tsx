@@ -61,7 +61,7 @@ function RouteComponent() {
         buttonTextColor: defaultTheme.buttonTextColor,
       })
 
-      navigate({ to: "/dashboard" })
+      navigate({ to: "/bio" })
     },
     validators: {
       onSubmit: formSchema,

@@ -8,13 +8,13 @@ import { AddLinkModal } from "@/components/add-link-modal"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 
-export const Route = createFileRoute("/_authenticated/dashboard/")({
+export const Route = createFileRoute("/_authenticated/bio/")({
   component: RouteComponent,
   ssr: false,
 })
 
 function RouteComponent() {
-  const { profileId } = useLoaderData({ from: "/_authenticated/dashboard" })
+  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
   const links = useQuery(api.links.getProfileLinks, { profileId })
   const toggleActive = useMutation(api.links.toggleActive)
   const [addLinkOpen, setAddLinkOpen] = useState(false)

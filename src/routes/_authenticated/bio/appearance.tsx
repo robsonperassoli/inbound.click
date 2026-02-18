@@ -5,12 +5,12 @@ import { EditTheme } from "@/components/edit-theme"
 import { Button } from "@/components/ui/button"
 import { type Theme, themes } from "@/lib/themes"
 
-export const Route = createFileRoute("/_authenticated/dashboard/appearance")({
+export const Route = createFileRoute("/_authenticated/bio/appearance")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { profileId } = useLoaderData({ from: "/_authenticated/dashboard" })
+  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
   const updateTheme = useMutation(api.profiles.updateTheme)
 
   const changeTheme = async (theme: Theme) => {

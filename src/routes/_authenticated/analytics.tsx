@@ -26,7 +26,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-export const Route = createFileRoute("/_authenticated/dashboard/analytics")({
+export const Route = createFileRoute("/_authenticated/analytics")({
   component: RouteComponent,
   ssr: false,
 })

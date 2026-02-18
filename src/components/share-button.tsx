@@ -21,17 +21,18 @@ import {
   PopoverTrigger,
 } from "./ui/popover"
 
-export function ShareButton({
-  profileId,
-}: {
-  profileId: Doc<"profiles">["_id"]
-}) {
-  const profile = useQuery(api.profiles.getProfile, { profileId })
+export function ShareButton() {
+  const profile = useQuery(api.profiles.getProfile, {})
   const { copyToClipboard, copied } = useCopyToClipboard()
   const link = useMemo(
-    () => (profile ? `https://s.uper.com/${profile.username}` : ""),
+    () => (profile ? `https://s.uper.bio/${profile.username}` : ""),
     [profile],
   )
+
+  if (!profile) {
+    return null
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
