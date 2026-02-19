@@ -124,7 +124,7 @@ export function AddLinkModal({
                 Cancel
               </Button>
               <Button type="submit" size="lg">
-                Create Button
+                Create
               </Button>
             </Field>
           </FieldGroup>

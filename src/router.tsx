@@ -6,6 +6,7 @@ export function getRouter() {
   const router = createRouter({
     routeTree,
     scrollRestoration: true,
+    defaultPreload: "intent",
     context: {
       convex: convexQueryClient.convexClient,
     },

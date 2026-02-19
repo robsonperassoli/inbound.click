@@ -69,13 +69,13 @@ function RouteComponent() {
         </TabsList>
       </Tabs>
 
-      <div className="flex gap-x-6 justify-center pt-8">
-        <div className="grow ">
+      <div className="flex gap-x-6 justify-center">
+        <div className="grow">
           <Outlet />
         </div>
 
         <div className="shrink-0 w-md">
-          <div className="border rounded-xl shadow-lg overflow-hidden">
+          <div className="sticky top-20 border rounded-xl shadow-lg overflow-hidden">
             <UserPage
               profile={profile}
               links={links ?? []}

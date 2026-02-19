@@ -22,7 +22,7 @@ export function UserPage({
 
   return (
     <div
-      className={cn("up-theme p-6 flex", className)}
+      className={cn("up-theme py-10 px-8 flex", className)}
       style={createUpThemeStyles({
         backgroundColor: profile.backgroundColor,
         fontFamily: profile.fontFamily,
@@ -34,12 +34,12 @@ export function UserPage({
       })}
     >
       <div className="max-w-2xl mx-auto flex-1">
-        <header className="text-center space-y-2">
+        <header className="text-center space-y-1.5">
           <h1 className="text-3xl font-semibold">{profile.title}</h1>
           <p className="text-base">{profile.bio}</p>
         </header>
 
-        <ul className="flex flex-col justify-center gap-y-4 mt-8">
+        <ul className="flex flex-col justify-center gap-y-5 mt-8 max-w-lg mx-auto">
           {links.map((link) => (
             <li key={link._id}>
               <Button
