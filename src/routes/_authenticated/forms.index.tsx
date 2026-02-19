@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useState } from "react"
 import z from "zod"
+import { PageTitle } from "@/components/page-title"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -70,23 +71,21 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Forms</h1>
-          <p className="max-w-xl text-sm text-muted-foreground">
-            Manage form definitions and review submissions.
-          </p>
-          <Badge variant="outline">{forms?.length ?? 0} forms</Badge>
-        </div>
-        <Button
-          type="button"
-          size="lg"
-          className="w-full sm:w-auto"
-          onClick={() => setIsSheetOpen(true)}
-        >
-          Create form
-        </Button>
-      </div>
+      <PageTitle
+        title="Forms"
+        description="Manage form definitions and review submissions."
+        meta={<Badge variant="outline">{forms?.length ?? 0} forms</Badge>}
+        actions={
+          <Button
+            type="button"
+            size="lg"
+            className="w-full sm:w-auto"
+            onClick={() => setIsSheetOpen(true)}
+          >
+            Create form
+          </Button>
+        }
+      />
 
       <div className="space-y-2">
         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">

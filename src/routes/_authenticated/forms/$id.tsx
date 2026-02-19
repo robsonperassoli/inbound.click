@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { useMemo } from "react"
+import { PageTitle } from "@/components/page-title"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const Route = createFileRoute("/_authenticated/forms/$id")({
@@ -33,10 +34,10 @@ function RouteComponent() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-xl font-medium">{form?.title}</h1>
-      {form?.description && (
-        <p className="text-sm text-muted">{form.description}</p>
-      )}
+      <PageTitle
+        title={form?.title ?? "Form"}
+        description={form?.description}
+      />
 
       <Tabs value={activeTab} className="w-full">
         <TabsList>

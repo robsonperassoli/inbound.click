@@ -5,6 +5,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
+import logo from "../assets/logo.svg"
 import { ShareButton } from "./share-button"
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -22,7 +23,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             to="/forms"
             className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
           >
-            inbound.click
+            <img src={logo} alt="Inbound.click logo" className="w-40" />
           </Link>
 
           <nav className="min-w-0">

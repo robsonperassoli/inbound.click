@@ -7,6 +7,8 @@ import {
   useLocation,
 } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
+import { PageTitle } from "@/components/page-title"
+import { ShareButton } from "@/components/share-button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserPage } from "@/components/user-page"
 
@@ -39,7 +41,12 @@ function RouteComponent() {
   }
 
   return (
-    <>
+    <div className="space-y-6">
+      <PageTitle
+        title="Bio Page"
+        description="Manage your links, appearance, and profile settings."
+      />
+
       <Tabs value={activeTab}>
         <TabsList>
           <TabsTrigger value="links" asChild>
@@ -77,6 +84,6 @@ function RouteComponent() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
