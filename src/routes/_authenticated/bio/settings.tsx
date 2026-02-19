@@ -1,10 +1,216 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { api } from "@convex/_generated/api"
+import type { Doc, Id } from "@convex/_generated/dataModel"
+import { useForm } from "@tanstack/react-form"
+import { createFileRoute, useLoaderData } from "@tanstack/react-router"
+import { useMutation, useQuery } from "convex/react"
+import { useState } from "react"
+import z from "zod"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 export const Route = createFileRoute("/_authenticated/bio/settings")({
   component: RouteComponent,
   ssr: false,
 })
 
+const profileHeaderSchema = z.object({
+  username: z.string().trim().min(3, "Username must be at least 3 characters"),
+  title: z.string().trim().min(2, "Title must be at least 2 characters"),
+  bio: z.string().trim().min(2, "Bio must be at least 2 characters"),
+})
+
+type ProfileHeaderValues = z.infer<typeof profileHeaderSchema>
+
 function RouteComponent() {
-  return <div>Change page title, bio, username and avatar picture</div>
+  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
+  const profile = useQuery(api.profiles.getProfile, {})
+
+  if (!profile) {
+    return (
+      <div className="text-sm text-muted-foreground">Loading profile...</div>
+    )
+  }
+
+  return <SettingsForm profileId={profileId} profile={profile} />
+}
+
+function SettingsForm({
+  profileId,
+  profile,
+}: {
+  profileId: Id<"profiles">
+  profile: Doc<"profiles">
+}) {
+  const updateProfileHeader = useMutation(api.profiles.updateProfileHeader)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  const normalizeValues = (
+    values: ProfileHeaderValues,
+  ): ProfileHeaderValues => ({
+    username: values.username.trim(),
+    title: values.title.trim(),
+    bio: values.bio.trim(),
+  })
+
+  const form = useForm({
+    defaultValues: {
+      username: profile.username,
+      title: profile.title,
+      bio: profile.bio,
+    },
+    validators: {
+      onSubmit: profileHeaderSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const normalizedValue = normalizeValues(value)
+      setIsSaving(true)
+      setSaveError(null)
+
+      console.log(normalizedValue)
+
+      try {
+        await updateProfileHeader({
+          profileId,
+          username: normalizedValue.username,
+          title: normalizedValue.title,
+          bio: normalizedValue.bio,
+        })
+        form.reset(normalizedValue)
+      } catch (error) {
+        setSaveError(
+          error instanceof Error ? error.message : "Failed to update profile",
+        )
+      } finally {
+        setIsSaving(false)
+      }
+    },
+  })
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Profile header</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}
+        >
+          <FieldGroup>
+            <form.Field name="username">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel>Username</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="the_real_john"
+                      autoComplete="off"
+                    />
+
+                    {isInvalid ? (
+                      <FieldError errors={field.state.meta.errors} />
+                    ) : (
+                      <FieldDescription>
+                        Your public page URL uses this username.
+                      </FieldDescription>
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field name="title">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel>Title</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="John Labrador"
+                    />
+
+                    {isInvalid ? (
+                      <FieldError errors={field.state.meta.errors} />
+                    ) : (
+                      <FieldDescription>
+                        This appears under your avatar on the public page.
+                      </FieldDescription>
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field name="bio">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel>Bio</FieldLabel>
+                    <Textarea
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Making dreams come true"
+                    />
+
+                    {isInvalid ? (
+                      <FieldError errors={field.state.meta.errors} />
+                    ) : (
+                      <FieldDescription>
+                        A short summary visitors see on your profile.
+                      </FieldDescription>
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            {saveError && (
+              <p className="text-sm text-destructive" role="alert">
+                {saveError}
+              </p>
+            )}
+
+            <Field orientation="horizontal">
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save profile"}
+              </Button>
+            </Field>
+          </FieldGroup>
+        </form>
+      </CardContent>
+    </Card>
+  )
 }
