@@ -39,7 +39,7 @@ export function UserPage({
       <div className="max-w-2xl mx-auto flex-1">
         <header className="space-y-5">
           {profile.avatarUrl && (
-            <Avatar className="size-20 up-avatar mx-auto block">
+            <Avatar className="size-20 mx-auto block shadow-lg">
               <AvatarImage src={profile.avatarUrl} />
             </Avatar>
           )}
@@ -50,7 +50,7 @@ export function UserPage({
           </div>
         </header>
 
-        <ul className="flex flex-col justify-center gap-y-5 mt-8 max-w-lg mx-auto">
+        <ul className="flex flex-col justify-center gap-y-5 mt-8 max-w-md mx-auto">
           {links.map((link) => (
             <li key={link._id}>
               <Button

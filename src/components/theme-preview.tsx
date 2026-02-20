@@ -65,9 +65,11 @@ export function ThemePreview({
                     ? theme.buttonColor
                     : theme.buttonTextColor,
                 boxShadow:
-                  theme.buttonStyle === "shadow" || theme.buttonStyle === "3d"
-                    ? "6px 6px 0px 0px black"
-                    : "none",
+                  theme.buttonStyle === "shadow"
+                    ? "0 6px 12px rgb(0 0 0 / 0.25)"
+                    : theme.buttonStyle === "3d"
+                      ? "6px 6px 0px 0px black"
+                      : "none",
                 transform:
                   theme.buttonStyle === "3d" ? "translateY(-2px)" : "none",
               }}

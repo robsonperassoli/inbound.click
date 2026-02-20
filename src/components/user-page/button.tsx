@@ -16,18 +16,12 @@ const buttonVariants = cva(
     variants: {
       buttonStyle: {
         solid: "up-button-solid",
-
         outline: "up-button-outline",
-
         paper: "up-button-paper",
-
         shadow: "up-button-solid up-button-shadow",
-
         "3d": "up-button-solid up-button-3d",
-
         ghost: "up-button-ghost",
       },
-
       shape: {
         square: "up-button-square",
         rounded: "up-button-rounded",

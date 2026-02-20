@@ -147,7 +147,8 @@
   --up-button-radius-rounded: 12px;
   --up-button-radius-pill: 9999px;
 
-  --up-button-shadow: 6px 6px 0px 0px black;
+  --up-button-shadow: 0 6px 12px rgb(0 0 0 / 0.25);
+  --up-button-shadow-3d: 6px 6px 0px 0px black;
 }
 
 @layer components {
@@ -209,16 +210,12 @@
   }
 
   .up-button-3d {
-    box-shadow: var(--up-button-shadow);
+    box-shadow: var(--up-button-shadow-3d);
     transform: translateY(-2px);
   }
 
   .up-button-3d:active {
     transform: translateY(2px);
     box-shadow: none;
-  }
-
-  .up-avatar {
-    border-width: 1px;
   }
 }
