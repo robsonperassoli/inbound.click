@@ -105,7 +105,7 @@ function LandingPage() {
 
           <button
             type="button"
-            className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(79,70,229,0.35)] transition-all hover:scale-[1.02] hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+            className="rounded-full bg-[#1A4A80] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(26,74,128,0.35)] transition-all hover:scale-[1.02] hover:bg-[#143b67] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00A6ED]/40"
           >
             Claim Your Link
           </button>
@@ -124,7 +124,7 @@ function LandingPage() {
             className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-6xl"
           >
             The link-in-bio that actually generates{" "}
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1A4A80] to-[#00A6ED] bg-clip-text text-transparent">
               revenue.
             </span>
           </motion.h1>
@@ -149,9 +149,9 @@ function LandingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex h-12 flex-1 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-800">
                 <span className="text-slate-500">s.uper.bio/</span>
-                <span className="ml-1 text-indigo-600">{typedHandle}</span>
+                <span className="ml-1 text-[#1A4A80]">{typedHandle}</span>
                 <motion.span
-                  className="ml-0.5 h-5 w-px bg-indigo-600"
+                  className="ml-0.5 h-5 w-px bg-[#1A4A80]"
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{
                     duration: 0.9,
@@ -161,7 +161,7 @@ function LandingPage() {
               </div>
               <button
                 type="button"
-                className="h-12 rounded-xl bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                className="h-12 rounded-xl bg-[#1A4A80] px-6 text-sm font-semibold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-[#143b67] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00A6ED]/40"
               >
                 Claim &amp; Build
               </button>
@@ -185,7 +185,7 @@ function LandingPage() {
               </p>
 
               <div className="mt-4">
-                <div className="ml-auto max-w-[90%] rounded-2xl rounded-br-md bg-indigo-600 px-4 py-3 text-sm text-white shadow-sm">
+                <div className="ml-auto max-w-[90%] rounded-2xl rounded-br-md bg-[linear-gradient(135deg,#1A4A80_0%,#00A6ED_100%)] px-4 py-3 text-sm text-white shadow-sm">
                   I need a form for my coaching business to collect name, email,
                   and their biggest fitness struggle.
                 </div>
@@ -225,7 +225,7 @@ function LandingPage() {
                         className="mx-auto mt-2 w-[235px] rounded-[26px] border border-slate-200 bg-white p-3 shadow-[0_14px_36px_rgba(15,23,42,0.16)] [transform-style:preserve-3d]"
                       >
                         <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-slate-200" />
-                        <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-500 p-3 text-white">
+                        <div className="rounded-2xl bg-[linear-gradient(135deg,#1A4A80_0%,#00A6ED_100%)] p-3 text-white">
                           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/80">
                             Inbound Page
                           </p>
@@ -475,7 +475,7 @@ function HeroStat({
 }) {
   return (
     <div className="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
-      <div className="inline-flex rounded-lg bg-indigo-50 p-2 text-indigo-600">
+      <div className="inline-flex rounded-lg bg-[#1A4A80]/10 p-2 text-[#1A4A80]">
         <HugeiconsIcon icon={icon} size={18} />
       </div>
       <p className="mt-3 text-sm text-slate-500">{label}</p>
@@ -500,7 +500,7 @@ function StepCard({
   return (
     <div className="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="inline-flex rounded-full bg-indigo-50 p-2 text-indigo-600">
+        <span className="inline-flex rounded-full bg-[#00A6ED]/10 p-2 text-[#1A4A80]">
           <HugeiconsIcon icon={icon} size={18} />
         </span>
         <span className="text-xs font-semibold tracking-[0.12em] text-slate-400">
@@ -526,7 +526,7 @@ function UseCaseCard({
 }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-      <div className="inline-flex rounded-xl bg-violet-50 p-2 text-violet-600">
+      <div className="inline-flex rounded-xl bg-[#00A6ED]/10 p-2 text-[#1A4A80]">
         <HugeiconsIcon icon={icon} size={18} />
       </div>
       <h3 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">
