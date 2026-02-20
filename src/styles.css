@@ -157,6 +157,7 @@
     background-image: var(--up-background-image);
     color: var(--up-text-color);
     font-family: var(--up-font-family);
+    border-color: var(--up-text-color);
   }
 
   /* Button base */
@@ -215,5 +216,9 @@
   .up-button-3d:active {
     transform: translateY(2px);
     box-shadow: none;
+  }
+
+  .up-avatar {
+    border-width: 1px;
   }
 }

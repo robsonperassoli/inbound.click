@@ -54,7 +54,12 @@ export const getProfile = query({
     const links = unsortedLinks.sort((a, b) => b.order - a.order)
 
     return {
-      profile,
+      profile: {
+        ...profile,
+        avatarUrl: profile?.avatarId
+          ? await ctx.storage.getUrl(profile.avatarId)
+          : null,
+      },
       links,
     }
   },

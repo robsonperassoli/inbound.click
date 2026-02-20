@@ -20,7 +20,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <header className="bg-background/80 sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex w-full max-w-5xl flex-nowrap items-center gap-4 px-4 py-3 sm:px-6">
           <Link
-            to="/forms"
+            to="/bio"
             className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
           >
             <img src={logo} alt="Inbound.click logo" className="w-40" />

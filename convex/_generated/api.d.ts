@@ -11,6 +11,7 @@
 import type * as agents from "../agents.js";
 import type * as auth from "../auth.js";
 import type * as chats from "../chats.js";
+import type * as files from "../files.js";
 import type * as forms from "../forms.js";
 import type * as http from "../http.js";
 import type * as links from "../links.js";
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   auth: typeof auth;
   chats: typeof chats;
+  files: typeof files;
   forms: typeof forms;
   http: typeof http;
   links: typeof links;

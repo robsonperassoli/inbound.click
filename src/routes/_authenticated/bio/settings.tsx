@@ -1,10 +1,15 @@
 import { api } from "@convex/_generated/api"
-import type { Doc, Id } from "@convex/_generated/dataModel"
+import type { Id } from "@convex/_generated/dataModel"
+import { PencilEdit01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useForm } from "@tanstack/react-form"
 import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
+import type { FunctionReturnType } from "convex/server"
 import { useState } from "react"
 import z from "zod"
+import { FileUpload } from "@/components/file-upload"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -43,14 +48,18 @@ function RouteComponent() {
   return <SettingsForm profileId={profileId} profile={profile} />
 }
 
+export type Profile = FunctionReturnType<typeof api.profiles.getProfile>
+
 function SettingsForm({
   profileId,
   profile,
 }: {
   profileId: Id<"profiles">
-  profile: Doc<"profiles">
+  profile: Profile
 }) {
   const updateProfileHeader = useMutation(api.profiles.updateProfileHeader)
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
+  const updateProfileAvatar = useMutation(api.profiles.updateProfileAvatar)
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -76,8 +85,6 @@ function SettingsForm({
       setIsSaving(true)
       setSaveError(null)
 
-      console.log(normalizedValue)
-
       try {
         await updateProfileHeader({
           profileId,
@@ -96,6 +103,20 @@ function SettingsForm({
     },
   })
 
+  const handleAvatarUpload = async (file: File) => {
+    const uploadUrl = await generateUploadUrl({})
+
+    const result = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type },
+      body: file,
+    })
+
+    const { storageId } = await result.json()
+
+    await updateProfileAvatar({ avatarId: storageId, profileId })
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -109,6 +130,19 @@ function SettingsForm({
           }}
         >
           <FieldGroup>
+            <FileUpload onChange={(_tempUrl, file) => handleAvatarUpload(file)}>
+              <Avatar size="lg" className="group overflow-hidden">
+                {profile.avatarUrl ? (
+                  <AvatarImage src={profile.avatarUrl} />
+                ) : (
+                  <AvatarFallback />
+                )}
+                <div className="absolute inset-0 bg-primary/40 opacity-0 flex items-center justify-center text-primary-foreground group-hover:opacity-100 duration-200">
+                  <HugeiconsIcon icon={PencilEdit01Icon} size={16} />
+                </div>
+              </Avatar>
+            </FileUpload>
+
             <form.Field name="username">
               {(field) => {
                 const isInvalid =

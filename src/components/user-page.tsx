@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { loadFont } from "@/lib/load-font"
 import { createUpThemeStyles } from "@/lib/themes"
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
 
 export function UserPage({
@@ -10,7 +11,9 @@ export function UserPage({
   links,
   className,
 }: {
-  profile: Doc<"profiles">
+  profile: Doc<"profiles"> & {
+    avatarUrl: string | null
+  }
   links: Doc<"links">[]
   className?: string
 }) {
@@ -34,9 +37,17 @@ export function UserPage({
       })}
     >
       <div className="max-w-2xl mx-auto flex-1">
-        <header className="text-center space-y-1.5">
-          <h1 className="text-3xl font-semibold">{profile.title}</h1>
-          <p className="text-base">{profile.bio}</p>
+        <header className="space-y-5">
+          {profile.avatarUrl && (
+            <Avatar className="size-20 up-avatar mx-auto block">
+              <AvatarImage src={profile.avatarUrl} />
+            </Avatar>
+          )}
+
+          <div className="text-center space-y-1.5">
+            <h1 className="text-3xl font-semibold">{profile.title}</h1>
+            <p className="text-base">{profile.bio}</p>
+          </div>
         </header>
 
         <ul className="flex flex-col justify-center gap-y-5 mt-8 max-w-lg mx-auto">

@@ -57,13 +57,23 @@ export const authenticatedUser = async (
 }
 
 export const getProfile = query({
-  handler: async (ctx, args) => {
+  handler: async (ctx, _args) => {
     const userId = await authenticatedUser(ctx)
-
-    return await ctx.db
+    const profile = await ctx.db
       .query("profiles")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .unique()
+
+    if (!profile) {
+      throw new Error("Profile not found")
+    }
+
+    return {
+      ...profile,
+      avatarUrl: profile?.avatarId
+        ? await ctx.storage.getUrl(profile.avatarId)
+        : null,
+    }
   },
 })
 
@@ -147,6 +157,21 @@ export const updateProfileHeader = mutation({
       username: args.username,
       title: args.title,
       bio: args.bio,
+    })
+  },
+})
+
+export const updateProfileAvatar = mutation({
+  args: {
+    profileId: v.id("profiles"),
+    avatarId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+    const profile = await getUserProfile(ctx, userId, args.profileId)
+
+    await ctx.db.patch(profile._id, {
+      avatarId: args.avatarId,
     })
   },
 })
