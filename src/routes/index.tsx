@@ -1,632 +1,424 @@
-import {
-  AiChat01Icon,
-  ArrowRight02Icon,
-  Chart01Icon,
-  Link01Icon,
-  Message01Icon,
-  Mic01Icon,
-  Notification01Icon,
-  SmartPhone01Icon,
-  WebhookIcon,
-  ZapIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute } from "@tanstack/react-router"
-import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useId, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import logo from "../assets/logo.svg"
 
 export const Route = createFileRoute("/")({
-  component: IndexPage,
+  component: LandingPage,
 })
 
-const handles = ["john", "acme-corp", "fitness-coach"]
+const DYNAMIC_NAMES = [
+  "fitness-coach",
+  "startup-founder",
+  "creator",
+  "agency-owner",
+]
 
-function IndexPage() {
-  const baseId = useId().replaceAll(":", "")
-  const sectionIds = useMemo(
-    () => ({
-      top: `${baseId}-top`,
-      howItWorks: `${baseId}-how-it-works`,
-      useCases: `${baseId}-use-cases`,
-      integrations: `${baseId}-integrations`,
-      pricing: `${baseId}-pricing`,
-    }),
-    [baseId],
-  )
-
+function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <Nav sectionIds={sectionIds} />
-      <Hero topId={sectionIds.top} />
-      <ProblemSolution pricingId={sectionIds.pricing} />
-      <HowItWorks howItWorksId={sectionIds.howItWorks} />
-      <UseCases useCasesId={sectionIds.useCases} />
-      <Features integrationsId={sectionIds.integrations} />
-      <FinalCta />
+    <div className="min-h-screen overflow-x-hidden bg-white text-[#2D2E2C]">
+      <SpeedLinesBackground />
+
+      <header className="sticky top-0 z-50 border-b border-[#2D2E2C]/8 bg-white/85 backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <a href="#top" className="flex items-center gap-3">
+            <img src={logo} alt="Inbound.click" className="h-9 w-auto" />
+            <span className="text-sm font-semibold tracking-tight sm:text-base sr-only">
+              Inbound.click
+            </span>
+          </a>
+
+          <a
+            href="#workflow"
+            className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
+          >
+            Start Free
+          </a>
+        </div>
+      </header>
+
+      <main
+        id="top"
+        className="relative mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8"
+      >
+        <HeroSection />
+        <SpeedDivider />
+        <ProblemSection />
+        <SpeedDivider />
+        <AiArchitectSection />
+        <SpeedDivider />
+        <WorkflowSection />
+      </main>
     </div>
   )
 }
 
-function Nav({ sectionIds }: { sectionIds: Record<string, string> }) {
+function HeroSection() {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <a href={`#${sectionIds.top}`} className="flex items-center gap-3">
-          <img src={logo} alt="Inbound.click logo" className="h-7 w-auto" />
-          <span className="sr-only text-lg font-semibold tracking-tight text-slate-900">
-            Inbound.click
-          </span>
-        </a>
-
-        <nav className="hidden items-center gap-8 md:flex">
-          {[
-            { href: `#${sectionIds.howItWorks}`, label: "How it Works" },
-            { href: `#${sectionIds.useCases}`, label: "Use Cases" },
-            { href: `#${sectionIds.integrations}`, label: "Integrations" },
-            { href: `#${sectionIds.pricing}`, label: "Pricing" },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        <button
-          type="button"
-          className="rounded-full bg-[#EE775F] px-5 py-2 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(238,119,95,0.35)] transition-all hover:scale-[1.02] hover:bg-[#e5664d]"
-        >
-          Claim Your Link
-        </button>
-      </div>
-    </header>
-  )
-}
-
-function Hero({ topId }: { topId: string }) {
-  const handle = useTypingHandle()
-
-  return (
-    <section
-      id={topId}
-      className="relative overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 10%, rgba(238,119,95,.18), transparent 35%), radial-gradient(circle at 80% 15%, rgba(105,208,178,.18), transparent 35%), linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)",
-          backgroundSize: "auto, auto, 32px 32px, 32px 32px",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#f7c7be] bg-[#fff6f4] px-4 py-1.5 text-sm font-medium text-[#b14f3d]">
-            <HugeiconsIcon icon={AiChat01Icon} size={16} />
-            AI-powered social lead engine
+    <section className="pt-12 pb-14 sm:pt-16 sm:pb-16 lg:pt-20">
+      <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.03fr] lg:items-start">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full border border-[#2D2E2C]/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/70 shadow-[0_6px_20px_rgba(45,46,44,0.08)]">
+            <SpeedLines />
+            Social Lead Engine
           </p>
 
-          <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            The link-in-bio that actually generates{" "}
-            <span className="bg-gradient-to-r from-[#EE775F] via-[#f2a33c] to-[#69D0B2] bg-clip-text text-transparent">
-              revenue
-            </span>
-            .
+          <h1 className="mt-6 text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl">
+            Turn Your Social Traffic into Qualified Leads, Automatically.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Stop leaking social media traffic. Inbound.click is an AI-powered
-            lead engine that turns followers into clients. Zero drag-and-drop
-            form building required, just tell the AI what you need.
+          <TypewriterUrl />
+
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#2D2E2C]/75 sm:text-lg">
+            Built for Social Bios. Stop leaking traffic and start capturing
+            high-intent leads through zero-setup conversational AI flows.
           </p>
 
-          <div className="mx-auto mt-10 w-full max-w-2xl rounded-2xl border border-slate-200/70 bg-white p-3 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="flex h-14 flex-1 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-500">
-                <span className="font-medium text-slate-500">s.uper.bio/</span>
-                <span className="ml-1 font-semibold text-slate-900">
-                  {handle}
-                </span>
-                <motion.span
-                  aria-hidden
-                  className="ml-0.5 inline-block h-5 w-px bg-slate-700"
-                  animate={{ opacity: [1, 0, 1] }}
-                  transition={{
-                    duration: 0.9,
-                    repeat: Number.POSITIVE_INFINITY,
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                className="h-14 rounded-xl bg-[#EE775F] px-6 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(238,119,95,0.35)] transition-all hover:scale-[1.02] hover:bg-[#e5664d]"
-              >
-                Claim &amp; Build
-              </button>
-            </div>
-            <p className="mt-2 text-left text-sm text-slate-500 sm:px-1">
-              Setup takes 60 seconds. Free forever plan available.
-            </p>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-14 max-w-5xl">
-          <ChatToBioDemo />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ChatToBioDemo() {
-  const [phase, setPhase] = useState(0)
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setPhase((current) => (current + 1) % 3)
-    }, 2600)
-
-    return () => window.clearInterval(id)
-  }, [])
-
-  return (
-    <div className="relative mx-auto h-[460px] w-full max-w-[980px] rounded-[32px] border border-slate-200/70 bg-gradient-to-b from-white to-slate-50 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] sm:h-[520px] sm:p-8">
-      <div className="absolute left-10 top-10 h-52 w-52 rounded-full bg-[#EE775F]/20 blur-3xl" />
-      <div className="absolute bottom-8 right-10 h-56 w-56 rounded-full bg-[#69D0B2]/20 blur-3xl" />
-
-      <div className="relative mx-auto h-full w-full max-w-[360px] [perspective:1200px]">
-        <AnimatePresence mode="wait">
-          {phase < 2 ? (
-            <motion.div
-              key={`chat-${phase}`}
-              initial={{ opacity: 0, rotateY: -14, y: 18, scale: 0.96 }}
-              animate={{ opacity: 1, rotateY: 0, y: 0, scale: 1 }}
-              exit={{ opacity: 0, rotateY: 18, y: -12, scale: 0.96 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="h-full rounded-[30px] border border-slate-200/70 bg-white p-5 shadow-[0_16px_48px_rgba(15,23,42,0.12)]"
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#workflow"
+              className="rounded-full bg-[#EE7A64] px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_14px_30px_rgba(238,122,100,0.34)] transition-transform hover:-translate-y-0.5"
             >
-              <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-slate-200" />
-              <div className="mb-4 flex items-center gap-2">
-                <div className="grid size-8 place-items-center rounded-full bg-[#fff2ef] text-[#d55d46]">
-                  <HugeiconsIcon icon={AiChat01Icon} size={16} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    Inbound AI
-                  </p>
-                  <p className="text-xs text-slate-500">Online now</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-[#EE775F] px-4 py-3 text-sm text-white"
-                >
-                  I need a form for my coaching business to collect name, email,
-                  and their biggest fitness struggle.
-                </motion.div>
-
-                {phase === 0 ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="max-w-[72%] rounded-2xl rounded-bl-md border border-slate-200 bg-slate-50 px-4 py-3"
-                  >
-                    <TypingDots />
-                  </motion.div>
-                ) : null}
-
-                {phase === 1 ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="max-w-[80%] rounded-2xl rounded-bl-md border border-[#d9f3eb] bg-[#effbf7] px-4 py-3 text-sm text-slate-700"
-                  >
-                    Got it! Building your capture page...
-                  </motion.div>
-                ) : null}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="bio"
-              initial={{ opacity: 0, rotateY: -24, scale: 0.92, y: 18 }}
-              animate={{ opacity: 1, rotateY: 0, scale: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.55, ease: "easeOut" }}
-              className="h-full rounded-[30px] border border-slate-200/70 bg-white p-5 shadow-[0_16px_48px_rgba(15,23,42,0.12)]"
-            >
-              <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-slate-200" />
-              <div className="rounded-2xl border border-[#f3d7cf] bg-gradient-to-b from-[#fff7f5] to-white p-4">
-                <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-white shadow-sm">
-                  <HugeiconsIcon
-                    icon={SmartPhone01Icon}
-                    size={24}
-                    className="text-[#EE775F]"
-                  />
-                </div>
-                <p className="text-center text-sm font-semibold text-slate-900">
-                  @fitness-coach
-                </p>
-                <p className="mt-1 text-center text-xs text-slate-500">
-                  DM-grade capture page
-                </p>
-
-                <div className="mt-4 space-y-2">
-                  {[
-                    "Start your coaching intake",
-                    "Tell me your biggest fitness struggle",
-                    "Drop your email to get your plan",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#69D0B2] py-2.5 text-sm font-semibold text-slate-900"
-                >
-                  Open AI Capture Flow
-                  <HugeiconsIcon icon={ArrowRight02Icon} size={16} />
-                </button>
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-xl border border-[#d9f3eb] bg-[#effbf7] px-3 py-2 text-slate-700">
-                  87% completion
-                </div>
-                <div className="rounded-xl border border-[#fde7bd] bg-[#fff9eb] px-3 py-2 text-slate-700">
-                  +3 new leads
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  )
-}
-
-function TypingDots() {
-  return (
-    <div className="flex items-center gap-1.5">
-      {[0, 1, 2].map((dot) => (
-        <motion.span
-          key={dot}
-          className="size-2 rounded-full bg-slate-400"
-          animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{
-            duration: 0.8,
-            repeat: Number.POSITIVE_INFINITY,
-            delay: dot * 0.15,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
-function ProblemSolution({ pricingId }: { pricingId: string }) {
-  return (
-    <section id={pricingId} className="px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Linktree leaks traffic. Typeform kills conversions.
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-slate-600">
-            You&apos;re working too hard on content to send your audience to a
-            dead-end list of links, or a 5-page form they&apos;ll abandon. You
-            need a frictionless bridge between social discovery and your sales
-            pipeline.
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <div className="rounded-2xl border border-red-100 bg-red-50/50 p-7 shadow-sm">
-            <h3 className="text-lg font-semibold tracking-tight text-red-700">
-              The Old Way
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm text-red-800/85">
-              {[
-                "❌ Multi-step forms",
-                "❌ Coding required",
-                "❌ High drop-off rates",
-                "❌ Dead leads",
-              ].map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-7 shadow-sm">
-            <h3 className="text-lg font-semibold tracking-tight text-emerald-700">
-              The Inbound Way
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm text-emerald-800/90">
-              {[
-                "✅ Conversational forms",
-                "✅ Voice/audio capture",
-                "✅ Instant notifications",
-                "✅ High conversion",
-              ].map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function HowItWorks({ howItWorksId }: { howItWorksId: string }) {
-  const steps = useMemo(
-    () => [
-      {
-        icon: Link01Icon,
-        title: "Connect Your World",
-        body: "Plug in your social handles, top links, and even your own custom domain (e.g., links.yourbrand.com). You maintain 100% brand authority.",
-        tone: "bg-[#fff6f4] text-[#d55d46]",
-      },
-      {
-        icon: Message01Icon,
-        title: "Just Text Our AI Agent",
-        body: "Throw away complex form builders. Just type what data you want to collect. Our AI instantly architects an optimized, high-converting capture flow.",
-        tone: "bg-[#fff9eb] text-[#c58d1b]",
-      },
-      {
-        icon: Mic01Icon,
-        title: "Capture via Text or Voice",
-        body: "Paste your link on Instagram, TikTok, or LinkedIn. When leads click, they don't fill out a rigid form, they chat. They can even reply with audio messages.",
-        tone: "bg-[#effbf7] text-[#178467]",
-      },
-    ],
-    [],
-  )
-
-  return (
-    <section
-      id={howItWorksId}
-      className="bg-slate-50 px-4 py-24 sm:px-6 lg:px-8"
-    >
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            From setup to your first lead in under 2 minutes.
-          </h2>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {steps.map((step, index) => (
-            <motion.article
-              key={step.title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.45, delay: index * 0.1 }}
-              className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm"
-            >
-              <div className={`mb-5 inline-flex rounded-xl p-3 ${step.tone}`}>
-                <HugeiconsIcon icon={step.icon} size={20} />
-              </div>
-              <h3 className="text-xl font-semibold tracking-tight text-slate-900">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                {step.body}
-              </p>
-            </motion.article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function UseCases({ useCasesId }: { useCasesId: string }) {
-  const cards = [
-    {
-      title: "Creators & Influencers",
-      body: "Turn casual viewers into an owned email list or capture inbound brand sponsorship requests instantly.",
-      icon: Notification01Icon,
-    },
-    {
-      title: "Consultants & Agencies",
-      body: "Qualify inbound leads by asking about monthly budgets and pain points before you ever get on a discovery call.",
-      icon: Message01Icon,
-    },
-    {
-      title: "Real Estate & Local Biz",
-      body: "Let potential buyers leave voice notes about what kind of property they are looking for directly from your Instagram bio.",
-      icon: SmartPhone01Icon,
-    },
-  ]
-
-  return (
-    <section id={useCasesId} className="px-4 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Built for the modern internet business.
-          </h2>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {cards.map((card) => (
-            <article
-              key={card.title}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div className="mb-5 inline-flex rounded-xl bg-slate-100 p-3 text-slate-700">
-                <HugeiconsIcon icon={card.icon} size={20} />
-              </div>
-              <h3 className="text-lg font-semibold tracking-tight text-slate-900">
-                {card.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                {card.body}
-              </p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function Features({ integrationsId }: { integrationsId: string }) {
-  const items = [
-    {
-      title: "Speed-to-Lead Alerts",
-      body: "The moment a lead finishes the flow, your phone buzzes. Get instant pings via WhatsApp, SMS, or Email.",
-      icon: ZapIcon,
-      tone: "bg-[#fff6f4] text-[#d55d46]",
-    },
-    {
-      title: "Audio/Voice Capture",
-      body: "Forms feel like a conversation. Leads can drop a quick voice note instead of typing paragraphs.",
-      icon: Mic01Icon,
-      tone: "bg-[#effbf7] text-[#178467]",
-    },
-    {
-      title: "Built-in Lightweight CRM",
-      body: "View clicks, conversion rates, and a clean database of all your captured leads in one dashboard.",
-      icon: Chart01Icon,
-      tone: "bg-[#fff9eb] text-[#c58d1b]",
-    },
-    {
-      title: "Universal Webhooks",
-      body: "Route data instantly to HubSpot, Salesforce, Slack, or Google Sheets.",
-      icon: WebhookIcon,
-      tone: "bg-slate-100 text-slate-700",
-    },
-  ]
-
-  return (
-    <section
-      id={integrationsId}
-      className="bg-slate-50 px-4 py-24 sm:px-6 lg:px-8"
-    >
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Everything you need to capture, route, and close.
-          </h2>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {items.map((item) => (
-            <article
-              key={item.title}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <div className={`mb-4 inline-flex rounded-xl p-3 ${item.tone}`}>
-                <HugeiconsIcon icon={item.icon} size={20} />
-              </div>
-              <h3 className="text-lg font-semibold tracking-tight text-slate-900">
-                {item.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                {item.body}
-              </p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function FinalCta() {
-  return (
-    <footer className="px-4 pb-10 pt-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl rounded-[2rem] border border-slate-800 bg-slate-900 p-8 text-white shadow-[0_25px_70px_rgba(15,23,42,0.35)] sm:p-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Stop dropping the ball on social leads.
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-300">
-            Join the smart creators and founders who are automating their
-            inbound pipeline.
-          </p>
-          <button
-            type="button"
-            className="mt-8 rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-900 transition-all hover:scale-[1.02] hover:bg-slate-100"
-          >
-            Create Your AI Page Free
-          </button>
-        </div>
-
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-6 text-sm text-slate-400 sm:flex-row">
-          <div className="flex flex-wrap items-center justify-center gap-5">
-            <a href="/privacy" className="transition-colors hover:text-white">
-              Privacy
-            </a>
-            <a href="/terms" className="transition-colors hover:text-white">
-              Terms
+              Launch Your Capture Engine
             </a>
             <a
-              href="https://twitter.com"
-              className="transition-colors hover:text-white"
+              href="#ai-architect"
+              className="rounded-full border border-[#2D2E2C]/16 bg-white px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_10px_24px_rgba(45,46,44,0.08)]"
             >
-              Twitter
-            </a>
-            <a
-              href="https://linkedin.com"
-              className="transition-colors hover:text-white"
-            >
-              LinkedIn
+              See AI Architect
             </a>
           </div>
-          <p>Copyright 2026 Inbound.click</p>
         </div>
+
+        <HeroMockup />
       </div>
-    </footer>
+    </section>
   )
 }
 
-function useTypingHandle() {
-  const [wordIndex, setWordIndex] = useState(0)
-  const [text, setText] = useState("")
+function TypewriterUrl() {
+  const [nameIndex, setNameIndex] = useState(0)
+  const [typedLength, setTypedLength] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  const activeName = DYNAMIC_NAMES[nameIndex]
+
   useEffect(() => {
-    const currentWord = handles[wordIndex]
-    const speed = isDeleting ? 45 : 95
+    const typingDelay = isDeleting ? 45 : 95
 
-    const timeout = window.setTimeout(() => {
-      if (!isDeleting) {
-        const next = currentWord.slice(0, text.length + 1)
-        setText(next)
-        if (next === currentWord) {
-          window.setTimeout(() => setIsDeleting(true), 900)
-        }
-      } else {
-        const next = currentWord.slice(0, text.length - 1)
-        setText(next)
-        if (next.length === 0) {
-          setIsDeleting(false)
-          setWordIndex((index) => (index + 1) % handles.length)
-        }
-      }
-    }, speed)
+    if (!isDeleting && typedLength === activeName.length) {
+      const holdTimer = window.setTimeout(() => setIsDeleting(true), 1200)
+      return () => window.clearTimeout(holdTimer)
+    }
 
-    return () => window.clearTimeout(timeout)
-  }, [isDeleting, text, wordIndex])
+    if (isDeleting && typedLength === 0) {
+      setIsDeleting(false)
+      setNameIndex((index) => (index + 1) % DYNAMIC_NAMES.length)
+      return
+    }
 
-  return text
+    const timer = window.setTimeout(() => {
+      setTypedLength((length) => length + (isDeleting ? -1 : 1))
+    }, typingDelay)
+
+    return () => window.clearTimeout(timer)
+  }, [activeName, isDeleting, typedLength])
+
+  const typedName = useMemo(
+    () => activeName.slice(0, typedLength),
+    [activeName, typedLength],
+  )
+
+  return (
+    <div className="mt-6 rounded-3xl border border-[#2D2E2C]/12 bg-[#2D2E2C] px-5 py-4 shadow-[0_18px_36px_rgba(45,46,44,0.26)] sm:px-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
+        Your brand at
+      </p>
+      <p className="mt-2 text-lg font-semibold text-white sm:text-xl">
+        inbound.link/
+        <span className="text-[#71D0AC]">{typedName || "\u00a0"}</span>
+        <span
+          aria-hidden
+          className="ml-0.5 inline-block h-5 w-[2px] animate-[blink_1s_steps(1,end)_infinite] bg-[#F7C664] align-middle"
+        />
+      </p>
+    </div>
+  )
+}
+
+function HeroMockup() {
+  return (
+    <section className="mx-auto w-full max-w-[520px] lg:pt-3">
+      <div className="relative rounded-[2rem] border border-[#2D2E2C]/10 bg-[linear-gradient(140deg,rgba(255,255,255,0.92),rgba(241,251,246,0.82))] p-4 shadow-[0_24px_50px_rgba(45,46,44,0.12)] sm:p-5">
+        <div className="mx-auto w-full max-w-[340px] rounded-[2rem] border border-[#2D2E2C]/20 bg-[#1F201F] p-2 shadow-[0_20px_40px_rgba(45,46,44,0.45)]">
+          <div className="overflow-hidden rounded-[1.6rem] bg-white">
+            <div className="flex items-center justify-between bg-[#2D2E2C] px-4 py-3 text-white">
+              <p className="text-sm font-semibold">@fitness-coach</p>
+              <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold">
+                LIVE
+              </span>
+            </div>
+
+            <div className="space-y-3 px-4 pt-4 pb-5">
+              <MockPill bg="#EE7A64" label="Start your intake" />
+              <MockPill bg="#F7C664" label="Tell me your struggle" />
+              <MockPill bg="#71D0AC" label="Drop your email" />
+
+              <button
+                type="button"
+                className="mt-3 w-full rounded-full bg-[#71D0AC] px-4 py-3 text-sm font-bold text-[#12382c] shadow-[0_10px_24px_rgba(113,208,172,0.45)]"
+              >
+                Open AI Capture Flow {"->"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute -left-2 bottom-5 rounded-2xl border border-white/45 bg-white/48 px-4 py-2 backdrop-blur-xl shadow-[0_12px_24px_rgba(45,46,44,0.15)] sm:-left-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#2D2E2C]/65">
+            Funnel quality
+          </p>
+          <p className="text-sm font-extrabold text-[#3AAE86]">
+            87% completion
+          </p>
+        </div>
+
+        <div className="pointer-events-none absolute -right-2 top-[70%] rounded-2xl border border-white/45 bg-white/48 px-4 py-2 backdrop-blur-xl shadow-[0_12px_24px_rgba(45,46,44,0.15)] sm:-right-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#2D2E2C]/65">
+            Live signal
+          </p>
+          <p className="text-sm font-extrabold text-[#B47C04]">+3 new leads</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ProblemSection() {
+  return (
+    <section className="py-12 sm:py-14">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
+        The Problem
+      </p>
+      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        Traditional links are just menus. Inbound.click is an engine.
+      </h2>
+
+      <div className="mt-7 grid gap-4 md:grid-cols-3">
+        <ProblemCard
+          title="One tap, no intent"
+          body="Most bio links force people to hunt through options, dropping intent before they ever speak to you."
+          tone="bg-[#EE7A64]/20"
+        />
+        <ProblemCard
+          title="No qualification"
+          body="Traffic volume looks good, but there is no fast way to separate curious visitors from ready-to-buy leads."
+          tone="bg-[#F7C664]/20"
+        />
+        <ProblemCard
+          title="Slow follow-up"
+          body="By the time you notice activity, your hottest prospects already moved on to the next profile."
+          tone="bg-[#71D0AC]/20"
+        />
+      </div>
+    </section>
+  )
+}
+
+function AiArchitectSection() {
+  return (
+    <section id="ai-architect" className="py-12 sm:py-14">
+      <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
+            AI Architect
+          </p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Prompt the flow. Ship the form instantly.
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-[#2D2E2C]/73">
+            Describe what you need in one sentence and Inbound.click generates a
+            complete conversational capture flow with the right fields,
+            sequencing, and qualification logic.
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_18px_42px_rgba(45,46,44,0.1)] sm:p-6">
+          <div className="rounded-2xl border border-[#2D2E2C]/8 bg-[#f8f9f8] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
+              You
+            </p>
+            <p className="mt-2 inline-flex rounded-2xl rounded-bl-md bg-[#2D2E2C] px-4 py-2 text-sm font-medium text-white">
+              Collect name and budget
+            </p>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-[#2D2E2C]/8 bg-[linear-gradient(145deg,rgba(113,208,172,0.25),rgba(255,255,255,0.95))] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
+              AI Architect
+            </p>
+            <div className="mt-3 space-y-2">
+              <GeneratedField name="Full name" />
+              <GeneratedField name="Budget range" />
+              <GeneratedField name="Preferred callback time" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function WorkflowSection() {
+  return (
+    <section id="workflow" className="py-12 sm:py-14">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
+        The Workflow
+      </p>
+      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        Three steps from social click to qualified pipeline.
+      </h2>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <WorkflowStep
+          step="1"
+          title="Link your bio"
+          description="Swap your bio URL with your Inbound.click page and turn every tap into a guided entry point."
+          accent="bg-[#EE7A64]"
+        />
+        <WorkflowStep
+          step="2"
+          title="AI builds your flow"
+          description="Define your intake once. The AI creates the conversational funnel around your lead criteria."
+          accent="bg-[#F7C664]"
+        />
+        <WorkflowStep
+          step="3"
+          title="Get instant SMS/WhatsApp alerts"
+          description="High-intent responses trigger real-time notifications so your follow-up happens while urgency is high."
+          accent="bg-[#71D0AC]"
+        />
+      </div>
+
+      <div className="mt-10 rounded-[2rem] border border-[#2D2E2C]/10 bg-[#2D2E2C] px-6 py-7 text-white shadow-[0_22px_44px_rgba(45,46,44,0.24)]">
+        <h3 className="text-2xl font-bold tracking-tight">
+          Ready to stop leaking high-intent traffic?
+        </h3>
+        <p className="mt-2 max-w-2xl text-sm text-white/78 sm:text-base">
+          Replace static links with AI capture flows that qualify, convert, and
+          notify you in real time.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a
+            href="#top"
+            className="rounded-full bg-[#71D0AC] px-6 py-3 text-sm font-bold text-[#12382c] shadow-[0_12px_28px_rgba(113,208,172,0.4)]"
+          >
+            Build My Lead Engine
+          </a>
+          <a
+            href="#ai-architect"
+            className="rounded-full border border-white/24 px-6 py-3 text-sm font-semibold text-white"
+          >
+            Watch It Work
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function SpeedLinesBackground() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_18%,rgba(238,122,100,0.24),transparent_28%),radial-gradient(circle_at_90%_12%,rgba(247,198,100,0.24),transparent_24%),radial-gradient(circle_at_74%_84%,rgba(113,208,172,0.2),transparent_26%)]" />
+      <span className="absolute top-[16%] -left-28 h-[5px] w-60 animate-[speedline_6s_linear_infinite] rounded-full bg-[#EE7A64]/36" />
+      <span className="absolute top-[32%] -left-36 h-[5px] w-80 animate-[speedline_7.4s_linear_infinite] rounded-full bg-[#F7C664]/34" />
+      <span className="absolute top-[68%] -left-32 h-[5px] w-72 animate-[speedline_6.6s_linear_infinite] rounded-full bg-[#71D0AC]/32" />
+    </div>
+  )
+}
+
+function SpeedDivider() {
+  return (
+    <div className="relative h-10 sm:h-12" aria-hidden>
+      <span className="absolute top-1/2 left-0 h-[3px] w-20 -translate-y-1/2 rounded-full bg-[#EE7A64]/60" />
+      <span className="absolute top-1/2 left-8 h-[3px] w-28 -translate-y-1/2 rounded-full bg-[#F7C664]/58" />
+      <span className="absolute top-1/2 left-[4.5rem] h-[3px] w-36 -translate-y-1/2 rounded-full bg-[#71D0AC]/56" />
+    </div>
+  )
+}
+
+function SpeedLines() {
+  return (
+    <span aria-hidden className="inline-flex items-center gap-1.5">
+      <span className="h-1 w-2.5 rounded-full bg-[#EE7A64]" />
+      <span className="h-1 w-3.5 rounded-full bg-[#F7C664]" />
+      <span className="h-1 w-5 rounded-full bg-[#71D0AC]" />
+    </span>
+  )
+}
+
+function MockPill({ bg, label }: { bg: string; label: string }) {
+  return (
+    <button
+      type="button"
+      className="w-full rounded-full border border-[#2D2E2C]/12 px-4 py-3 text-left text-sm font-semibold text-[#2D2E2C] shadow-[0_8px_18px_rgba(45,46,44,0.11)]"
+      style={{ backgroundColor: bg }}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ProblemCard({
+  title,
+  body,
+  tone,
+}: {
+  title: string
+  body: string
+  tone: string
+}) {
+  return (
+    <article className="rounded-3xl border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_14px_32px_rgba(45,46,44,0.09)]">
+      <div className={`mb-4 h-2.5 w-16 rounded-full ${tone}`} />
+      <h3 className="text-lg font-bold">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-[#2D2E2C]/72">{body}</p>
+    </article>
+  )
+}
+
+function GeneratedField({ name }: { name: string }) {
+  return (
+    <div className="rounded-xl border border-[#2D2E2C]/12 bg-white px-3 py-2 text-sm font-semibold text-[#2D2E2C]/78">
+      {name}
+    </div>
+  )
+}
+
+function WorkflowStep({
+  step,
+  title,
+  description,
+  accent,
+}: {
+  step: string
+  title: string
+  description: string
+  accent: string
+}) {
+  return (
+    <article className="rounded-3xl border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_14px_32px_rgba(45,46,44,0.09)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/55">
+        Step {step}
+      </p>
+      <h3 className="mt-2 text-xl font-bold tracking-tight">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-[#2D2E2C]/72">
+        {description}
+      </p>
+      <div className={`mt-4 h-2.5 w-24 rounded-full ${accent}`} />
+    </article>
+  )
 }
