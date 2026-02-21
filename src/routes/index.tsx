@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { useEffect, useMemo, useState } from "react"
 import logo from "../assets/logo.svg"
 
@@ -74,12 +74,12 @@ function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#workflow"
+            <Link
+              to="/signin"
               className="rounded-full bg-[#EE7A64] px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_14px_30px_rgba(238,122,100,0.34)] transition-transform hover:-translate-y-0.5"
             >
               Launch Your Capture Engine
-            </a>
+            </Link>
             <a
               href="#ai-architect"
               className="rounded-full border border-[#2D2E2C]/16 bg-white px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_10px_24px_rgba(45,46,44,0.08)]"
@@ -308,12 +308,12 @@ function WorkflowSection() {
           notify you in real time.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <a
-            href="#top"
+          <Link
+            to="/signin"
             className="rounded-full bg-[#71D0AC] px-6 py-3 text-sm font-bold text-[#12382c] shadow-[0_12px_28px_rgba(113,208,172,0.4)]"
           >
             Build My Lead Engine
-          </a>
+          </Link>
           <a
             href="#ai-architect"
             className="rounded-full border border-white/24 px-6 py-3 text-sm font-semibold text-white"
