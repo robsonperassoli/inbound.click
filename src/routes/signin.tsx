@@ -1,6 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react"
-import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useConvexAuth } from "convex/react"
+import { useEffect, useState } from "react"
 import logo from "@/assets/logo.svg"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,18 +15,30 @@ import { Spinner } from "@/components/ui/spinner"
 
 export const Route = createFileRoute("/signin")({
   component: RouteComponent,
+  ssr: false,
 })
 
 function RouteComponent() {
+  const { isAuthenticated, isLoading } = useConvexAuth()
+  const navigate = useNavigate()
   const { signIn } = useAuthActions()
+
   const [activeProvider, setActiveProvider] = useState<
     "github" | "google" | null
   >(null)
 
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      navigate({ to: "/bio" })
+    }
+  }, [isAuthenticated, isLoading, navigate])
+
+  if (isLoading || isAuthenticated) return null
+
   const handleSignIn = async (provider: "github" | "google") => {
     setActiveProvider(provider)
     try {
-      await signIn(provider)
+      await signIn(provider, { redirectTo: "/bio" })
     } finally {
       setActiveProvider(null)
     }

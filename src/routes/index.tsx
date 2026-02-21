@@ -27,12 +27,12 @@ function LandingPage() {
             </span>
           </a>
 
-          <a
-            href="#workflow"
+          <Link
+            to="/signin"
             className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
           >
             Start Free
-          </a>
+          </Link>
         </div>
       </header>
 
