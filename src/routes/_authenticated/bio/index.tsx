@@ -15,8 +15,8 @@ export const Route = createFileRoute("/_authenticated/bio/")({
 
 function RouteComponent() {
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const links = useQuery(api.links.getProfileLinks, { profileId })
-  const toggleActive = useMutation(api.links.toggleActive)
+  const links = useQuery(api.links.queries.getProfileLinks, { profileId })
+  const toggleActive = useMutation(api.links.mutations.toggleActive)
   const [addLinkOpen, setAddLinkOpen] = useState(false)
 
   const nextOrder = useMemo(() => (links?.at(-1)?.order ?? 0) + 1, [links])

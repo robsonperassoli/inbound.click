@@ -25,7 +25,7 @@ export function AddLinkModal({
   order: number
   profileId: Doc<"profiles">["_id"]
 }) {
-  const addLink = useMutation(api.links.addLink)
+  const addLink = useMutation(api.links.mutations.addLink)
 
   const form = useForm({
     defaultValues: {

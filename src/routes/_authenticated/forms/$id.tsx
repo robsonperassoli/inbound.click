@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/forms/$id")({
 function RouteComponent() {
   const { id: formId } = Route.useParams()
   const { pathname } = useLocation()
-  const form = useQuery(api.forms.getUserForm, {
+  const form = useQuery(api.forms.queries.getUserForm, {
     formId,
   })
 

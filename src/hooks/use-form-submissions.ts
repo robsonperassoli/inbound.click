@@ -4,7 +4,7 @@ import { useQuery } from "convex/react"
 import { useMemo } from "react"
 
 export function useFormSubmissions(formId: Id<"forms">) {
-  const submissionsData = useQuery(api.forms.getUserFormSubmissions, {
+  const submissionsData = useQuery(api.forms.queries.getUserFormSubmissions, {
     formId,
   })
 

@@ -1,4 +1,6 @@
 import { api } from "@convex/_generated/api"
+import { ChevronDown, PlusSignIcon, Sparkles } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useForm } from "@tanstack/react-form"
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
@@ -7,7 +9,15 @@ import z from "zod"
 import { PageTitle } from "@/components/page-title"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Field,
   FieldDescription,
@@ -36,8 +46,8 @@ const createFormSchema = z.object({
 
 function RouteComponent() {
   const navigate = useNavigate()
-  const forms = useQuery(api.forms.getUserForms, {})
-  const createForm = useMutation(api.forms.createForm)
+  const forms = useQuery(api.forms.queries.getUserForms, {})
+  const createForm = useMutation(api.forms.mutations.createForm)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
 
@@ -76,14 +86,27 @@ function RouteComponent() {
         description="Manage form definitions and review submissions."
         meta={<Badge variant="outline">{forms?.length ?? 0} forms</Badge>}
         actions={
-          <Button
-            type="button"
-            size="lg"
-            className="w-full sm:w-auto"
-            onClick={() => setIsSheetOpen(true)}
-          >
-            Create form
-          </Button>
+          <ButtonGroup>
+            <Button asChild>
+              <Link to="/forms/new">
+                <HugeiconsIcon icon={Sparkles} /> Create Form
+              </Link>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="!pl-2">
+                  <HugeiconsIcon icon={ChevronDown} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => setIsSheetOpen(true)}>
+                    Create manually
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </ButtonGroup>
         }
       />
 

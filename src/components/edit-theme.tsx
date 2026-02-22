@@ -43,8 +43,8 @@ export function EditTheme({
 }: {
   profileId: Doc<"profiles">["_id"]
 }) {
-  const profile = useQuery(api.profiles.getProfile, { profileId })
-  const updateTheme = useMutation(api.profiles.updateTheme)
+  const profile = useQuery(api.profiles.queries.getProfile, { profileId })
+  const updateTheme = useMutation(api.profiles.mutations.updateTheme)
 
   if (!profile) {
     return <div>Loading...</div>

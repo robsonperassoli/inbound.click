@@ -1,23 +1,6 @@
 import { v } from "convex/values"
-import { mutation, query } from "./_generated/server"
-import { authenticatedUser } from "./profiles"
-
-export const getProfileLinks = query({
-  args: {
-    profileId: v.id("profiles"),
-  },
-  handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx)
-
-    const links = await ctx.db
-      .query("links")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .filter((q) => q.eq(q.field("profileId"), args.profileId))
-      .collect()
-
-    return links.sort((a, b) => a.order - b.order)
-  },
-})
+import { mutation } from "../_generated/server"
+import * as auth from "../domain/auth"
 
 export const addLink = mutation({
   args: {
@@ -28,7 +11,7 @@ export const addLink = mutation({
     active: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx)
+    const userId = await auth.authenticatedUser(ctx)
 
     await ctx.db.insert("links", {
       userId,
@@ -47,7 +30,7 @@ export const toggleActive = mutation({
     active: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx)
+    const userId = await auth.authenticatedUser(ctx)
 
     const link = await ctx.db
       .query("links")

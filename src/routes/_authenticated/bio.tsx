@@ -28,8 +28,8 @@ export const Route = createFileRoute("/_authenticated/bio")({
 function RouteComponent() {
   const { profileId } = Route.useLoaderData()
   const { pathname } = useLocation()
-  const profile = useQuery(api.profiles.getProfile, {})
-  const links = useQuery(api.links.getProfileLinks, { profileId })
+  const profile = useQuery(api.profiles.queries.getProfile, {})
+  const links = useQuery(api.links.queries.getProfileLinks, { profileId })
   const activeTab = pathname.includes("/appearance")
     ? "appearance"
     : pathname.includes("/settings")

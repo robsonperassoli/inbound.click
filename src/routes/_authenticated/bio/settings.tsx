@@ -37,7 +37,7 @@ type ProfileHeaderValues = z.infer<typeof profileHeaderSchema>
 
 function RouteComponent() {
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const profile = useQuery(api.profiles.getProfile, {})
+  const profile = useQuery(api.profiles.queries.getProfile, {})
 
   if (!profile) {
     return (
@@ -57,9 +57,13 @@ function SettingsForm({
   profileId: Id<"profiles">
   profile: Profile
 }) {
-  const updateProfileHeader = useMutation(api.profiles.updateProfileHeader)
+  const updateProfileHeader = useMutation(
+    api.profiles.mutations.updateProfileHeader,
+  )
   const generateUploadUrl = useMutation(api.files.generateUploadUrl)
-  const updateProfileAvatar = useMutation(api.profiles.updateProfileAvatar)
+  const updateProfileAvatar = useMutation(
+    api.profiles.mutations.updateProfileAvatar,
+  )
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 

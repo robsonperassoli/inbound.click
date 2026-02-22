@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/forms/$id/submissions")({
 
 function RouteComponent() {
   const { id: formId } = Route.useParams()
-  const form = useQuery(api.forms.getUserForm, {
+  const form = useQuery(api.forms.queries.getUserForm, {
     formId,
   })
   const submissions = useFormSubmissions(formId)

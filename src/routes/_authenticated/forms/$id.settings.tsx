@@ -105,7 +105,7 @@ function newFieldId() {
 
 function RouteComponent() {
   const { id: formId } = Route.useParams()
-  const formData = useQuery(api.forms.getUserForm, { formId })
+  const formData = useQuery(api.forms.queries.getUserForm, { formId })
 
   if (!formData) {
     return (
@@ -123,8 +123,8 @@ function SettingsEditor({
   formId: Doc<"forms">["_id"]
   formData: Doc<"forms">
 }) {
-  const updateFormHeader = useMutation(api.forms.updateFormHeader)
-  const removeFormField = useMutation(api.forms.removeFormField)
+  const updateFormHeader = useMutation(api.forms.mutations.updateFormHeader)
+  const removeFormField = useMutation(api.forms.mutations.removeFormField)
 
   const [isSavingHeader, setIsSavingHeader] = useState(false)
   const [isDeletingFieldId, setIsDeletingFieldId] = useState<string | null>(
@@ -336,8 +336,8 @@ function FieldEditorSheet({
   onOpenChange: (open: boolean) => void
   initialField: FormField | null
 }) {
-  const addFormField = useMutation(api.forms.addFormField)
-  const updateFormField = useMutation(api.forms.updateFormField)
+  const addFormField = useMutation(api.forms.mutations.addFormField)
+  const updateFormField = useMutation(api.forms.mutations.updateFormField)
   const [isSavingField, setIsSavingField] = useState(false)
 
   const fieldForm = useForm({

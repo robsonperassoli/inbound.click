@@ -14,8 +14,8 @@ export const Route = createFileRoute("/_authenticated/bio/appearance")({
 
 function RouteComponent() {
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const profile = useQuery(api.profiles.getProfile, { profileId })
-  const updateTheme = useMutation(api.profiles.updateTheme)
+  const profile = useQuery(api.profiles.queries.getProfile, { profileId })
+  const updateTheme = useMutation(api.profiles.mutations.updateTheme)
   const [activeView, setActiveView] = useState<"customize" | "themes">(
     "customize",
   )

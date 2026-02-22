@@ -1,36 +1,10 @@
 import * as toon from "@toon-format/toon"
 import { v } from "convex/values"
 import { internal } from "./_generated/api"
-import type { Id } from "./_generated/dataModel"
-import {
-  type MutationCtx,
-  mutation,
-  type QueryCtx,
-  query,
-} from "./_generated/server"
-import { sendUserMessage } from "./chats"
-import { getForm, getFormSubmission } from "./forms"
-
-export const getSession = async (
-  ctx: QueryCtx | MutationCtx,
-  sessionId: Id<"formSubmissionChatSessions">,
-) => {
-  const session = await ctx.db.get("formSubmissionChatSessions", sessionId)
-  if (!session) {
-    throw new Error("Session not found")
-  }
-
-  return session
-}
-
-const getChat = async (ctx: QueryCtx, chatId: Id<"chats">) => {
-  const chat = await ctx.db.get("chats", chatId)
-  if (!chat) {
-    throw new Error("Chat not found")
-  }
-
-  return chat
-}
+import { mutation, query } from "./_generated/server"
+import * as chats from "./chats/domain"
+import { getSession } from "./formSubmissionChatSessions/domain"
+import * as forms from "./forms/domain"
 
 export const getProfile = query({
   args: {
@@ -150,7 +124,7 @@ export const getFormSessionMessages = query({
   },
   handler: async (ctx, args) => {
     const session = await getSession(ctx, args.sessionId)
-    const chat = await getChat(ctx, session.chatId)
+    const chat = await chats.getChat(ctx, session.chatId)
 
     const chatMessages = await ctx.db
       .query("chatMessages")
@@ -168,15 +142,15 @@ export const sendFormSessionMessage = mutation({
   },
   handler: async (ctx, args) => {
     const session = await getSession(ctx, args.sessionId)
-    const chat = await getChat(ctx, session.chatId)
+    const chat = await chats.getChat(ctx, session.chatId)
 
-    await sendUserMessage(ctx, chat._id, args.message)
+    await chats.sendUserMessage(ctx, chat._id, args.message)
 
-    const form = await getForm(ctx, session.formId)
+    const form = await forms.getForm(ctx, session.formId)
 
     let submission = null
     if (session.formSubmissionId) {
-      submission = await getFormSubmission(ctx, session.formSubmissionId)
+      submission = await forms.getFormSubmission(ctx, session.formSubmissionId)
     }
 
     const state = `
@@ -184,10 +158,14 @@ export const sendFormSessionMessage = mutation({
     COLLECTED_VALUES: ${toon.encode(submission?.values)}
     `
 
-    await ctx.scheduler.runAfter(0, internal.agents.runFormSubmissionAgent, {
-      formSubmissionChatSessionId: session._id,
-      chatId: chat._id,
-      state,
-    })
+    await ctx.scheduler.runAfter(
+      0,
+      internal.agents.actions.runFormSubmissionAgent,
+      {
+        formSubmissionChatSessionId: session._id,
+        chatId: chat._id,
+        state,
+      },
+    )
   },
 })

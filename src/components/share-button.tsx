@@ -22,7 +22,7 @@ import {
 } from "./ui/popover"
 
 export function ShareButton() {
-  const profile = useQuery(api.profiles.getProfile, {})
+  const profile = useQuery(api.profiles.queries.getProfile, {})
   const { copyToClipboard, copied } = useCopyToClipboard()
   const link = useMemo(
     () => (profile ? `https://s.uper.bio/${profile.username}` : ""),

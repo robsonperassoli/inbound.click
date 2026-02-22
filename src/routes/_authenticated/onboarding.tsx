@@ -37,7 +37,9 @@ const formSchema = z.object({
 
 function RouteComponent() {
   const navigate = useNavigate()
-  const createProfileMutation = useMutation(api.profiles.createProfile)
+  const createProfileMutation = useMutation(
+    api.profiles.mutations.createProfile,
+  )
   const form = useForm({
     defaultValues: {
       username: "",

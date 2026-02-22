@@ -17,10 +17,9 @@ import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bi
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as UUsernameIndexRouteImport } from './routes/u.$username.index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
-import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat/index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
+import { Route as AuthenticatedFormsNewRouteImport } from './routes/_authenticated/forms.new'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
-import { Route as AuthenticatedChatChatIdRouteImport } from './routes/_authenticated/chat/$chatId'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
 import { Route as UUsernameFormIndexRouteImport } from './routes/u.$username.form.index'
@@ -68,24 +67,19 @@ const AuthenticatedFormsIndexRoute = AuthenticatedFormsIndexRouteImport.update({
   path: '/forms/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
-  id: '/chat/',
-  path: '/chat/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedBioIndexRoute = AuthenticatedBioIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedBioRoute,
 } as any)
+const AuthenticatedFormsNewRoute = AuthenticatedFormsNewRouteImport.update({
+  id: '/forms/new',
+  path: '/forms/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
   id: '/forms/$id',
   path: '/forms/$id',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedChatChatIdRoute = AuthenticatedChatChatIdRouteImport.update({
-  id: '/chat/$chatId',
-  path: '/chat/$chatId',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedBioSettingsRoute =
@@ -138,10 +132,9 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
-  '/chat/$chatId': typeof AuthenticatedChatChatIdRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/forms/new': typeof AuthenticatedFormsNewRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
-  '/chat/': typeof AuthenticatedChatIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
@@ -157,9 +150,8 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
-  '/chat/$chatId': typeof AuthenticatedChatChatIdRoute
+  '/forms/new': typeof AuthenticatedFormsNewRoute
   '/bio': typeof AuthenticatedBioIndexRoute
-  '/chat': typeof AuthenticatedChatIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
@@ -178,10 +170,9 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
-  '/_authenticated/chat/$chatId': typeof AuthenticatedChatChatIdRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/_authenticated/forms/new': typeof AuthenticatedFormsNewRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
-  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
@@ -200,10 +191,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/bio/appearance'
     | '/bio/settings'
-    | '/chat/$chatId'
     | '/forms/$id'
+    | '/forms/new'
     | '/bio/'
-    | '/chat/'
     | '/forms/'
     | '/u/$username/'
     | '/forms/$id/settings'
@@ -219,9 +209,8 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/bio/appearance'
     | '/bio/settings'
-    | '/chat/$chatId'
+    | '/forms/new'
     | '/bio'
-    | '/chat'
     | '/forms'
     | '/u/$username'
     | '/forms/$id/settings'
@@ -239,10 +228,9 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
-    | '/_authenticated/chat/$chatId'
     | '/_authenticated/forms/$id'
+    | '/_authenticated/forms/new'
     | '/_authenticated/bio/'
-    | '/_authenticated/chat/'
     | '/_authenticated/forms/'
     | '/u/$username/'
     | '/_authenticated/forms/$id/settings'
@@ -319,13 +307,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/chat/': {
-      id: '/_authenticated/chat/'
-      path: '/chat'
-      fullPath: '/chat/'
-      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/bio/': {
       id: '/_authenticated/bio/'
       path: '/'
@@ -333,18 +314,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBioIndexRouteImport
       parentRoute: typeof AuthenticatedBioRoute
     }
+    '/_authenticated/forms/new': {
+      id: '/_authenticated/forms/new'
+      path: '/forms/new'
+      fullPath: '/forms/new'
+      preLoaderRoute: typeof AuthenticatedFormsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/forms/$id': {
       id: '/_authenticated/forms/$id'
       path: '/forms/$id'
       fullPath: '/forms/$id'
       preLoaderRoute: typeof AuthenticatedFormsIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/chat/$chatId': {
-      id: '/_authenticated/chat/$chatId'
-      path: '/chat/$chatId'
-      fullPath: '/chat/$chatId'
-      preLoaderRoute: typeof AuthenticatedChatChatIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/bio/settings': {
@@ -433,9 +414,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedChatChatIdRoute: typeof AuthenticatedChatChatIdRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
-  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+  AuthenticatedFormsNewRoute: typeof AuthenticatedFormsNewRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
 }
 
@@ -443,9 +423,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedChatChatIdRoute: AuthenticatedChatChatIdRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
-  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+  AuthenticatedFormsNewRoute: AuthenticatedFormsNewRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
 }
 
