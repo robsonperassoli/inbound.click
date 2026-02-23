@@ -1,11 +1,11 @@
 import { api } from "@convex/_generated/api"
-import { ChevronDown, PlusSignIcon, Sparkles } from "@hugeicons/core-free-icons"
+import { ChevronDown, Sparkles } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useForm } from "@tanstack/react-form"
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
-import { useMutation, useQuery } from "convex/react"
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { useQuery } from "convex/react"
 import { useState } from "react"
-import z from "zod"
+import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
+import { CreateFormSheet } from "@/components/forms/create-form-sheet"
 import { PageTitle } from "@/components/page-title"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,66 +18,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import { Textarea } from "@/components/ui/textarea"
 
 export const Route = createFileRoute("/_authenticated/forms/")({
   component: RouteComponent,
 })
 
-const createFormSchema = z.object({
-  title: z.string().trim().min(1, "Title is required"),
-  description: z.string(),
-})
-
 function RouteComponent() {
-  const navigate = useNavigate()
   const forms = useQuery(api.forms.queries.getUserForms, {})
-  const createForm = useMutation(api.forms.mutations.createForm)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      description: "",
-    },
-    validators: {
-      onSubmit: createFormSchema,
-    },
-    onSubmit: async ({ value }) => {
-      setIsCreating(true)
-      try {
-        const formId = await createForm({
-          title: value.title.trim(),
-          description: value.description.trim() || undefined,
-          fields: [],
-        })
-
-        setIsSheetOpen(false)
-        navigate({
-          to: "/forms/$id/settings",
-          params: { id: formId },
-        })
-      } finally {
-        setIsCreating(false)
-      }
-    },
-  })
+  const [openDialog, setOpenDialog] = useState<
+    null | "manual-create" | "prompt-create"
+  >(null)
 
   return (
     <div className="space-y-6">
@@ -87,10 +38,8 @@ function RouteComponent() {
         meta={<Badge variant="outline">{forms?.length ?? 0} forms</Badge>}
         actions={
           <ButtonGroup>
-            <Button asChild>
-              <Link to="/forms/new">
-                <HugeiconsIcon icon={Sparkles} /> Create Form
-              </Link>
+            <Button onClick={() => setOpenDialog("prompt-create")}>
+              <HugeiconsIcon icon={Sparkles} /> Create Form
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -100,7 +49,9 @@ function RouteComponent() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => setIsSheetOpen(true)}>
+                  <DropdownMenuItem
+                    onClick={() => setOpenDialog("manual-create")}
+                  >
                     Create manually
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -182,84 +133,15 @@ function RouteComponent() {
         </div>
       </div>
 
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-[560px]">
-          <SheetHeader>
-            <SheetTitle>Create form</SheetTitle>
-            <SheetDescription>
-              Set a title and optional description to get started.
-            </SheetDescription>
-          </SheetHeader>
+      <CreateFormSheet
+        open={openDialog === "manual-create"}
+        onClose={() => setOpenDialog(null)}
+      />
 
-          <form
-            className="flex-1 overflow-y-auto px-6 pb-6"
-            onSubmit={(e) => {
-              e.preventDefault()
-              form.handleSubmit()
-            }}
-          >
-            <FieldGroup>
-              <form.Field name="title">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid
-
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel>Title</FieldLabel>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Contact form"
-                      />
-                      {isInvalid ? (
-                        <FieldError errors={field.state.meta.errors} />
-                      ) : (
-                        <FieldDescription>
-                          A clear title helps people understand this form.
-                        </FieldDescription>
-                      )}
-                    </Field>
-                  )
-                }}
-              </form.Field>
-
-              <form.Field name="description">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid
-
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel>Description</FieldLabel>
-                      <Textarea
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Optional description"
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  )
-                }}
-              </form.Field>
-
-              <Field orientation="horizontal">
-                <Button type="submit" disabled={isCreating}>
-                  {isCreating ? "Creating..." : "Create form"}
-                </Button>
-              </Field>
-            </FieldGroup>
-          </form>
-        </SheetContent>
-      </Sheet>
+      <CreateFormPrompt
+        open={openDialog === "prompt-create"}
+        onClose={() => setOpenDialog(null)}
+      />
     </div>
   )
 }

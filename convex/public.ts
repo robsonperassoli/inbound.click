@@ -1,10 +1,10 @@
-import * as toon from "@toon-format/toon"
+import { encode } from "@toon-format/toon"
 import { v } from "convex/values"
 import { internal } from "./_generated/api"
 import { mutation, query } from "./_generated/server"
-import * as chats from "./chats/domain"
-import { getSession } from "./formSubmissionChatSessions/domain"
 import * as forms from "./forms/domain"
+import { systemPrompt } from "./threads/agents/formSubmission"
+import * as threads from "./threads/domain"
 
 export const getProfile = query({
   args: {
@@ -62,110 +62,51 @@ export const startFormSession = mutation({
       throw new Error("form not found")
     }
 
-    const chatId = await ctx.db.insert("chats", {
+    // move this logic to the threads folder
+    const threadId = await ctx.db.insert("threads", {
+      userId: profile.userId,
       title: `${form.title} Form Session`,
       model: "gpt-4o-mini",
-      systemPrompt: `You are a helpful assistant. Your name is Hugo.
-      Your goal is to help people with form submissions, but never mention it.
-      You should capture answers in a friendly casual conversation and fill
-      the form yourself using the tools provided.
-
-      It's very important you are very friendly and make the user feel comfortable, never robotic or just ask the information sequentially. The sale depends on you.
-
-      ## FORM DATA FORMAT
-      You will receive two JSON-encoded values:
-      - **FORM_DEFINITION**: Schema describing all form fields, types, validation rules, and requirements
-      - **COLLECTED_VALUES**: Current progress with field IDs as keys and user-provided values (may be partial or empty)
-
-      Use these to determine which fields are complete, missing, or need validation.
-
-      ## WORKFLOW
-      1. **Analyze the current state**: Check COLLECTED_VALUES against FORM_DEFINITION to identify which fields are still missing or incomplete.
-      2. **Engage naturally**: Have a friendly, casual conversation with the user. Ask about missing information in a natural way, never interrogating. Make them feel comfortable.
-      3. **Extract and validate**: When the user provides information, validate it against the field requirements in FORM_DEFINITION.
-      4. **Call the tool**: Use \`fillFormFields\` to submit the collected field values. Pass the field IDs and values as arguments.
-      5. **Loop**: After calling \`fillFormFields\`, you will receive updated COLLECTED_VALUES. Return to step 1 and continue the conversation until all required fields are complete.
-      6. **Completion**: When all fields are filled, celebrate naturally and let the user know everything is set—without ever mentioning "forms" or "submission."
-
-      ## TONE GUIDELINES
-      - Warm, approachable, and genuinely helpful
-      - Never robotic, scripted, or transactional
-      - Use natural transitions, not "Next, I need..."
-      - Show enthusiasm and make the user feel good about progressing
-      - If validation fails, be gentle and encouraging, never critical
-      `,
+      systemPrompt,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      type: "formSubmission",
+      formId: form._id,
+      formSubmissionId: undefined,
     })
 
-    await ctx.db.insert("chatMessages", {
-      chatId,
+    await ctx.db.insert("messages", {
+      threadId,
       role: "assistant",
       content: `Hello! Good to have you here. ${profile.username} has a few questions that I'll help you answer! Is now a good time to chat?`,
       createdAt: Date.now(),
       status: "complete",
     })
 
-    const sessionId = await ctx.db.insert("formSubmissionChatSessions", {
-      userId: profile.userId,
-      chatId,
-      formId: form._id,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    })
-
-    return sessionId
+    return threadId
   },
 })
 
 export const getFormSessionMessages = query({
   args: {
-    sessionId: v.id("formSubmissionChatSessions"),
+    sessionId: v.id("threads"),
   },
   handler: async (ctx, args) => {
-    const session = await getSession(ctx, args.sessionId)
-    const chat = await chats.getChat(ctx, session.chatId)
-
-    const chatMessages = await ctx.db
-      .query("chatMessages")
-      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
-      .collect()
-
-    return chatMessages.sort((a, b) => a.createdAt - b.createdAt)
+    return await threads.getMessagesByThreadId(ctx, args.sessionId)
   },
 })
 
 export const sendFormSessionMessage = mutation({
   args: {
-    sessionId: v.id("formSubmissionChatSessions"),
+    sessionId: v.id("threads"),
     message: v.string(),
   },
   handler: async (ctx, args) => {
-    const session = await getSession(ctx, args.sessionId)
-    const chat = await chats.getChat(ctx, session.chatId)
+    const thread = await threads.getThread(ctx, args.sessionId)
+    await threads.sendUserMessage(ctx, thread._id, args.message)
 
-    await chats.sendUserMessage(ctx, chat._id, args.message)
-
-    const form = await forms.getForm(ctx, session.formId)
-
-    let submission = null
-    if (session.formSubmissionId) {
-      submission = await forms.getFormSubmission(ctx, session.formSubmissionId)
-    }
-
-    const state = `
-    FORM_DEFINITION: ${toon.encode(form.fields)}
-    COLLECTED_VALUES: ${toon.encode(submission?.values)}
-    `
-
-    await ctx.scheduler.runAfter(
-      0,
-      internal.agents.actions.runFormSubmissionAgent,
-      {
-        formSubmissionChatSessionId: session._id,
-        chatId: chat._id,
-        state,
-      },
-    )
+    await ctx.scheduler.runAfter(0, internal.threads.actions.runAgent, {
+      threadId: thread._id,
+    })
   },
 })

@@ -1,12 +1,6 @@
 import { ArrowUp02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  type ChangeEvent,
-  type InputEvent,
-  type KeyboardEvent,
-  useRef,
-  useState,
-} from "react"
+import { type KeyboardEvent, useRef, useState } from "react"
 import TextareaAutosize from "react-textarea-autosize"
 import {
   InputGroup,

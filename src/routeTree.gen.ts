@@ -18,12 +18,12 @@ import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authentica
 import { Route as UUsernameIndexRouteImport } from './routes/u.$username.index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
-import { Route as AuthenticatedFormsNewRouteImport } from './routes/_authenticated/forms.new'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
 import { Route as UUsernameFormIndexRouteImport } from './routes/u.$username.form.index'
 import { Route as AuthenticatedFormsIdIndexRouteImport } from './routes/_authenticated/forms/$id.index'
+import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
 import { Route as UUsernameFormSessionIdIndexRouteImport } from './routes/u.$username.form.$sessionId.index'
@@ -72,11 +72,6 @@ const AuthenticatedBioIndexRoute = AuthenticatedBioIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedBioRoute,
 } as any)
-const AuthenticatedFormsNewRoute = AuthenticatedFormsNewRouteImport.update({
-  id: '/forms/new',
-  path: '/forms/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
   id: '/forms/$id',
   path: '/forms/$id',
@@ -104,6 +99,12 @@ const AuthenticatedFormsIdIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedFormsIdRoute,
+  } as any)
+const AuthenticatedFormsBuilderThreadIdRoute =
+  AuthenticatedFormsBuilderThreadIdRouteImport.update({
+    id: '/forms/builder/$threadId',
+    path: '/forms/builder/$threadId',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedFormsIdSubmissionsRoute =
   AuthenticatedFormsIdSubmissionsRouteImport.update({
@@ -133,12 +134,12 @@ export interface FileRoutesByFullPath {
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
-  '/forms/new': typeof AuthenticatedFormsNewRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
@@ -150,12 +151,12 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
-  '/forms/new': typeof AuthenticatedFormsNewRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId': typeof UUsernameFormSessionIdIndexRoute
@@ -171,12 +172,12 @@ export interface FileRoutesById {
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
-  '/_authenticated/forms/new': typeof AuthenticatedFormsNewRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
@@ -192,12 +193,12 @@ export interface FileRouteTypes {
     | '/bio/appearance'
     | '/bio/settings'
     | '/forms/$id'
-    | '/forms/new'
     | '/bio/'
     | '/forms/'
     | '/u/$username/'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
+    | '/forms/builder/$threadId'
     | '/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
@@ -209,12 +210,12 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/bio/appearance'
     | '/bio/settings'
-    | '/forms/new'
     | '/bio'
     | '/forms'
     | '/u/$username'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
+    | '/forms/builder/$threadId'
     | '/forms/$id'
     | '/u/$username/form'
     | '/u/$username/form/$sessionId'
@@ -229,12 +230,12 @@ export interface FileRouteTypes {
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
-    | '/_authenticated/forms/new'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
     | '/u/$username/'
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
+    | '/_authenticated/forms/builder/$threadId'
     | '/_authenticated/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
@@ -314,13 +315,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBioIndexRouteImport
       parentRoute: typeof AuthenticatedBioRoute
     }
-    '/_authenticated/forms/new': {
-      id: '/_authenticated/forms/new'
-      path: '/forms/new'
-      fullPath: '/forms/new'
-      preLoaderRoute: typeof AuthenticatedFormsNewRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/forms/$id': {
       id: '/_authenticated/forms/$id'
       path: '/forms/$id'
@@ -355,6 +349,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forms/$id/'
       preLoaderRoute: typeof AuthenticatedFormsIdIndexRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
+    }
+    '/_authenticated/forms/builder/$threadId': {
+      id: '/_authenticated/forms/builder/$threadId'
+      path: '/forms/builder/$threadId'
+      fullPath: '/forms/builder/$threadId'
+      preLoaderRoute: typeof AuthenticatedFormsBuilderThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/forms/$id/submissions': {
       id: '/_authenticated/forms/$id/submissions'
@@ -415,8 +416,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
-  AuthenticatedFormsNewRoute: typeof AuthenticatedFormsNewRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
+  AuthenticatedFormsBuilderThreadIdRoute: typeof AuthenticatedFormsBuilderThreadIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -424,8 +425,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
-  AuthenticatedFormsNewRoute: AuthenticatedFormsNewRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
+  AuthenticatedFormsBuilderThreadIdRoute:
+    AuthenticatedFormsBuilderThreadIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

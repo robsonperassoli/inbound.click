@@ -1,6 +1,7 @@
 import { authTables } from "@convex-dev/auth/server"
 import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
+import { threadsFields } from "./threads/validators"
 
 export const themeFields = {
   theme: v.string(),
@@ -75,16 +76,10 @@ export default defineSchema({
     .index("by_profile", ["profileId"])
     .index("by_user", ["userId"]),
 
-  chats: defineTable({
-    title: v.string(),
-    model: v.string(),
-    systemPrompt: v.string(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  }),
+  threads: defineTable(threadsFields),
 
-  chatMessages: defineTable({
-    chatId: v.id("chats"),
+  messages: defineTable({
+    threadId: v.id("threads"),
     role: v.union(
       v.literal("user"),
       v.literal("assistant"),
@@ -98,7 +93,7 @@ export default defineSchema({
       v.literal("error"),
     ),
     createdAt: v.number(),
-  }).index("by_chat", ["chatId"]),
+  }).index("by_thread", ["threadId"]),
 
   forms: defineTable({
     userId: v.id("users"),
@@ -119,14 +114,4 @@ export default defineSchema({
   })
     .index("by_form", ["formId"])
     .index("by_user", ["userId"]),
-
-  formSubmissionChatSessions: defineTable({
-    chatId: v.id("chats"),
-    formId: v.id("forms"),
-    userId: v.id("users"),
-    formSubmissionId: v.optional(v.id("formSubmissions")),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-    finishedAt: v.optional(v.number()),
-  }).index("by_form", ["formId"]),
 })

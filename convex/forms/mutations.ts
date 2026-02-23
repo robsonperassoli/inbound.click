@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../domain/auth"
-import * as formSubmissionChatSessions from "../formSubmissionChatSessions/domain"
 import { formField, formSubmissionValue } from "../schema"
+import * as threads from "../threads/domain"
 import * as forms from "./domain"
 
 export const createForm = mutation({
@@ -116,26 +116,25 @@ export const removeFormField = mutation({
 
 export const fillForm = internalMutation({
   args: {
-    formSubmissionChatSessionId: v.id("formSubmissionChatSessions"),
+    threadId: v.id("threads"),
     values: v.record(v.string(), formSubmissionValue),
   },
   handler: async (ctx, args) => {
-    const session = await formSubmissionChatSessions.getSession(
-      ctx,
-      args.formSubmissionChatSessionId,
-    )
+    const thread = await threads.getThread(ctx, args.threadId)
 
-    let formSubmissionId = session.formSubmissionId
+    if (thread.type !== "formSubmission") {
+      throw new Error("Invalid session type")
+    }
+
+    let formSubmissionId = thread.formSubmissionId
     if (!formSubmissionId) {
       formSubmissionId = await forms.createFormSubmission(
         ctx,
-        session.userId,
-        session.formId,
+        thread.userId,
+        thread.formId,
       )
 
-      ctx.db.patch("formSubmissionChatSessions", session._id, {
-        formSubmissionId,
-      })
+      await threads.setFormSubmissionId(ctx, thread._id, formSubmissionId)
     }
 
     ctx.db.patch("formSubmissions", formSubmissionId, {

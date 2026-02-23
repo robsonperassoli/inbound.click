@@ -8,7 +8,6 @@ import {
 } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { PageTitle } from "@/components/page-title"
-import { ShareButton } from "@/components/share-button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserPage } from "@/components/user-page"
 
@@ -16,7 +15,10 @@ export const Route = createFileRoute("/_authenticated/bio")({
   component: RouteComponent,
   ssr: false,
   loader: async ({ context }) => {
-    const profile = await context.convex.query(api.profiles.getProfile, {})
+    const profile = await context.convex.query(
+      api.profiles.queries.getProfile,
+      {},
+    )
 
     if (!profile) {
       throw redirect({ to: "/onboarding" })

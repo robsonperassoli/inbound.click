@@ -1,5 +1,7 @@
+import type { Infer } from "convex/values"
 import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
+import type { formField } from "../schema"
 
 export async function getForm(
   ctx: MutationCtx | QueryCtx,
@@ -21,7 +23,7 @@ export async function getForms(ctx: QueryCtx, userId: Id<"users">) {
 }
 
 export async function getFormSubmission(
-  ctx: MutationCtx,
+  ctx: MutationCtx | QueryCtx,
   formSubmissionId: Id<"formSubmissions">,
 ) {
   const formSubmission = await ctx.db.get(formSubmissionId)
@@ -59,5 +61,36 @@ export async function createFormSubmission(
     createdAt: Date.now(),
     updatedAt: Date.now(),
     values: {},
+  })
+}
+
+export async function createEmptyForm(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+  title: string,
+  description?: string,
+) {
+  return await ctx.db.insert("forms", {
+    userId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    title,
+    description,
+    fields: [],
+  })
+}
+
+export async function updateForm(
+  ctx: MutationCtx,
+  formId: Id<"forms">,
+  title: string,
+  fields: Infer<typeof formField>[],
+  description?: string,
+) {
+  return await ctx.db.patch("forms", formId, {
+    updatedAt: Date.now(),
+    title: title,
+    description: description,
+    fields: fields,
   })
 }

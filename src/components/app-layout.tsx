@@ -5,6 +5,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
+import { Toaster } from "@/components/ui/sonner"
 import logo from "../assets/logo.svg"
 import { ShareButton } from "./share-button"
 
@@ -59,6 +60,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
         {children}
       </main>
+
+      <Toaster />
     </div>
   )
 }
