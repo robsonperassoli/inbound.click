@@ -30,6 +30,7 @@ import type * as threads_domain from "../threads/domain.js";
 import type * as threads_mutations from "../threads/mutations.js";
 import type * as threads_queries from "../threads/queries.js";
 import type * as threads_validators from "../threads/validators.js";
+import type * as users_queries from "../users/queries.js";
 
 import type {
   ApiFromModules,
@@ -60,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   "threads/mutations": typeof threads_mutations;
   "threads/queries": typeof threads_queries;
   "threads/validators": typeof threads_validators;
+  "users/queries": typeof users_queries;
 }>;
 
 /**

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import type { ConvexReactClient } from "convex/react"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { convexQueryClient } from "../integrations/convex/provider"
 import appCss from "../styles.css?url"
 
@@ -74,7 +75,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ConvexAuthProvider client={convexQueryClient.convexClient}>
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
           <TanStackDevtools
             config={{
               position: "bottom-right",
