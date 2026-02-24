@@ -1,5 +1,6 @@
 import { v } from "convex/values"
 import { internalQuery, query } from "../_generated/server"
+import { authenticatedUser } from "../domain/auth"
 import * as threads from "./domain"
 
 export const getFullChat = internalQuery({
@@ -23,7 +24,26 @@ export const getFullChat = internalQuery({
   },
 })
 
-export const getChatMessages = query({
+export const getFullThread = query({
+  args: {
+    threadId: v.id("threads"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await authenticatedUser(ctx)
+    const thread = await threads.getThread(ctx, args.threadId)
+
+    if (thread.userId !== userId) {
+      throw new Error("thread not found")
+    }
+
+    return {
+      ...thread,
+      messages: await threads.getMessagesByThreadId(ctx, args.threadId),
+    }
+  },
+})
+
+export const getMessages = query({
   args: {
     threadId: v.id("threads"),
   },
