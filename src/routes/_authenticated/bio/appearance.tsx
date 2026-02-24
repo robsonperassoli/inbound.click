@@ -3,6 +3,7 @@ import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useState } from "react"
 import { EditTheme } from "@/components/edit-theme"
+import { useSiteHeader } from "@/components/site-header"
 import { ThemePreview } from "@/components/theme-preview"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/bio/appearance")({
 })
 
 function RouteComponent() {
+  useSiteHeader({ title: "Appearance", titleMode: "append" })
+
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
   const profile = useQuery(api.profiles.queries.getProfile, { profileId })
   const updateTheme = useMutation(api.profiles.mutations.updateTheme)

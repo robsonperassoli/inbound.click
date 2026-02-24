@@ -5,6 +5,7 @@ import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
+import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 
@@ -18,6 +19,22 @@ function RouteComponent() {
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
   const toggleActive = useMutation(api.links.mutations.toggleActive)
   const [addLinkOpen, setAddLinkOpen] = useState(false)
+
+  const headerActions = useMemo(
+    () => [
+      <Button key="add-link" onClick={() => setAddLinkOpen(true)}>
+        <HugeiconsIcon icon={PlusSignIcon} />
+        Add Link
+      </Button>,
+    ],
+    [],
+  )
+
+  useSiteHeader({
+    title: "Links",
+    titleMode: "append",
+    actions: headerActions,
+  })
 
   const nextOrder = useMemo(() => (links?.at(-1)?.order ?? 0) + 1, [links])
 
@@ -42,16 +59,6 @@ function RouteComponent() {
         ))}
       </ul>
 
-      <div>
-        <Button
-          size="lg"
-          variant="secondary"
-          onClick={() => setAddLinkOpen(true)}
-        >
-          <HugeiconsIcon icon={PlusSignIcon} />
-          Add Link
-        </Button>
-      </div>
       <AddLinkModal
         open={addLinkOpen}
         onClose={() => setAddLinkOpen(false)}

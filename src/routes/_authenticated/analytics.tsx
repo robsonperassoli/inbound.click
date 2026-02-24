@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-import { PageTitle } from "@/components/page-title"
+import { useSiteHeader } from "@/components/site-header"
 import {
   Card,
   CardContent,
@@ -73,6 +73,8 @@ const visitsPerDayConfig = {
 } satisfies ChartConfig
 
 function RouteComponent() {
+  useSiteHeader({ title: "Analytics" })
+
   const totalVisits = weeklyVisitsData.reduce(
     (sum, week) => sum + week.visits,
     0,
@@ -88,11 +90,6 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <PageTitle
-        title="Analytics"
-        description="Track visits, unique visitors, and top-performing links."
-      />
-
       <div className="grid gap-4 md:grid-cols-3">
         <Card size="sm">
           <CardHeader className="pb-0">

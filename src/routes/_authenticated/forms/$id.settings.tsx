@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useMemo, useState } from "react"
 import z from "zod"
+import { useSiteHeader } from "@/components/site-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -104,6 +105,8 @@ function newFieldId() {
 }
 
 function RouteComponent() {
+  useSiteHeader({ title: "Settings", titleMode: "append" })
+
   const { id: formId } = Route.useParams()
   const formData = useQuery(api.forms.queries.getUserForm, { formId })
 

@@ -5,6 +5,7 @@ import { useForm } from "@tanstack/react-form"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMutation } from "convex/react"
 import z from "zod"
+import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -36,6 +37,8 @@ const formSchema = z.object({
 })
 
 function RouteComponent() {
+  useSiteHeader({ title: "Onboarding" })
+
   const navigate = useNavigate()
   const createProfileMutation = useMutation(
     api.profiles.mutations.createProfile,

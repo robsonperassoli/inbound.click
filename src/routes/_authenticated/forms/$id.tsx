@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { useMemo } from "react"
-import { PageTitle } from "@/components/page-title"
+import { useSiteHeader } from "@/components/site-header"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const Route = createFileRoute("/_authenticated/forms/$id")({
@@ -27,6 +27,8 @@ function RouteComponent() {
     formId,
   })
 
+  useSiteHeader({ title: form?.title ?? "Form" })
+
   const activeTab = useMemo(
     () => (pathname.includes("/settings") ? "settings" : "submissions"),
     [pathname],
@@ -34,11 +36,6 @@ function RouteComponent() {
 
   return (
     <div className="p-6 space-y-4">
-      <PageTitle
-        title={form?.title ?? "Form"}
-        description={form?.description}
-      />
-
       <Tabs value={activeTab} className="w-full">
         <TabsList>
           <TabsTrigger value="submissions" asChild>

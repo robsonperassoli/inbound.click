@@ -9,6 +9,7 @@ import type { FunctionReturnType } from "convex/server"
 import { useState } from "react"
 import z from "zod"
 import { FileUpload } from "@/components/file-upload"
+import { useSiteHeader } from "@/components/site-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,6 +37,8 @@ const profileHeaderSchema = z.object({
 type ProfileHeaderValues = z.infer<typeof profileHeaderSchema>
 
 function RouteComponent() {
+  useSiteHeader({ title: "Settings", titleMode: "append" })
+
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
   const profile = useQuery(api.profiles.queries.getProfile, {})
 
@@ -48,7 +51,7 @@ function RouteComponent() {
   return <SettingsForm profileId={profileId} profile={profile} />
 }
 
-export type Profile = FunctionReturnType<typeof api.profiles.getProfile>
+export type Profile = FunctionReturnType<typeof api.profiles.queries.getProfile>
 
 function SettingsForm({
   profileId,

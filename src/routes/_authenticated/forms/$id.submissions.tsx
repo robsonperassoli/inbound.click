@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { useQuery } from "convex/react"
 import { useMemo } from "react"
 import { DataTable } from "@/components/data-table"
+import { useSiteHeader } from "@/components/site-header"
 import { useFormSubmissions } from "@/hooks/use-form-submissions"
 
 export const Route = createFileRoute("/_authenticated/forms/$id/submissions")({
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/_authenticated/forms/$id/submissions")({
 })
 
 function RouteComponent() {
+  useSiteHeader({ title: "Submissions", titleMode: "append" })
+
   const { id: formId } = Route.useParams()
   const form = useQuery(api.forms.queries.getUserForm, {
     formId,

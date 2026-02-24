@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { Chat } from "@/components/chat"
 import { FormPreview } from "@/components/form-preview"
+import { useSiteHeader } from "@/components/site-header"
 
 export const Route = createFileRoute("/_authenticated/forms/builder/$threadId")(
   {
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/_authenticated/forms/builder/$threadId")(
 )
 
 function RouteComponent() {
+  useSiteHeader({ title: "Form Builder" })
+
   const { threadId } = Route.useParams()
   const thread = useQuery(api.threads.queries.getFullThread, {
     threadId: threadId as Id<"threads">,

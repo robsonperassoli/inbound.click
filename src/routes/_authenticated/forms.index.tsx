@@ -1,12 +1,12 @@
 import { api } from "@convex/_generated/api"
-import { ChevronDown, Sparkles } from "@hugeicons/core-free-icons"
+import { ChevronDown, PlusSignIcon, Sparkles } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateFormSheet } from "@/components/forms/create-form-sheet"
-import { PageTitle } from "@/components/page-title"
+import { useSiteHeader } from "@/components/site-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -24,6 +24,33 @@ export const Route = createFileRoute("/_authenticated/forms/")({
 })
 
 function RouteComponent() {
+  const headerActions = useMemo(
+    () => [
+      <ButtonGroup>
+        <Button size="sm" onClick={() => setOpenDialog("prompt-create")}>
+          <HugeiconsIcon icon={Sparkles} /> Create Form
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="!pl-2" size="sm">
+              <HugeiconsIcon icon={ChevronDown} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => setOpenDialog("manual-create")}>
+                Create manually
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </ButtonGroup>,
+    ],
+    [],
+  )
+
+  useSiteHeader({ title: "Forms", actions: headerActions })
+
   const forms = useQuery(api.forms.queries.getUserForms, {})
 
   const [openDialog, setOpenDialog] = useState<
@@ -32,35 +59,6 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <PageTitle
-        title="Forms"
-        description="Manage form definitions and review submissions."
-        meta={<Badge variant="outline">{forms?.length ?? 0} forms</Badge>}
-        actions={
-          <ButtonGroup>
-            <Button onClick={() => setOpenDialog("prompt-create")}>
-              <HugeiconsIcon icon={Sparkles} /> Create Form
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="!pl-2">
-                  <HugeiconsIcon icon={ChevronDown} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => setOpenDialog("manual-create")}
-                  >
-                    Create manually
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </ButtonGroup>
-        }
-      />
-
       <div className="space-y-2">
         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
           Your forms

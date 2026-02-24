@@ -1,14 +1,7 @@
 import { api } from "@convex/_generated/api"
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  redirect,
-  useLocation,
-} from "@tanstack/react-router"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
-import { PageTitle } from "@/components/page-title"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useSiteHeader } from "@/components/site-header"
 import { UserPage } from "@/components/user-page"
 
 export const Route = createFileRoute("/_authenticated/bio")({
@@ -28,6 +21,8 @@ export const Route = createFileRoute("/_authenticated/bio")({
 })
 
 function RouteComponent() {
+  useSiteHeader({ title: "Bio" })
+
   const { profileId } = Route.useLoaderData()
   const profile = useQuery(api.profiles.queries.getProfile, {})
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
@@ -38,11 +33,6 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <PageTitle
-        title="Bio Page"
-        description="Manage your links, appearance, and profile settings."
-      />
-
       <div className="flex gap-x-6 justify-center">
         <div className="grow">
           <Outlet />
