@@ -47,3 +47,50 @@ export const toggleActive = mutation({
     })
   },
 })
+
+export const updateLink = mutation({
+  args: {
+    linkId: v.id("links"),
+    title: v.string(),
+    url: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.authenticatedUser(ctx)
+
+    const link = await ctx.db
+      .query("links")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("_id"), args.linkId))
+      .unique()
+
+    if (!link) {
+      throw new Error("Link not found")
+    }
+
+    await ctx.db.patch(args.linkId, {
+      title: args.title,
+      url: args.url,
+    })
+  },
+})
+
+export const removeLink = mutation({
+  args: {
+    linkId: v.id("links"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.authenticatedUser(ctx)
+
+    const link = await ctx.db
+      .query("links")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("_id"), args.linkId))
+      .unique()
+
+    if (!link) {
+      throw new Error("Link not found")
+    }
+
+    await ctx.db.delete(args.linkId)
+  },
+})

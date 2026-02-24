@@ -34,11 +34,11 @@ function RouteComponent() {
   return (
     <div className="space-y-6">
       <div className="flex gap-x-6 justify-center">
-        <div className="grow">
+        <div className="grow w-3/5">
           <Outlet />
         </div>
 
-        <div className="shrink-0 w-md">
+        <div className="shrink-0 w-2/5">
           <div className="sticky top-20 border rounded-xl shadow-lg overflow-hidden">
             <UserPage
               profile={profile}
