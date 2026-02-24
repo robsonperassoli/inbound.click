@@ -1,5 +1,5 @@
 import { api } from "@convex/_generated/api"
-import { ChevronDown, PlusSignIcon, Sparkles } from "@hugeicons/core-free-icons"
+import { ChevronDown, Sparkles } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
@@ -7,10 +7,9 @@ import { useMemo, useState } from "react"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateFormSheet } from "@/components/forms/create-form-sheet"
 import { useSiteHeader } from "@/components/site-header"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,77 +57,73 @@ function RouteComponent() {
   >(null)
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Your forms
-        </p>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {forms === undefined && (
-            <Card className="md:col-span-2 xl:col-span-3">
-              <CardContent className="py-8 text-sm text-muted-foreground">
-                Loading forms…
-              </CardContent>
-            </Card>
-          )}
+    <div className="space-y-5">
+      {forms === undefined && (
+        <Card className="border-border/60 bg-muted/20">
+          <CardContent className="py-10 text-sm text-muted-foreground">
+            Loading forms…
+          </CardContent>
+        </Card>
+      )}
 
-          {forms?.length === 0 && (
-            <Card className="md:col-span-2 xl:col-span-3">
-              <CardContent className="py-8">
-                <p className="text-sm text-muted-foreground">
-                  No forms yet. Create one to start collecting submissions.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+      {forms?.length === 0 && (
+        <Card className="border-border/60 bg-muted/20">
+          <CardContent className="py-10">
+            <p className="text-sm text-muted-foreground">
+              No forms yet. Create one to start collecting submissions.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-          {forms?.map((item) => (
-            <Card
-              key={item._id}
-              className="group border-border/70 bg-card transition-shadow duration-200 hover:shadow-sm motion-safe:animate-in motion-safe:fade-in-0"
-            >
-              <CardHeader className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <CardTitle className="line-clamp-2 min-w-0 text-base text-pretty">
-                    {item.title}
-                  </CardTitle>
-                  <Badge variant="outline">{item.fields.length} fields</Badge>
+      {forms && forms.length > 0 && (
+        <Card className="!gap-0 !py-0 overflow-hidden border-border/60 bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/70">
+          <CardContent className="p-0">
+            {forms.map((item) => (
+              <div
+                key={item._id}
+                className="grid gap-4 border-b border-border/60 px-5 py-4 last:border-b-0 md:grid-cols-[1fr_auto] md:items-center"
+              >
+                <div className="min-w-0 space-y-2">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <h3 className="truncate text-sm font-semibold">{item.title}</h3>
+                    <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                      {item.fields.length} fields
+                    </span>
+                  </div>
+
+                  <p className="line-clamp-1 text-sm text-muted-foreground">
+                    {item.description || "No description"}
+                  </p>
+
+                  <p className="text-xs text-muted-foreground">
+                    Updated{" "}
+                    {new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                    }).format(item.updatedAt)}
+                  </p>
                 </div>
 
-                <p className="line-clamp-2 min-h-10 text-sm text-muted-foreground">
-                  {item.description || "No description"}
-                </p>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <p className="text-xs text-muted-foreground">
-                  Updated{" "}
-                  {new Intl.DateTimeFormat("en-US", {
-                    dateStyle: "medium",
-                  }).format(item.updatedAt)}
-                </p>
-
-                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                  >
+                <div className="flex gap-2 md:justify-end">
+                  <Button asChild size="sm" variant="ghost">
                     <Link to="/forms/$id/settings" params={{ id: item._id }}>
                       Edit
                     </Link>
                   </Button>
-                  <Button asChild size="sm" className="w-full">
+                  <Button asChild size="sm" variant="outline">
                     <Link to="/forms/$id/submissions" params={{ id: item._id }}>
                       Submissions
                     </Link>
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="text-xs text-muted-foreground">
+        {forms ? `${forms.length} total forms` : ""}
       </div>
 
       <CreateFormSheet
