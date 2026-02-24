@@ -15,7 +15,7 @@ export function ThemePreview({
       type="button"
       key={theme.name}
       className={cn(
-        "overflow-hidden rounded-lg border text-left transition",
+        "overflow-hidden rounded-lg border text-left transition max-w-56",
         "hover:border-primary/70 hover:shadow-sm",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         selected

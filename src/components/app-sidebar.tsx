@@ -79,12 +79,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton asChild>
               <Link
                 to="/bio"
                 className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
               >
-                <img src={logo} alt="Inbound.click logo" className="w-full" />
+                <img src={logo} alt="Inbound.click logo" className="w-32" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -29,14 +29,8 @@ export const Route = createFileRoute("/_authenticated/bio")({
 
 function RouteComponent() {
   const { profileId } = Route.useLoaderData()
-  const { pathname } = useLocation()
   const profile = useQuery(api.profiles.queries.getProfile, {})
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
-  const activeTab = pathname.includes("/appearance")
-    ? "appearance"
-    : pathname.includes("/settings")
-      ? "settings"
-      : "links"
 
   if (!profile) {
     return null
@@ -48,28 +42,6 @@ function RouteComponent() {
         title="Bio Page"
         description="Manage your links, appearance, and profile settings."
       />
-
-      <Tabs value={activeTab}>
-        <TabsList>
-          <TabsTrigger value="links" asChild>
-            <Link to="/bio" activeOptions={{ exact: true }}>
-              Links
-            </Link>
-          </TabsTrigger>
-
-          <TabsTrigger value="appearance" asChild>
-            <Link to="/bio/appearance" activeOptions={{ exact: true }}>
-              Appearance
-            </Link>
-          </TabsTrigger>
-
-          <TabsTrigger value="settings" asChild>
-            <Link to="/bio/settings" activeOptions={{ exact: true }}>
-              Settings
-            </Link>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       <div className="flex gap-x-6 justify-center">
         <div className="grow">
