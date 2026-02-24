@@ -8,6 +8,9 @@
  * @module
  */
 
+import type * as analytics_domain from "../analytics/domain.js";
+import type * as analytics_mutations from "../analytics/mutations.js";
+import type * as analytics_validators from "../analytics/validators.js";
 import type * as auth from "../auth.js";
 import type * as domain_auth from "../domain/auth.js";
 import type * as files from "../files.js";
@@ -39,6 +42,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "analytics/domain": typeof analytics_domain;
+  "analytics/mutations": typeof analytics_mutations;
+  "analytics/validators": typeof analytics_validators;
   auth: typeof auth;
   "domain/auth": typeof domain_auth;
   files: typeof files;

@@ -1,6 +1,7 @@
 import { authTables } from "@convex-dev/auth/server"
 import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
+import { eventsSchema } from "./analytics/validators"
 import { threadsFields } from "./threads/validators"
 
 export const themeFields = {
@@ -114,4 +115,8 @@ export default defineSchema({
   })
     .index("by_form", ["formId"])
     .index("by_user", ["userId"]),
+
+  events: defineTable(eventsSchema)
+    .index("by_profile", ["profileId"])
+    .index("by_link", ["linkId"]),
 })
