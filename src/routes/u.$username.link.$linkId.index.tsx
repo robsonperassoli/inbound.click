@@ -38,7 +38,7 @@ const trackLinkClick = createMiddleware().server(
   },
 )
 
-export const Route = createFileRoute("/u/$username/link/$linkId")({
+export const Route = createFileRoute("/u/$username/link/$linkId/")({
   component: () => null,
   server: {
     middleware: [trackLinkClick],

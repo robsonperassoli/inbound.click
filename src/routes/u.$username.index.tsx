@@ -43,15 +43,29 @@ export const Route = createFileRoute("/u/$username/")({
     middleware: [trackPageView],
   },
   loader: async ({ context, params }) => {
-    const viewPageData = await context.convex.query(api.public.getProfile, {
-      username: params.username,
-    })
+    const { profile, links } = await context.convex.query(
+      api.public.getProfile,
+      {
+        username: params.username,
+      },
+    )
 
-    return viewPageData
+    const linksWithRedirect = links.map((l) => ({
+      ...l,
+      url: `/u/${profile.username}/link/${l._id}`,
+    }))
+
+    console.log(linksWithRedirect)
+
+    return {
+      profile,
+      links: linksWithRedirect,
+    }
   },
 })
 
 function RouteComponent() {
   const { profile, links } = Route.useLoaderData()
+
   return <UserPage profile={profile} links={links} className="h-screen" />
 }

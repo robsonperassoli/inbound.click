@@ -23,10 +23,10 @@ import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
 import { Route as UUsernameFormIndexRouteImport } from './routes/u.$username.form.index'
 import { Route as AuthenticatedFormsIdIndexRouteImport } from './routes/_authenticated/forms/$id.index'
-import { Route as UUsernameLinkLinkIdRouteImport } from './routes/u.$username.link.$linkId'
 import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
+import { Route as UUsernameLinkLinkIdIndexRouteImport } from './routes/u.$username.link.$linkId.index'
 import { Route as UUsernameFormSessionIdIndexRouteImport } from './routes/u.$username.form.$sessionId.index'
 
 const SigninRoute = SigninRouteImport.update({
@@ -101,11 +101,6 @@ const AuthenticatedFormsIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
-const UUsernameLinkLinkIdRoute = UUsernameLinkLinkIdRouteImport.update({
-  id: '/u/$username/link/$linkId',
-  path: '/u/$username/link/$linkId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedFormsBuilderThreadIdRoute =
   AuthenticatedFormsBuilderThreadIdRouteImport.update({
     id: '/forms/builder/$threadId',
@@ -123,6 +118,12 @@ const AuthenticatedFormsIdSettingsRoute =
     id: '/settings',
     path: '/settings',
     getParentRoute: () => AuthenticatedFormsIdRoute,
+  } as any)
+const UUsernameLinkLinkIdIndexRoute =
+  UUsernameLinkLinkIdIndexRouteImport.update({
+    id: '/u/$username/link/$linkId/',
+    path: '/u/$username/link/$linkId/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const UUsernameFormSessionIdIndexRoute =
   UUsernameFormSessionIdIndexRouteImport.update({
@@ -146,10 +147,10 @@ export interface FileRoutesByFullPath {
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
-  '/u/$username/link/$linkId': typeof UUsernameLinkLinkIdRoute
   '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
+  '/u/$username/link/$linkId/': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,10 +165,10 @@ export interface FileRoutesByTo {
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
-  '/u/$username/link/$linkId': typeof UUsernameLinkLinkIdRoute
   '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId': typeof UUsernameFormSessionIdIndexRoute
+  '/u/$username/link/$linkId': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,10 +187,10 @@ export interface FileRoutesById {
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
-  '/u/$username/link/$linkId': typeof UUsernameLinkLinkIdRoute
   '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/u/$username/form/': typeof UUsernameFormIndexRoute
   '/u/$username/form/$sessionId/': typeof UUsernameFormSessionIdIndexRoute
+  '/u/$username/link/$linkId/': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,10 +209,10 @@ export interface FileRouteTypes {
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
-    | '/u/$username/link/$linkId'
     | '/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
+    | '/u/$username/link/$linkId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -226,10 +227,10 @@ export interface FileRouteTypes {
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
-    | '/u/$username/link/$linkId'
     | '/forms/$id'
     | '/u/$username/form'
     | '/u/$username/form/$sessionId'
+    | '/u/$username/link/$linkId'
   id:
     | '__root__'
     | '/'
@@ -247,10 +248,10 @@ export interface FileRouteTypes {
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
     | '/_authenticated/forms/builder/$threadId'
-    | '/u/$username/link/$linkId'
     | '/_authenticated/forms/$id/'
     | '/u/$username/form/'
     | '/u/$username/form/$sessionId/'
+    | '/u/$username/link/$linkId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -258,9 +259,9 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
-  UUsernameLinkLinkIdRoute: typeof UUsernameLinkLinkIdRoute
   UUsernameFormIndexRoute: typeof UUsernameFormIndexRoute
   UUsernameFormSessionIdIndexRoute: typeof UUsernameFormSessionIdIndexRoute
+  UUsernameLinkLinkIdIndexRoute: typeof UUsernameLinkLinkIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -363,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIdIndexRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
     }
-    '/u/$username/link/$linkId': {
-      id: '/u/$username/link/$linkId'
-      path: '/u/$username/link/$linkId'
-      fullPath: '/u/$username/link/$linkId'
-      preLoaderRoute: typeof UUsernameLinkLinkIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/forms/builder/$threadId': {
       id: '/_authenticated/forms/builder/$threadId'
       path: '/forms/builder/$threadId'
@@ -390,6 +384,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forms/$id/settings'
       preLoaderRoute: typeof AuthenticatedFormsIdSettingsRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
+    }
+    '/u/$username/link/$linkId/': {
+      id: '/u/$username/link/$linkId/'
+      path: '/u/$username/link/$linkId'
+      fullPath: '/u/$username/link/$linkId/'
+      preLoaderRoute: typeof UUsernameLinkLinkIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/u/$username/form/$sessionId/': {
       id: '/u/$username/form/$sessionId/'
@@ -459,9 +460,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
-  UUsernameLinkLinkIdRoute: UUsernameLinkLinkIdRoute,
   UUsernameFormIndexRoute: UUsernameFormIndexRoute,
   UUsernameFormSessionIdIndexRoute: UUsernameFormSessionIdIndexRoute,
+  UUsernameLinkLinkIdIndexRoute: UUsernameLinkLinkIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
