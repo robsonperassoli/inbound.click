@@ -39,6 +39,24 @@ export const getProfile = query({
   },
 })
 
+export const getLinkById = query({
+  args: {
+    id: v.id("links"),
+  },
+  handler: async (ctx, args) => {
+    const link = await ctx.db
+      .query("links")
+      .withIndex("by_id", (q) => q.eq("_id", args.id))
+      .unique()
+
+    if (!link) {
+      throw new Error("Not found")
+    }
+
+    return link
+  },
+})
+
 export const startFormSession = mutation({
   args: {
     username: v.string(),
