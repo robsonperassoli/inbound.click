@@ -55,8 +55,6 @@ export const Route = createFileRoute("/u/$username/")({
       url: `/u/${profile.username}/link/${l._id}`,
     }))
 
-    console.log(linksWithRedirect)
-
     return {
       profile,
       links: linksWithRedirect,
