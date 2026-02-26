@@ -4,12 +4,10 @@ import { Temporal } from "@js-temporal/polyfill"
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 import { createMiddleware } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
-import { convexQueryClient } from "@/integrations/convex/provider"
+import { convexHttpClient } from "@/integrations/convex/provider"
 import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOrCreateVisitorId } from "@/lib/server/visitor-id"
 import { tinybird } from "@/tinybird"
-
-const convexClient = convexQueryClient.convexClient
 
 const trackLinkClick = createMiddleware().server(
   async ({ request, pathname }) => {
@@ -22,7 +20,7 @@ const trackLinkClick = createMiddleware().server(
     const segments = pathname.split("/")
     const linkId = segments[segments.length - 1]
 
-    const link = await convexClient.query(api.public.getLinkById, {
+    const link = await convexHttpClient.query(api.public.getLinkById, {
       id: linkId as Id<"links">,
     })
 

@@ -1,6 +1,7 @@
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react"
 import type { ConvexQueryClient } from "@convex-dev/react-query"
 import { TanStackDevtools } from "@tanstack/react-devtools"
+import type { QueryClient } from "@tanstack/react-query"
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -23,6 +24,7 @@ const getAuth = createServerFn({ method: "GET" }).handler(async () => {
 interface AppContext {
   convex: ConvexReactClient
   convexQueryClient: ConvexQueryClient
+  queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<AppContext>()({

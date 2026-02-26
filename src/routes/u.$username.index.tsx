@@ -1,16 +1,15 @@
 import { api } from "@convex/_generated/api"
+import { convexQuery } from "@convex-dev/react-query"
 import { Temporal } from "@js-temporal/polyfill"
 import { createFileRoute } from "@tanstack/react-router"
 import { createMiddleware } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { UserPage } from "@/components/user-page"
-import { convexQueryClient } from "@/integrations/convex/provider"
+import { convexHttpClient } from "@/integrations/convex/provider"
 import { extractReferrerName } from "@/lib/analytics"
 import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOrCreateVisitorId } from "@/lib/server/visitor-id"
 import { tinybird } from "@/tinybird"
-
-const convexClient = convexQueryClient.convexClient
 
 const trackPageView = createMiddleware().server(
   async ({ request, pathname, next }) => {
@@ -23,7 +22,7 @@ const trackPageView = createMiddleware().server(
     const segments = pathname.split("/")
     const username = segments[segments.length - 1]
 
-    const viewPageData = await convexClient.query(api.public.getProfile, {
+    const viewPageData = await convexHttpClient.query(api.public.getProfile, {
       username,
     })
 
@@ -48,11 +47,10 @@ export const Route = createFileRoute("/u/$username/")({
     middleware: [trackPageView],
   },
   loader: async ({ context, params }) => {
-    const { profile, links } = await context.convex.query(
-      api.public.getProfile,
-      {
+    const { profile, links } = await context.queryClient.ensureQueryData(
+      convexQuery(api.public.getProfile, {
         username: params.username,
-      },
+      }),
     )
 
     const linksWithRedirect = links.map((l) => ({
