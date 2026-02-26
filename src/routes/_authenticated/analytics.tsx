@@ -1,15 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router"
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from "recharts"
+import { api } from "@convex/_generated/api"
+import { getProfileLinks } from "@convex/links/queries"
+import { Temporal } from "@js-temporal/polyfill"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useMemo } from "react"
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts"
+import z from "zod"
 import { useSiteHeader } from "@/components/site-header"
 import {
   Card,
@@ -21,183 +16,351 @@ import {
 import {
   type ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { formatToTinybirdDateTime } from "@/lib/dates"
+import { getOverview } from "@/lib/server/analytics.functions"
+
+const periodSchema = z.enum(["today", "7days", "30days", "3months", "6months"])
+type TimePeriod = z.infer<typeof periodSchema>
+
+const periodSelectOptions: { label: string; value: TimePeriod }[] = [
+  { label: "Today", value: "today" },
+  { label: "Last 7 Days", value: "7days" },
+  { label: "Last 30 Days", value: "30days" },
+  { label: "Last 3 Months", value: "3months" },
+  { label: "Last 6 Months", value: "6months" },
+]
+
+const getPeriodDates = (period: TimePeriod) => {
+  const end = Temporal.Now.zonedDateTimeISO().with({
+    hour: 23,
+    minute: 59,
+    second: 59,
+    millisecond: 999,
+  })
+
+  const start = Temporal.Now.zonedDateTimeISO().with({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  })
+
+  switch (period) {
+    case "today": {
+      return {
+        start,
+        end,
+      }
+    }
+    case "7days":
+      return {
+        start: start.subtract({ days: 7 }),
+        end: end,
+      }
+    case "30days": {
+      return {
+        start: start.subtract({ days: 30 }),
+        end: end,
+      }
+    }
+    case "3months": {
+      return {
+        start: start.subtract({ days: 90 }),
+        end: end,
+      }
+    }
+    case "6months":
+      return {
+        start: start.subtract({ days: 180 }),
+        end: end,
+      }
+  }
+}
 
 export const Route = createFileRoute("/_authenticated/analytics")({
   component: RouteComponent,
   ssr: false,
+  validateSearch: {
+    parse: z.object({
+      period: periodSchema.default("7days"),
+    }).parse,
+  },
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, deps }) => {
+    const profile = await context.convex.query(
+      api.profiles.queries.getProfile,
+      {},
+    )
+
+    const links = await context.convex.query(
+      api.links.queries.getProfileLinks,
+      { profileId: profile._id },
+    )
+
+    const dateRange = getPeriodDates(deps.period)
+
+    const stats = await getOverview({
+      data: {
+        profileId: profile._id,
+        start: formatToTinybirdDateTime(dateRange.start.toInstant()),
+        end: formatToTinybirdDateTime(dateRange.end.toInstant()),
+      },
+    })
+
+    return {
+      stats,
+      links,
+    }
+  },
 })
 
-const clicksPerButtonData = [
-  { button: "Portfolio", clicks: 1232, ctr: 46 },
-  { button: "Newsletter", clicks: 892, ctr: 33 },
-  { button: "Book a Call", clicks: 611, ctr: 24 },
-  { button: "Shop", clicks: 478, ctr: 18 },
-  { button: "YouTube", clicks: 355, ctr: 14 },
-]
-
-const weeklyVisitsData = [
-  { week: "W1", visits: 920, unique: 712 },
-  { week: "W2", visits: 1085, unique: 801 },
-  { week: "W3", visits: 980, unique: 744 },
-  { week: "W4", visits: 1264, unique: 932 },
-  { week: "W5", visits: 1348, unique: 1008 },
-  { week: "W6", visits: 1426, unique: 1089 },
-]
-
-const visitsPerDayData = [
-  { day: "Mon", visits: 188 },
-  { day: "Tue", visits: 214 },
-  { day: "Wed", visits: 238 },
-  { day: "Thu", visits: 251 },
-  { day: "Fri", visits: 286 },
-  { day: "Sat", visits: 329 },
-  { day: "Sun", visits: 276 },
-]
-
-const clicksPerButtonConfig = {
+const clicksPerLinkConfig = {
   clicks: { label: "Clicks", color: "var(--chart-1)" },
+  ctr: { label: "CTR %", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
-const weeklyVisitsConfig = {
-  visits: { label: "Visits", color: "var(--chart-2)" },
-  unique: { label: "Unique Visitors", color: "var(--chart-4)" },
+const deviceConfig = {
+  device: { label: "Device", color: "var(--chart-1)" },
 } satisfies ChartConfig
 
-const visitsPerDayConfig = {
-  visits: { label: "Daily Visits", color: "var(--chart-3)" },
+const referrerConfig = {
+  referrer: { label: "Referrer", color: "var(--chart-1)" },
 } satisfies ChartConfig
+
+const COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+]
 
 function RouteComponent() {
   useSiteHeader({ title: "Analytics" })
+  const navigate = useNavigate()
+  const {
+    stats: { linkClicks, overview, deviceBreakdown, referrerBreakdown },
+    links,
+  } = Route.useLoaderData()
+  const { period } = Route.useSearch()
 
-  const totalVisits = weeklyVisitsData.reduce(
-    (sum, week) => sum + week.visits,
-    0,
+  const linkLabelById: Record<string, string> = useMemo(
+    () => links.reduce((acc, l) => ({ ...acc, [l._id]: l.title }), {}),
+    [links],
   )
-  const totalUnique = weeklyVisitsData.reduce(
-    (sum, week) => sum + week.unique,
-    0,
+
+  const averageCTR = useMemo(() => {
+    if (overview?.average_ctr !== undefined) {
+      return overview.average_ctr * 100
+    }
+    if (!overview || overview.total_page_views === 0) return 0
+    return (overview.total_link_clicks / overview.total_page_views) * 100
+  }, [overview])
+
+  const clicksPerLinkData = useMemo(
+    () =>
+      linkClicks?.map((l) => {
+        const ctr = overview?.total_page_views
+          ? (l.clicks / overview.total_page_views) * 100
+          : 0
+        return {
+          link: linkLabelById[l.link_id] ?? "Unknown",
+          clicks: l.clicks,
+          ctr: Number(ctr.toFixed(2)),
+        }
+      }) ?? [],
+    [linkClicks, overview, linkLabelById],
   )
-  const totalClicks = clicksPerButtonData.reduce(
-    (sum, button) => sum + button.clicks,
-    0,
+
+  const deviceData = useMemo(
+    () =>
+      deviceBreakdown?.map((d) => ({
+        device: d.device,
+        views: d.views,
+      })) ?? [],
+    [deviceBreakdown],
+  )
+
+  const referrerData = useMemo(
+    () =>
+      referrerBreakdown?.map((r) => ({
+        referrer: r.referrer || "Direct",
+        views: r.views,
+      })) ?? [],
+    [referrerBreakdown],
   )
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <Select
+        value={period}
+        onValueChange={(selectedPeriod: TimePeriod) =>
+          navigate({ to: ".", search: { period: selectedPeriod } })
+        }
+      >
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="Select a time period" />
+        </SelectTrigger>
+        <SelectContent>
+          {periodSelectOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* Overview Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card size="sm">
           <CardHeader className="pb-0">
-            <CardDescription>Total Visits (6 weeks)</CardDescription>
-            <CardTitle>{totalVisits.toLocaleString()}</CardTitle>
+            <CardDescription>Total Page Views</CardDescription>
+            <CardTitle>{overview?.total_page_views ?? 0}</CardTitle>
           </CardHeader>
         </Card>
         <Card size="sm">
           <CardHeader className="pb-0">
             <CardDescription>Unique Visitors</CardDescription>
-            <CardTitle>{totalUnique.toLocaleString()}</CardTitle>
+            <CardTitle>{overview?.unique_visitors ?? 0}</CardTitle>
           </CardHeader>
         </Card>
         <Card size="sm">
           <CardHeader className="pb-0">
-            <CardDescription>Total Button Clicks</CardDescription>
-            <CardTitle>{totalClicks.toLocaleString()}</CardTitle>
+            <CardDescription>Total Link Clicks</CardDescription>
+            <CardTitle>{overview?.total_link_clicks ?? 0}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card size="sm">
+          <CardHeader className="pb-0">
+            <CardDescription>Average CTR</CardDescription>
+            <CardTitle>{averageCTR.toFixed(2)}%</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
       <div className="grid gap-6">
+        {/* Clicks Per Link */}
         <Card>
           <CardHeader>
-            <CardTitle>Clicks Per Button</CardTitle>
+            <CardTitle>Clicks Per Link</CardTitle>
             <CardDescription>
-              Top links and their click-through performance
+              Top links with clicks and CTR (CTR = Link Clicks / Total Page
+              Views)
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={clicksPerButtonConfig}>
-              <BarChart data={clicksPerButtonData}>
+            <ChartContainer config={clicksPerLinkConfig}>
+              <BarChart data={clicksPerLinkData}>
                 <CartesianGrid vertical={false} />
-                <XAxis dataKey="button" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} width={36} />
-                <ChartTooltip
-                  content={(props) => <ChartTooltipContent {...props} />}
+                <XAxis dataKey="link" tickLine={false} axisLine={false} />
+                <YAxis
+                  yAxisId="left"
+                  tickLine={false}
+                  axisLine={false}
+                  width={36}
                 />
-                <Bar dataKey="clicks" fill="var(--color-clicks)" radius={8} />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tickLine={false}
+                  axisLine={false}
+                  width={50}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar
+                  yAxisId="left"
+                  dataKey="clicks"
+                  fill="var(--color-clicks)"
+                  radius={4}
+                />
+                <Bar
+                  yAxisId="right"
+                  dataKey="ctr"
+                  fill="var(--color-ctr)"
+                  radius={4}
+                />
               </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Visits Weekly</CardTitle>
-            <CardDescription>
-              Total visits vs unique visitors by week
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={weeklyVisitsConfig}>
-              <LineChart data={weeklyVisitsData}>
-                <CartesianGrid vertical={false} />
-                <XAxis dataKey="week" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} width={36} />
-                <ChartTooltip
-                  content={(props) => <ChartTooltipContent {...props} />}
-                />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Line
-                  dataKey="visits"
-                  type="monotone"
-                  stroke="var(--color-visits)"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  dataKey="unique"
-                  type="monotone"
-                  stroke="var(--color-unique)"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+        {/* Traffic Insights */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Device Breakdown */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Device Breakdown</CardTitle>
+              <CardDescription>Views by device type</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={deviceConfig}>
+                <BarChart data={deviceData} layout="vertical">
+                  <CartesianGrid horizontal={true} vertical={false} />
+                  <XAxis type="number" tickLine={false} axisLine={false} />
+                  <YAxis
+                    dataKey="device"
+                    type="category"
+                    tickLine={false}
+                    axisLine={false}
+                    width={80}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="views" fill="var(--color-device)" radius={4}>
+                    {deviceData.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Visits Per Day</CardTitle>
-            <CardDescription>
-              Daily traffic trend from the current week
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={visitsPerDayConfig}>
-              <AreaChart data={visitsPerDayData}>
-                <CartesianGrid vertical={false} />
-                <XAxis dataKey="day" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} width={36} />
-                <ChartTooltip
-                  content={(props) => <ChartTooltipContent {...props} />}
-                />
-                <Area
-                  dataKey="visits"
-                  type="monotone"
-                  fill="var(--color-visits)"
-                  fillOpacity={0.2}
-                  stroke="var(--color-visits)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+          {/* Referrer Breakdown */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Referrer Breakdown</CardTitle>
+              <CardDescription>Top traffic sources</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={referrerConfig}>
+                <BarChart data={referrerData} layout="vertical">
+                  <CartesianGrid horizontal={true} vertical={false} />
+                  <XAxis type="number" tickLine={false} axisLine={false} />
+                  <YAxis
+                    dataKey="referrer"
+                    type="category"
+                    tickLine={false}
+                    axisLine={false}
+                    width={100}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="views" fill="var(--color-referrer)" radius={4}>
+                    {referrerData.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

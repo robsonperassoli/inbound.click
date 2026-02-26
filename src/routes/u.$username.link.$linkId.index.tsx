@@ -1,10 +1,13 @@
 import { api } from "@convex/_generated/api"
 import type { Id } from "@convex/_generated/dataModel"
+import { Temporal } from "@js-temporal/polyfill"
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 import { createMiddleware } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { convexQueryClient } from "@/integrations/convex/provider"
+import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOrCreateVisitorId } from "@/lib/server/visitor-id"
+import { tinybird } from "@/tinybird"
 
 const convexClient = convexQueryClient.convexClient
 
@@ -27,11 +30,11 @@ const trackLinkClick = createMiddleware().server(
       throw notFound()
     }
 
-    await convexClient.mutation(api.analytics.mutations.trackLinkClick, {
-      type: "link_click",
-      profileId: link.profileId,
-      linkId: link._id,
-      visitorId,
+    await tinybird.linkClicks.ingest({
+      profile_id: link.profileId,
+      visitor_id: visitorId,
+      link_id: link._id,
+      timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
     })
 
     throw redirect({ href: link.url, statusCode: 302 })

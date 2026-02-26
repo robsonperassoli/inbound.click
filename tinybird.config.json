@@ -1,0 +1,8 @@
+{
+  "include": [
+    "src/tinybird.ts"
+  ],
+  "token": "${TINYBIRD_TOKEN}",
+  "baseUrl": "${TINYBIRD_URL}",
+  "devMode": "local"
+}

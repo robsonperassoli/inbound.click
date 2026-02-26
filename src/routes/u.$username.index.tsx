@@ -1,10 +1,13 @@
 import { api } from "@convex/_generated/api"
+import { Temporal } from "@js-temporal/polyfill"
 import { createFileRoute } from "@tanstack/react-router"
 import { createMiddleware } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { UserPage } from "@/components/user-page"
 import { convexQueryClient } from "@/integrations/convex/provider"
+import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOrCreateVisitorId } from "@/lib/server/visitor-id"
+import { tinybird } from "@/tinybird"
 
 const convexClient = convexQueryClient.convexClient
 
@@ -24,11 +27,11 @@ const trackPageView = createMiddleware().server(
     })
 
     if (!isBot) {
-      await convexClient.mutation(api.analytics.mutations.trackPageView, {
-        type: "page_view",
-        profileId: viewPageData.profile._id,
-        visitorId,
-        referrer: request.headers.get("referer") ?? undefined,
+      await tinybird.pageViews.ingest({
+        profile_id: viewPageData.profile._id,
+        visitor_id: visitorId,
+        timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
+        referrer: request.headers.get("referer") ?? null,
         device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
       })
     }
