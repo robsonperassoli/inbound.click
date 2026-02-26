@@ -31,6 +31,7 @@ export const pageViews = defineDatasource("page_views", {
     visitor_id: t.string(),
     timestamp: t.dateTime(),
     referrer: t.string().nullable(),
+    referrer_name: t.string().nullable(),
     device: t.string().nullable(),
   },
   engine: engine.mergeTree({
@@ -175,14 +176,14 @@ export const referrerBreakdown = defineEndpoint("referrer_breakdown", {
       name: "referrers",
       sql: `
         SELECT
-          coalesce(referrer, 'direct') AS referrer,
+          coalesce(referrer_name, 'direct') AS referrer,
           count() AS views,
           uniqExact(visitor_id) AS unique_visitors
         FROM page_views
         WHERE profile_id = {{String(profile_id)}}
           AND timestamp >= {{DateTime(start_date)}}
           AND timestamp <= {{DateTime(end_date)}}
-        GROUP BY referrer
+        GROUP BY referrer_name
         ORDER BY views DESC
         LIMIT {{Int32(limit)}}
       `,

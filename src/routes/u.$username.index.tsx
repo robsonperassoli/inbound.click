@@ -5,6 +5,7 @@ import { createMiddleware } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { UserPage } from "@/components/user-page"
 import { convexQueryClient } from "@/integrations/convex/provider"
+import { extractReferrerName } from "@/lib/analytics"
 import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOrCreateVisitorId } from "@/lib/server/visitor-id"
 import { tinybird } from "@/tinybird"
@@ -32,6 +33,7 @@ const trackPageView = createMiddleware().server(
         visitor_id: visitorId,
         timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
         referrer: request.headers.get("referer") ?? null,
+        referrer_name: extractReferrerName(request.headers.get("referer")),
         device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
       })
     }
