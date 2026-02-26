@@ -1,14 +1,10 @@
-import { getAuthUserId } from "@convex-dev/auth/server"
 import type { ActionCtx, MutationCtx, QueryCtx } from "../_generated/server"
+import { authComponent } from "../auth"
 
 export const authenticatedUser = async (
   ctx: MutationCtx | ActionCtx | QueryCtx,
 ) => {
-  const userId = await getAuthUserId(ctx)
+  const user = await authComponent.safeGetAuthUser(ctx)
 
-  if (userId === null) {
-    throw new Error("Client is not authenticated!")
-  }
-
-  return userId
+  return user?._id
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { api } from "@convex/_generated/api"
-import { useAuthActions } from "@convex-dev/auth/react"
+
 import {
   CheckmarkBadgeIcon,
   CreditCardIcon,
@@ -31,8 +31,9 @@ import {
 import { getInitials } from "@/lib/names"
 
 export function NavUser() {
-  const user = useQuery(api.users.queries.me, {})
-  const { signOut } = useAuthActions()
+  const user = useQuery(api.auth.getCurrentUser, {})
+
+  const signOut = () => null
 
   const { isMobile } = useSidebar()
 
@@ -46,7 +47,10 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user?.avatarUrl} alt={user?.name} />
+                {user?.image && (
+                  <AvatarImage src={user?.image} alt={user?.name} />
+                )}
+
                 <AvatarFallback className="rounded-lg">
                   {user?.name ? getInitials(user.name) : null}
                 </AvatarFallback>
@@ -71,7 +75,9 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.avatarUrl} alt={user?.name} />
+                  {user?.image && (
+                    <AvatarImage src={user?.image} alt={user?.name} />
+                  )}
                   <AvatarFallback className="rounded-lg">
                     {user?.name ? getInitials(user.name) : null}
                   </AvatarFallback>

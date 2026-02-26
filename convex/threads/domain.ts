@@ -10,7 +10,7 @@ export type Thread = Infer<typeof threadsFields>
 
 export async function createFormBuilderThread(
   ctx: MutationCtx,
-  userId: Id<"users">,
+  userId: Id<"user">,
   firstPrompt: string,
 ) {
   return await createThread(

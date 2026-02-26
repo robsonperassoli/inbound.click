@@ -18,6 +18,7 @@ import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authentica
 import { Route as UUsernameIndexRouteImport } from './routes/u.$username.index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
@@ -72,6 +73,11 @@ const AuthenticatedBioIndexRoute = AuthenticatedBioIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedBioRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
   id: '/forms/$id',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/bio/appearance'
     | '/bio/settings'
     | '/forms/$id'
+    | '/api/auth/$'
     | '/bio/'
     | '/forms/'
     | '/u/$username/'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/bio/appearance'
     | '/bio/settings'
+    | '/api/auth/$'
     | '/bio'
     | '/forms'
     | '/u/$username'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
+    | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
     | '/u/$username/'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
   UUsernameFormIndexRoute: typeof UUsernameFormIndexRoute
   UUsernameFormSessionIdIndexRoute: typeof UUsernameFormSessionIdIndexRoute
@@ -328,6 +341,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/bio/'
       preLoaderRoute: typeof AuthenticatedBioIndexRouteImport
       parentRoute: typeof AuthenticatedBioRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/forms/$id': {
       id: '/_authenticated/forms/$id'
@@ -459,6 +479,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
   UUsernameFormIndexRoute: UUsernameFormIndexRoute,
   UUsernameFormSessionIdIndexRoute: UUsernameFormSessionIdIndexRoute,

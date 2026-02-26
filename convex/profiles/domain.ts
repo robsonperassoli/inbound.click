@@ -3,7 +3,7 @@ import type { QueryCtx } from "../_generated/server"
 
 export const getUserProfile = async (
   ctx: QueryCtx,
-  userId: Id<"users">,
+  userId: Id<"user">,
   profileId: Id<"profiles">,
 ) => {
   const profile = await ctx.db.get("profiles", profileId)
@@ -16,7 +16,7 @@ export const getUserProfile = async (
 
 export const getProfileForUserId = async (
   ctx: QueryCtx,
-  userId: Id<"users">,
+  userId: Id<"user">,
 ) => {
   const profile = await ctx.db
     .query("profiles")

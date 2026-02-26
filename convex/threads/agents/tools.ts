@@ -35,7 +35,7 @@ export function createFillFormTool(ctx: ActionCtx, threadId: Id<"threads">) {
   })
 }
 
-export function createListFormsTool(ctx: ActionCtx, userId: Id<"users">) {
+export function createListFormsTool(ctx: ActionCtx, userId: Id<"user">) {
   return tool({
     description: "List User forms",
     inputSchema: z.object({}),
@@ -54,7 +54,7 @@ export function createListFormsTool(ctx: ActionCtx, userId: Id<"users">) {
 
 export function createCreateFormTool(
   ctx: ActionCtx,
-  userId: Id<"users">,
+  userId: Id<"user">,
   threadId: Id<"threads">,
 ) {
   return tool({

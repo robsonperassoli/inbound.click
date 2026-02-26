@@ -1,4 +1,3 @@
-import { useAuthActions } from "@convex-dev/auth/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useConvexAuth } from "convex/react"
 import { useEffect, useState } from "react"
@@ -12,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { authClient } from "@/lib/auth-client"
 
 export const Route = createFileRoute("/signin")({
   component: RouteComponent,
@@ -21,7 +21,6 @@ export const Route = createFileRoute("/signin")({
 function RouteComponent() {
   const { isAuthenticated, isLoading } = useConvexAuth()
   const navigate = useNavigate()
-  const { signIn } = useAuthActions()
 
   const [activeProvider, setActiveProvider] = useState<
     "github" | "google" | null
@@ -38,7 +37,9 @@ function RouteComponent() {
   const handleSignIn = async (provider: "github" | "google") => {
     setActiveProvider(provider)
     try {
-      await signIn(provider, { redirectTo: "/bio" })
+      await authClient.signIn.social({
+        provider,
+      })
     } finally {
       setActiveProvider(null)
     }
