@@ -15,7 +15,7 @@ export async function getForm(
   return form
 }
 
-export async function getForms(ctx: QueryCtx, userId: Id<"user">) {
+export async function getForms(ctx: QueryCtx, userId: Id<"users">) {
   return await ctx.db
     .query("forms")
     .withIndex("by_user", (q) => q.eq("userId", userId))
@@ -36,7 +36,7 @@ export async function getFormSubmission(
 
 export async function getFormSubmissions(
   ctx: QueryCtx,
-  userId: Id<"user">,
+  userId: Id<"users">,
   formId?: Id<"forms">,
 ) {
   let query = ctx.db
@@ -52,7 +52,7 @@ export async function getFormSubmissions(
 
 export async function createFormSubmission(
   ctx: MutationCtx,
-  userId: Id<"user">,
+  userId: Id<"users">,
   formId: Id<"forms">,
 ) {
   return await ctx.db.insert("formSubmissions", {
@@ -66,7 +66,7 @@ export async function createFormSubmission(
 
 export async function createEmptyForm(
   ctx: MutationCtx,
-  userId: Id<"user">,
+  userId: Id<"users">,
   title: string,
   description?: string,
 ) {

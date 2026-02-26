@@ -9,7 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as domain_auth from "../domain/auth.js";
+import type * as custom from "../custom.js";
 import type * as files from "../files.js";
 import type * as forms_domain from "../forms/domain.js";
 import type * as forms_mutations from "../forms/mutations.js";
@@ -30,6 +30,7 @@ import type * as threads_domain from "../threads/domain.js";
 import type * as threads_mutations from "../threads/mutations.js";
 import type * as threads_queries from "../threads/queries.js";
 import type * as threads_validators from "../threads/validators.js";
+import type * as users_domain from "../users/domain.js";
 
 import type {
   ApiFromModules,
@@ -39,7 +40,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  "domain/auth": typeof domain_auth;
+  custom: typeof custom;
   files: typeof files;
   "forms/domain": typeof forms_domain;
   "forms/mutations": typeof forms_mutations;
@@ -60,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   "threads/mutations": typeof threads_mutations;
   "threads/queries": typeof threads_queries;
   "threads/validators": typeof threads_validators;
+  "users/domain": typeof users_domain;
 }>;
 
 /**
@@ -2064,6 +2066,92 @@ export declare const components: {
     adapterTest: {
       runCustomTests: FunctionReference<"action", "internal", any, any>;
       runTests: FunctionReference<"action", "internal", any, any>;
+    };
+  };
+  migrations: {
+    lib: {
+      cancel: FunctionReference<
+        "mutation",
+        "internal",
+        { name: string },
+        {
+          batchSize?: number;
+          cursor?: string | null;
+          error?: string;
+          isDone: boolean;
+          latestEnd?: number;
+          latestStart: number;
+          name: string;
+          next?: Array<string>;
+          processed: number;
+          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
+        }
+      >;
+      cancelAll: FunctionReference<
+        "mutation",
+        "internal",
+        { sinceTs?: number },
+        Array<{
+          batchSize?: number;
+          cursor?: string | null;
+          error?: string;
+          isDone: boolean;
+          latestEnd?: number;
+          latestStart: number;
+          name: string;
+          next?: Array<string>;
+          processed: number;
+          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
+        }>
+      >;
+      clearAll: FunctionReference<
+        "mutation",
+        "internal",
+        { before?: number },
+        null
+      >;
+      getStatus: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; names?: Array<string> },
+        Array<{
+          batchSize?: number;
+          cursor?: string | null;
+          error?: string;
+          isDone: boolean;
+          latestEnd?: number;
+          latestStart: number;
+          name: string;
+          next?: Array<string>;
+          processed: number;
+          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
+        }>
+      >;
+      migrate: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          batchSize?: number;
+          cursor?: string | null;
+          dryRun: boolean;
+          fnHandle: string;
+          name: string;
+          next?: Array<{ fnHandle: string; name: string }>;
+          oneBatchOnly?: boolean;
+        },
+        {
+          batchSize?: number;
+          cursor?: string | null;
+          error?: string;
+          isDone: boolean;
+          latestEnd?: number;
+          latestStart: number;
+          name: string;
+          next?: Array<string>;
+          processed: number;
+          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
+        }
+      >;
     };
   };
 };

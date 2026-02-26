@@ -51,14 +51,9 @@ export const formSubmissionValue = v.union(
 )
 
 export default defineSchema({
-  // ...authTables,
-  //
   users: defineTable({
-    id: v.string(),
-    email: v.optional(v.string()),
-    name: v.optional(v.string()),
-    image: v.optional(v.string()),
-  }),
+    authId: v.optional(v.string()),
+  }).index("by_auth", ["authId"]),
 
   profiles: defineTable({
     userId: v.id("users"),

@@ -1,6 +1,6 @@
 import { v } from "convex/values"
 import { internalQuery, query } from "../_generated/server"
-import * as auth from "../domain/auth"
+import * as auth from "../auth"
 import * as forms from "./domain"
 
 export const getUserForm = query({

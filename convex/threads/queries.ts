@@ -1,6 +1,6 @@
 import { v } from "convex/values"
 import { internalQuery, query } from "../_generated/server"
-import { authenticatedUser } from "../domain/auth"
+import { authenticatedUser } from "../auth"
 import * as threads from "./domain"
 
 export const getFullChat = internalQuery({

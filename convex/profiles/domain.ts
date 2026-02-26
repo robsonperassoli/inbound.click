@@ -3,7 +3,7 @@ import type { QueryCtx } from "../_generated/server"
 
 export const getUserProfile = async (
   ctx: QueryCtx,
-  userId: Id<"user">,
+  userId: Id<"users">,
   profileId: Id<"profiles">,
 ) => {
   const profile = await ctx.db.get("profiles", profileId)
@@ -16,23 +16,21 @@ export const getUserProfile = async (
 
 export const getProfileForUserId = async (
   ctx: QueryCtx,
-  userId: Id<"user">,
+  userId: Id<"users">,
 ) => {
   const profile = await ctx.db
     .query("profiles")
     .withIndex("by_user", (q) => q.eq("userId", userId))
     .unique()
 
-  if (!profile) {
-    throw new Error("Profile not found")
-  }
-
-  return {
-    ...profile,
-    avatarUrl: profile?.avatarId
-      ? await ctx.storage.getUrl(profile.avatarId)
-      : null,
-  }
+  return profile
+    ? {
+        ...profile,
+        avatarUrl: profile?.avatarId
+          ? await ctx.storage.getUrl(profile.avatarId)
+          : null,
+      }
+    : null
 }
 
 export const checkProfileUsernameAvailable = async (

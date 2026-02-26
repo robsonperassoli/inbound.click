@@ -1,7 +1,7 @@
 import { v } from "convex/values"
 import { internal } from "../_generated/api"
 import { internalMutation, mutation } from "../_generated/server"
-import * as auth from "../domain/auth"
+import * as auth from "../auth"
 import * as forms from "../forms/domain"
 import { formField } from "../schema"
 import * as threads from "./domain"

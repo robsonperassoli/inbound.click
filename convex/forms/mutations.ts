@@ -1,21 +1,20 @@
 import { v } from "convex/values"
 import { internalMutation, mutation } from "../_generated/server"
-import * as auth from "../domain/auth"
+import * as auth from "../auth"
+import { userMutation } from "../custom"
 import { formField, formSubmissionValue } from "../schema"
 import * as threads from "../threads/domain"
 import * as forms from "./domain"
 
-export const createForm = mutation({
+export const createForm = userMutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
     fields: v.array(formField),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     const formId = await ctx.db.insert("forms", {
-      userId,
+      userId: ctx.user._id,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       title: args.title,

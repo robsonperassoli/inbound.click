@@ -1,6 +1,6 @@
 import { v } from "convex/values"
 import { mutation } from "../_generated/server"
-import * as auth from "../domain/auth"
+import * as auth from "../auth"
 import { themeFields } from "../schema"
 import * as domain from "./domain"
 

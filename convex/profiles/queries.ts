@@ -1,11 +1,8 @@
-import { query } from "../_generated/server"
-import * as auth from "../domain/auth"
+import { userQuery } from "../custom"
 import { getProfileForUserId } from "./domain"
 
-export const getProfile = query({
+export const getProfile = userQuery({
   handler: async (ctx, _args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
-    return await getProfileForUserId(ctx, userId)
+    return await getProfileForUserId(ctx, ctx.user._id)
   },
 })
