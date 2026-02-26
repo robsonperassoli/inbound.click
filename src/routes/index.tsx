@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { Authenticated, Unauthenticated } from "convex/react"
 import { useEffect, useMemo, useState } from "react"
 import logo from "../assets/logo.svg"
 
@@ -27,12 +28,22 @@ function LandingPage() {
             </span>
           </a>
 
-          <Link
-            to="/signin"
-            className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
-          >
-            Start Free
-          </Link>
+          <Authenticated>
+            <Link
+              to="/bio"
+              className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
+            >
+              Dashboard
+            </Link>
+          </Authenticated>
+          <Unauthenticated>
+            <Link
+              to="/signin"
+              className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
+            >
+              Start Free
+            </Link>
+          </Unauthenticated>
         </div>
       </header>
 

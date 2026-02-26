@@ -22,9 +22,7 @@ function RouteComponent() {
   const { isAuthenticated, isLoading } = useConvexAuth()
   const navigate = useNavigate()
 
-  const [activeProvider, setActiveProvider] = useState<
-    "github" | "google" | null
-  >(null)
+  const [activeProvider, setActiveProvider] = useState<"google" | null>(null)
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -34,11 +32,12 @@ function RouteComponent() {
 
   if (isLoading || isAuthenticated) return null
 
-  const handleSignIn = async (provider: "github" | "google") => {
+  const handleSignIn = async (provider: "google") => {
     setActiveProvider(provider)
     try {
       await authClient.signIn.social({
         provider,
+        callbackURL: "/bio",
       })
     } finally {
       setActiveProvider(null)
@@ -118,21 +117,6 @@ function RouteComponent() {
               Continue with Google
             </Button>
 
-            <Button
-              size="lg"
-              variant="secondary"
-              className="h-12 w-full justify-center gap-2 border border-black/5 bg-white/70 text-sm font-medium hover:bg-white"
-              disabled={activeProvider !== null}
-              onClick={() => void handleSignIn("github")}
-            >
-              {activeProvider === "github" ? (
-                <Spinner />
-              ) : (
-                <GitHubIcon className="size-4" />
-              )}
-              Continue with GitHub
-            </Button>
-
             <p className="pt-2 text-center text-xs text-muted-foreground">
               By continuing, you agree to authenticate with your selected
               provider.
@@ -189,22 +173,6 @@ function GoogleIcon({ className }: { className?: string }) {
       <path
         d="M12 5.971c1.468 0 2.791.505 3.828 1.496l2.873-2.873C16.964 2.973 14.7 2 12 2A9.999 9.999 0 0 0 3.073 7.5l3.336 2.584C7.2 7.726 9.4 5.971 12 5.971Z"
         fill="#EA4335"
-      />
-    </svg>
-  )
-}
-
-function GitHubIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-    >
-      <path
-        fill="currentColor"
-        d="M12 2A10 10 0 0 0 8.838 21.488c.5.09.687-.219.687-.482v-1.714c-2.8.608-3.387-1.208-3.387-1.208-.457-1.16-1.116-1.468-1.116-1.468-.913-.625.067-.612.067-.612 1.008.071 1.54 1.039 1.54 1.039.896 1.533 2.35 1.09 2.923.833.091-.651.351-1.09.636-1.34-2.236-.255-4.587-1.118-4.587-4.975 0-1.099.394-1.998 1.039-2.702-.104-.255-.45-1.283.098-2.674 0 0 .848-.271 2.778 1.032A9.66 9.66 0 0 1 12 6.844c.851.004 1.709.115 2.509.337 1.93-1.303 2.777-1.032 2.777-1.032.549 1.39.203 2.418.1 2.674.646.704 1.038 1.603 1.038 2.702 0 3.867-2.355 4.716-4.598 4.967.361.312.684.925.684 1.866v2.764c0 .266.18.576.69.479A10 10 0 0 0 12 2Z"
       />
     </svg>
   )

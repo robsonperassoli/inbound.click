@@ -28,12 +28,21 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { authClient } from "@/lib/auth-client"
 import { getInitials } from "@/lib/names"
 
 export function NavUser() {
   const user = useQuery(api.auth.getCurrentUser, {})
 
-  const signOut = () => null
+  const signOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          location.reload()
+        },
+      },
+    })
+  }
 
   const { isMobile } = useSidebar()
 
