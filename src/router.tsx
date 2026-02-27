@@ -8,11 +8,14 @@ export function getRouter() {
   const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL
   if (!CONVEX_URL) {
     console.error("missing envar CONVEX_URL")
-  }
+  } // expectAuth was causing problem on public pages like the user profile.
+  // since users are not expected to be authenticated on those pages,
+  // the chat would not work due to hanging (expecting auth) queries
+  // const convexQueryClient = new ConvexQueryClient(CONVEX_URL, {
+  //   expectAuth: true,
+  // })
 
-  const convexQueryClient = new ConvexQueryClient(CONVEX_URL, {
-    expectAuth: true,
-  })
+  const convexQueryClient = new ConvexQueryClient(CONVEX_URL)
 
   const queryClient: QueryClient = new QueryClient({
     defaultOptions: {

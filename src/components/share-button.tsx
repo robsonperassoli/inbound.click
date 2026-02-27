@@ -1,5 +1,4 @@
 import { api } from "@convex/_generated/api"
-import type { Doc } from "@convex/_generated/dataModel"
 import { Copy01Icon, Share03Icon, Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "convex/react"
