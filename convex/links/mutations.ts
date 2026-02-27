@@ -1,40 +1,46 @@
 import { v } from "convex/values"
-import { mutation } from "../_generated/server"
-import * as auth from "../auth"
+import { userMutation } from "../custom"
 
-export const addLink = mutation({
+export const addLink = userMutation({
   args: {
     profileId: v.id("profiles"),
     title: v.string(),
-    url: v.string(),
     order: v.number(),
     active: v.boolean(),
+    details: v.union(
+      v.object({
+        type: v.literal("url"),
+        url: v.string(),
+      }),
+      v.object({
+        type: v.literal("form"),
+        formId: v.id("forms"),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     await ctx.db.insert("links", {
-      userId,
+      userId: ctx.user._id,
       profileId: args.profileId,
       title: args.title,
-      url: args.url,
       order: args.order,
       active: args.active,
+      type: args.details.type,
+      url: args.details.type === "url" ? args.details.url : undefined,
+      formId: args.details.type === "form" ? args.details.formId : undefined,
     })
   },
 })
 
-export const toggleActive = mutation({
+export const toggleActive = userMutation({
   args: {
     linkId: v.id("links"),
     active: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     const link = await ctx.db
       .query("links")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", ctx.user._id))
       .filter((q) => q.eq(q.field("_id"), args.linkId))
       .unique()
 
@@ -48,18 +54,16 @@ export const toggleActive = mutation({
   },
 })
 
-export const updateLink = mutation({
+export const updateLink = userMutation({
   args: {
     linkId: v.id("links"),
     title: v.string(),
-    url: v.string(),
+    url: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     const link = await ctx.db
       .query("links")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", ctx.user._id))
       .filter((q) => q.eq(q.field("_id"), args.linkId))
       .unique()
 
@@ -74,16 +78,14 @@ export const updateLink = mutation({
   },
 })
 
-export const removeLink = mutation({
+export const removeLink = userMutation({
   args: {
     linkId: v.id("links"),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     const link = await ctx.db
       .query("links")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", ctx.user._id))
       .filter((q) => q.eq(q.field("_id"), args.linkId))
       .unique()
 

@@ -1,11 +1,14 @@
 import { api } from "@convex/_generated/api"
-import type { Id } from "@convex/_generated/dataModel"
+import type { Doc, Id } from "@convex/_generated/dataModel"
 import { PlusSignIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { createFileRoute, useLoaderData } from "@tanstack/react-router"
+import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { type FormEvent, useId, useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
+import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
+import { CreateLinkButton } from "@/components/links/create-link-button"
+import { EditLinkModal } from "@/components/links/edit-link-modal"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,21 +30,19 @@ function RouteComponent() {
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
   const toggleActive = useMutation(api.links.mutations.toggleActive)
-  const updateLink = useMutation(api.links.mutations.updateLink)
   const removeLink = useMutation(api.links.mutations.removeLink)
-  const [addLinkOpen, setAddLinkOpen] = useState(false)
-  const [editLinkId, setEditLinkId] = useState<Id<"links"> | null>(null)
-  const [editTitle, setEditTitle] = useState("")
-  const [editUrl, setEditUrl] = useState("")
-  const [isSavingEdit, setIsSavingEdit] = useState(false)
-  const [removingLinkId, setRemovingLinkId] = useState<Id<"links"> | null>(null)
+  const [openModal, setOpenModal] = useState<
+    "add-link" | "add-form-link" | "edit-link" | null
+  >(null)
+  const [selectedLinkId, setSelectedLinkId] = useState<Id<"links"> | null>(null)
 
   const headerActions = useMemo(
     () => [
-      <Button key="add-link" onClick={() => setAddLinkOpen(true)} size="sm">
-        <HugeiconsIcon icon={PlusSignIcon} />
-        Add Link
-      </Button>,
+      <CreateLinkButton
+        key="add-link"
+        onAddLink={() => setOpenModal("add-link")}
+        onAddAiLeadCapture={() => setOpenModal("add-form-link")}
+      />,
     ],
     [],
   )
@@ -53,41 +54,6 @@ function RouteComponent() {
   })
 
   const nextOrder = useMemo(() => (links?.at(-1)?.order ?? 0) + 1, [links])
-  const isEditOpen = Boolean(editLinkId)
-  const editTitleInputId = useId()
-  const editUrlInputId = useId()
-
-  const openEditModal = (link: {
-    _id: Id<"links">
-    title: string
-    url: string
-  }) => {
-    setEditLinkId(link._id)
-    setEditTitle(link.title)
-    setEditUrl(link.url)
-  }
-
-  const closeEditModal = () => {
-    setEditLinkId(null)
-    setEditTitle("")
-    setEditUrl("")
-    setIsSavingEdit(false)
-  }
-
-  const handleSaveEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!editLinkId || !editTitle.trim() || !editUrl.trim()) {
-      return
-    }
-
-    setIsSavingEdit(true)
-    await updateLink({
-      linkId: editLinkId,
-      title: editTitle.trim(),
-      url: editUrl.trim(),
-    })
-    closeEditModal()
-  }
 
   const handleRemoveLink = async (link: {
     _id: Id<"links">
@@ -101,12 +67,17 @@ function RouteComponent() {
       return
     }
 
-    setRemovingLinkId(link._id)
+    setSelectedLinkId(link._id)
     try {
       await removeLink({ linkId: link._id })
     } finally {
-      setRemovingLinkId(null)
+      setSelectedLinkId(null)
     }
+  }
+
+  const onLinkEdit = async (link: Doc<"links">) => {
+    setSelectedLinkId(link._id)
+    setOpenModal("edit-link")
   }
 
   return (
@@ -126,7 +97,7 @@ function RouteComponent() {
               No links yet. Add your first link to start building your page.
             </p>
             <div>
-              <Button size="sm" onClick={() => setAddLinkOpen(true)}>
+              <Button size="sm" onClick={() => setOpenModal("add-link")}>
                 <HugeiconsIcon icon={PlusSignIcon} />
                 Add first link
               </Button>
@@ -174,13 +145,7 @@ function RouteComponent() {
                     <Button
                       size="xs"
                       variant="ghost"
-                      onClick={() =>
-                        openEditModal({
-                          _id: link._id,
-                          title: link.title,
-                          url: link.url,
-                        })
-                      }
+                      onClick={() => onLinkEdit(link)}
                     >
                       Edit
                     </Button>
@@ -188,7 +153,7 @@ function RouteComponent() {
                       size="xs"
                       variant="ghost"
                       className="text-destructive hover:text-destructive"
-                      disabled={removingLinkId === link._id}
+                      disabled={selectedLinkId === link._id}
                       onClick={() =>
                         handleRemoveLink({
                           _id: link._id,
@@ -196,7 +161,7 @@ function RouteComponent() {
                         })
                       }
                     >
-                      {removingLinkId === link._id ? "Removing..." : "Remove"}
+                      {selectedLinkId === link._id ? "Removing..." : "Remove"}
                     </Button>
                     <span className="ml-1 text-xs text-muted-foreground">
                       Active
@@ -220,65 +185,27 @@ function RouteComponent() {
       </div>
 
       <AddLinkModal
-        open={addLinkOpen}
-        onClose={() => setAddLinkOpen(false)}
+        open={openModal === "add-link"}
+        onClose={() => setOpenModal(null)}
         order={nextOrder}
         profileId={profileId}
       />
 
-      <Dialog
-        open={isEditOpen}
-        onOpenChange={(open) => !open && closeEditModal()}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Link</DialogTitle>
-          </DialogHeader>
+      <CreateFormPrompt
+        open={openModal === "add-form-link"}
+        onClose={() => setOpenModal(null)}
+      />
 
-          <form className="space-y-4" onSubmit={handleSaveEdit}>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium" htmlFor={editTitleInputId}>
-                Title
-              </label>
-              <Input
-                id={editTitleInputId}
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                placeholder="Book a tour"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium" htmlFor={editUrlInputId}>
-                URL
-              </label>
-              <Input
-                id={editUrlInputId}
-                value={editUrl}
-                onChange={(e) => setEditUrl(e.target.value)}
-                placeholder="https://example.com"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={closeEditModal}
-                disabled={isSavingEdit}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSavingEdit || !editTitle.trim() || !editUrl.trim()}
-              >
-                {isSavingEdit ? "Saving..." : "Save changes"}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {selectedLinkId && (
+        <EditLinkModal
+          linkId={selectedLinkId}
+          onClose={() => {
+            setOpenModal(null)
+            setSelectedLinkId(null)
+          }}
+          open={openModal === "edit-link"}
+        />
+      )}
     </div>
   )
 }

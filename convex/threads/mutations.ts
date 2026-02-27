@@ -2,7 +2,10 @@ import { v } from "convex/values"
 import { internal } from "../_generated/api"
 import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
+import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
+import * as links from "../links/domain"
+import * as profiles from "../profiles/domain"
 import { formField } from "../schema"
 import * as threads from "./domain"
 
@@ -19,15 +22,13 @@ export const updateMessageContent = internalMutation({
   },
 })
 
-export const createFormBuilderThread = mutation({
+export const createFormBuilderThread = userMutation({
   args: {
     message: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
     const { threadId, messageId, assistantMessageId } =
-      await threads.createFormBuilderThread(ctx, userId, args.message)
+      await threads.createFormBuilderThread(ctx, ctx.user._id, args.message)
 
     await ctx.scheduler.runAfter(0, internal.threads.actions.runAgent, {
       threadId,
@@ -82,6 +83,18 @@ export const createFormForThread = internalMutation({
       args.title,
       args.description,
     )
+
+    const profile = await profiles.getProfileForUserId(ctx, args.userId)
+    if (!profile) {
+      throw new Error("User doesn't have a bio page")
+    }
+
+    await links.createFormLink(ctx, {
+      userId: args.userId,
+      profileId: profile._id,
+      title: args.title,
+      formId,
+    })
 
     await ctx.db.patch("threads", args.threadId, {
       formId: formId,

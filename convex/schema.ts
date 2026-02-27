@@ -70,9 +70,11 @@ export default defineSchema({
     userId: v.id("users"),
     profileId: v.id("profiles"),
     title: v.string(),
-    url: v.string(),
     order: v.number(),
     active: v.boolean(),
+    type: v.union(v.literal("url"), v.literal("form")),
+    formId: v.optional(v.id("forms")),
+    url: v.optional(v.string()),
   })
     .index("by_profile", ["profileId"])
     .index("by_user", ["userId"]),

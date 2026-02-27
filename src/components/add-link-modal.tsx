@@ -42,7 +42,10 @@ export function AddLinkModal({
       await addLink({
         profileId,
         title: value.title,
-        url: value.url,
+        details: {
+          type: "url",
+          url: value.url,
+        },
         order,
         active: true,
       })

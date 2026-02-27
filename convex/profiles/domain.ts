@@ -1,8 +1,8 @@
 import type { Id } from "../_generated/dataModel"
-import type { QueryCtx } from "../_generated/server"
+import type { MutationCtx, QueryCtx } from "../_generated/server"
 
 export const getUserProfile = async (
-  ctx: QueryCtx,
+  ctx: QueryCtx | MutationCtx,
   userId: Id<"users">,
   profileId: Id<"profiles">,
 ) => {

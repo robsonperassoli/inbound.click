@@ -38,6 +38,7 @@ function RouteComponent() {
       await authClient.signIn.social({
         provider,
         callbackURL: "/bio",
+        newUserCallbackURL: "/onboarding",
       })
     } finally {
       setActiveProvider(null)
