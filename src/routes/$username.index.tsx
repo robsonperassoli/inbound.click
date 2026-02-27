@@ -44,7 +44,7 @@ const trackPageView = createMiddleware().server(
   },
 )
 
-export const Route = createFileRoute("/u/$username/")({
+export const Route = createFileRoute("/$username/")({
   component: RouteComponent,
   server: {
     middleware: [trackPageView],
@@ -58,7 +58,7 @@ export const Route = createFileRoute("/u/$username/")({
 
     const linksWithRedirect = links.map((l) => ({
       ...l,
-      url: `/u/${profile.username}/link/${l._id}`,
+      url: `/${profile.username}/link/${l._id}`,
     }))
 
     return {

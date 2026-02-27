@@ -24,9 +24,14 @@ import {
 export function ShareButton() {
   const profile = useQuery(api.profiles.queries.getProfile, {})
   const { copyToClipboard, copied } = useCopyToClipboard()
-  const link = useMemo(
-    () => (profile ? `https://s.uper.bio/${profile.username}` : ""),
+  const visibleLink = useMemo(
+    () => (profile ? `s.uper.bio/${profile.username}` : ""),
     [profile],
+  )
+
+  const link = useMemo(
+    () => (visibleLink ? `https://${visibleLink}` : ""),
+    [visibleLink],
   )
 
   if (!profile) {

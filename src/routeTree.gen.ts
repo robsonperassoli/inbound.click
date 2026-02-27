@@ -12,10 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsernameIndexRouteImport } from './routes/$username.index'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
-import { Route as UUsernameIndexRouteImport } from './routes/u.$username.index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -23,10 +23,10 @@ import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
 import { Route as AuthenticatedFormsIdIndexRouteImport } from './routes/_authenticated/forms/$id.index'
+import { Route as UsernameLinkLinkIdIndexRouteImport } from './routes/$username.link.$linkId.index'
 import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
-import { Route as UUsernameLinkLinkIdIndexRouteImport } from './routes/u.$username.link.$linkId.index'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -40,6 +40,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsernameIndexRoute = UsernameIndexRouteImport.update({
+  id: '/$username/',
+  path: '/$username/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
@@ -56,11 +61,6 @@ const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => AuthenticatedRoute,
-} as any)
-const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
-  id: '/u/$username/',
-  path: '/u/$username/',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedFormsIndexRoute = AuthenticatedFormsIndexRouteImport.update({
   id: '/forms/',
@@ -100,6 +100,11 @@ const AuthenticatedFormsIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
+const UsernameLinkLinkIdIndexRoute = UsernameLinkLinkIdIndexRouteImport.update({
+  id: '/$username/link/$linkId/',
+  path: '/$username/link/$linkId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedFormsBuilderThreadIdRoute =
   AuthenticatedFormsBuilderThreadIdRouteImport.update({
     id: '/forms/builder/$threadId',
@@ -118,12 +123,6 @@ const AuthenticatedFormsIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
-const UUsernameLinkLinkIdIndexRoute =
-  UUsernameLinkLinkIdIndexRouteImport.update({
-    id: '/u/$username/link/$linkId/',
-    path: '/u/$username/link/$linkId/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,35 +130,35 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/$username/': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
-  '/u/$username/': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
+  '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
   '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
-  '/u/$username/link/$linkId/': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/$username': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
-  '/u/$username': typeof UUsernameIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
+  '/$username/link/$linkId': typeof UsernameLinkLinkIdIndexRoute
   '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
-  '/u/$username/link/$linkId': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,18 +168,18 @@ export interface FileRoutesById {
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/$username/': typeof UsernameIndexRoute
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
-  '/u/$username/': typeof UUsernameIndexRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
   '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
+  '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
   '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
-  '/u/$username/link/$linkId/': typeof UUsernameLinkLinkIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,35 +189,35 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/bio'
     | '/onboarding'
+    | '/$username/'
     | '/bio/appearance'
     | '/bio/settings'
     | '/forms/$id'
     | '/api/auth/$'
     | '/bio/'
     | '/forms/'
-    | '/u/$username/'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
+    | '/$username/link/$linkId/'
     | '/forms/$id/'
-    | '/u/$username/link/$linkId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/signin'
     | '/analytics'
     | '/onboarding'
+    | '/$username'
     | '/bio/appearance'
     | '/bio/settings'
     | '/api/auth/$'
     | '/bio'
     | '/forms'
-    | '/u/$username'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
+    | '/$username/link/$linkId'
     | '/forms/$id'
-    | '/u/$username/link/$linkId'
   id:
     | '__root__'
     | '/'
@@ -227,27 +226,27 @@ export interface FileRouteTypes {
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/onboarding'
+    | '/$username/'
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
     | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
-    | '/u/$username/'
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
     | '/_authenticated/forms/builder/$threadId'
+    | '/$username/link/$linkId/'
     | '/_authenticated/forms/$id/'
-    | '/u/$username/link/$linkId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
+  UsernameIndexRoute: typeof UsernameIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  UUsernameIndexRoute: typeof UUsernameIndexRoute
-  UUsernameLinkLinkIdIndexRoute: typeof UUsernameLinkLinkIdIndexRoute
+  UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -273,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$username/': {
+      id: '/$username/'
+      path: '/$username'
+      fullPath: '/$username/'
+      preLoaderRoute: typeof UsernameIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
@@ -293,13 +299,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/analytics'
       preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRoute
-    }
-    '/u/$username/': {
-      id: '/u/$username/'
-      path: '/u/$username'
-      fullPath: '/u/$username/'
-      preLoaderRoute: typeof UUsernameIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/forms/': {
       id: '/_authenticated/forms/'
@@ -350,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIdIndexRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
     }
+    '/$username/link/$linkId/': {
+      id: '/$username/link/$linkId/'
+      path: '/$username/link/$linkId'
+      fullPath: '/$username/link/$linkId/'
+      preLoaderRoute: typeof UsernameLinkLinkIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/forms/builder/$threadId': {
       id: '/_authenticated/forms/builder/$threadId'
       path: '/forms/builder/$threadId'
@@ -370,13 +376,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/forms/$id/settings'
       preLoaderRoute: typeof AuthenticatedFormsIdSettingsRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
-    }
-    '/u/$username/link/$linkId/': {
-      id: '/u/$username/link/$linkId/'
-      path: '/u/$username/link/$linkId'
-      fullPath: '/u/$username/link/$linkId/'
-      preLoaderRoute: typeof UUsernameLinkLinkIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -438,9 +437,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
+  UsernameIndexRoute: UsernameIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  UUsernameIndexRoute: UUsernameIndexRoute,
-  UUsernameLinkLinkIdIndexRoute: UUsernameLinkLinkIdIndexRoute,
+  UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
