@@ -98,6 +98,7 @@ function RouteComponent() {
 
   return (
     <>
+      <title>{profile.title}</title>
       <UserPage
         profile={profile}
         links={links}
