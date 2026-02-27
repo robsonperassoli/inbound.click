@@ -1,10 +1,10 @@
 import { api } from "@convex/_generated/api"
 import type { Doc, Id } from "@convex/_generated/dataModel"
-import { PlusSignIcon } from "@hugeicons/core-free-icons"
+import { DatabaseLightningIcon, PlusSignIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
-import { type FormEvent, useId, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateLinkButton } from "@/components/links/create-link-button"
@@ -12,13 +12,6 @@ import { EditLinkModal } from "@/components/links/edit-link-modal"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 
 export const Route = createFileRoute("/_authenticated/bio/")({
@@ -131,14 +124,30 @@ function RouteComponent() {
                       </span>
                     </div>
 
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block truncate text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.url}
-                    </a>
+                    {link.type === "form" && link.formId ? (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Link
+                          to="/forms/$id/submissions"
+                          params={{ id: link.formId }}
+                          className="flex gap-x-1 items-center text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <HugeiconsIcon
+                            icon={DatabaseLightningIcon}
+                            size={12}
+                          />{" "}
+                          View collected data
+                        </Link>
+                      </div>
+                    ) : (
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block truncate text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {link.url}
+                      </a>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 transition-opacity duration-150 md:justify-end md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">

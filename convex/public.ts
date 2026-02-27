@@ -1,6 +1,8 @@
 import { v } from "convex/values"
 import { internal } from "./_generated/api"
+import type { Doc } from "./_generated/dataModel"
 import { mutation, query } from "./_generated/server"
+import * as profiles from "./profiles/domain"
 import { systemPrompt } from "./threads/agents/formSubmission"
 import * as threads from "./threads/domain"
 
@@ -9,14 +11,7 @@ export const getProfile = query({
     username: v.string(),
   },
   handler: async (ctx, args) => {
-    const profile = await ctx.db
-      .query("profiles")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .unique()
-
-    if (!profile) {
-      throw new Error("Not found")
-    }
+    const profile = await profiles.getProfileByUsername(ctx, args.username)
 
     const unsortedLinks = await ctx.db
       .query("links")
@@ -26,16 +21,13 @@ export const getProfile = query({
     const links = unsortedLinks.sort((a, b) => b.order - a.order)
 
     return {
-      profile: {
-        ...profile,
-        avatarUrl: profile?.avatarId
-          ? await ctx.storage.getUrl(profile.avatarId)
-          : null,
-      },
-      links,
+      profile,
+      links: links.map(removeUnsafeData),
     }
   },
 })
+
+const removeUnsafeData = ({ userId, ...rest }: Doc<"links">) => rest
 
 export const getLinkById = query({
   args: {
@@ -51,29 +43,19 @@ export const getLinkById = query({
       throw new Error("Not found")
     }
 
-    return link
+    return removeUnsafeData(link)
   },
 })
 
 export const startFormSession = mutation({
   args: {
-    username: v.string(),
+    profileId: v.id("profiles"),
+    formId: v.id("forms"),
   },
   handler: async (ctx, args) => {
-    const profile = await ctx.db
-      .query("profiles")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .unique()
+    const profile = await profiles.getProfileById(ctx, args.profileId)
 
-    if (!profile) {
-      throw new Error("user not found")
-    }
-
-    const form = await ctx.db
-      .query("forms")
-      .withIndex("by_user", (q) => q.eq("userId", profile.userId))
-      .unique()
-
+    const form = await ctx.db.get("forms", args.formId)
     if (!form) {
       throw new Error("form not found")
     }

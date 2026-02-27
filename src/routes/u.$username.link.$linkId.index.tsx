@@ -35,6 +35,10 @@ const trackLinkClick = createMiddleware().server(
       timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
     })
 
+    if (link.type !== "url") {
+      throw new Error("invalid link type")
+    }
+
     throw redirect({ href: link.url, statusCode: 302 })
   },
 )

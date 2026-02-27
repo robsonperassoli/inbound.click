@@ -33,6 +33,42 @@ export const getProfileForUserId = async (
     : null
 }
 
+export const getProfileByUsername = async (ctx: QueryCtx, username: string) => {
+  const profile = await ctx.db
+    .query("profiles")
+    .withIndex("by_username", (q) => q.eq("username", username))
+    .unique()
+
+  if (!profile) {
+    throw new Error("Profile not found")
+  }
+
+  return {
+    ...profile,
+    avatarUrl: profile?.avatarId
+      ? await ctx.storage.getUrl(profile.avatarId)
+      : null,
+  }
+}
+
+export const getProfileById = async (
+  ctx: QueryCtx,
+  profileId: Id<"profiles">,
+) => {
+  const profile = await ctx.db.get("profiles", profileId)
+
+  if (!profile) {
+    throw new Error("Profile not found")
+  }
+
+  return {
+    ...profile,
+    avatarUrl: profile?.avatarId
+      ? await ctx.storage.getUrl(profile.avatarId)
+      : null,
+  }
+}
+
 export const checkProfileUsernameAvailable = async (
   ctx: QueryCtx,
   username: string,

@@ -6,16 +6,20 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
 
+export type UserPageLink = Omit<Doc<"links">, "userId">
+
 export function UserPage({
   profile,
   links,
   className,
+  onFormLinkClick,
 }: {
   profile: Doc<"profiles"> & {
     avatarUrl: string | null
   }
-  links: Doc<"links">[]
+  links: UserPageLink[]
   className?: string
+  onFormLinkClick: (link: UserPageLink) => void
 }) {
   useEffect(() => {
     if (profile.fontFamily) {
@@ -54,8 +58,9 @@ export function UserPage({
           {links.map((link) => (
             <li key={link._id}>
               <Button
-                href={link.url}
-                target="_blank"
+                {...(link.type === "url"
+                  ? { href: link.url }
+                  : { onClick: () => onFormLinkClick(link) })}
                 shape={profile.buttonShape}
                 buttonStyle={profile.buttonStyle}
               >

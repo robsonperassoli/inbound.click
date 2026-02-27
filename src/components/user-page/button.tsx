@@ -11,6 +11,7 @@ const buttonVariants = cva(
   shrink-0
   outline-none
   select-none
+  w-full
   `,
   {
     variants: {
@@ -36,19 +37,50 @@ const buttonVariants = cva(
   },
 )
 
+interface ButtonProps extends VariantProps<typeof buttonVariants> {
+  className?: string
+  href?: string
+  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>
+  children?: React.ReactNode
+  [key: string]: unknown
+}
+
 function Button({
   className,
   shape = "rounded",
   buttonStyle = "solid",
+  href,
+  onClick,
+  children,
   ...props
-}: React.ComponentProps<"a"> & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
+  const classes = cn(buttonVariants({ shape, buttonStyle }), className)
+
+  if (href) {
+    return (
+      <a
+        data-slot="button"
+        href={href}
+        target="_blank"
+        className={classes}
+        onClick={onClick}
+        {...props}
+      >
+        {children}
+      </a>
+    )
+  }
+
   return (
-    <a
+    <button
       data-slot="button"
-      target="_blank"
-      className={cn(buttonVariants({ shape, buttonStyle }), className)}
+      type="button"
+      className={classes}
+      onClick={onClick}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 }
 
