@@ -9,6 +9,8 @@ import { AddLinkModal } from "@/components/add-link-modal"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateLinkButton } from "@/components/links/create-link-button"
 import { EditLinkModal } from "@/components/links/edit-link-modal"
+import { LinkListItem } from "@/components/links/link-list-item"
+import { LinkListItemActions } from "@/components/links/link-list-item-actions"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -104,85 +106,21 @@ function RouteComponent() {
           <CardContent className="p-0">
             <ul>
               {links.map((link) => (
-                <li
+                <LinkListItem
                   key={link._id}
-                  className="group grid gap-4 border-b border-border/60 px-5 py-4 last:border-b-0 md:grid-cols-[1fr_auto] md:items-center"
-                >
-                  <div className="min-w-0 space-y-2">
-                    <div className="flex min-w-0 items-center gap-2">
-                      <span className="truncate text-sm font-semibold">
-                        {link.title}
-                      </span>
-                      <span
-                        className={`rounded-md border px-2 py-0.5 text-[11px] font-medium ${
-                          link.active
-                            ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                            : "border-border/60 bg-muted/40 text-muted-foreground"
-                        }`}
-                      >
-                        {link.active ? "Live" : "Hidden"}
-                      </span>
-                    </div>
-
-                    {link.type === "form" && link.formId ? (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Link
-                          to="/forms/$id/submissions"
-                          params={{ id: link.formId }}
-                          className="flex gap-x-1 items-center text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                          <HugeiconsIcon
-                            icon={DatabaseLightningIcon}
-                            size={12}
-                          />{" "}
-                          View collected data
-                        </Link>
-                      </div>
-                    ) : (
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block truncate text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {link.url}
-                      </a>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2 transition-opacity duration-150 md:justify-end md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      onClick={() => onLinkEdit(link)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive"
-                      disabled={selectedLinkId === link._id}
-                      onClick={() =>
-                        handleRemoveLink({
-                          _id: link._id,
-                          title: link.title,
-                        })
-                      }
-                    >
-                      {selectedLinkId === link._id ? "Removing..." : "Remove"}
-                    </Button>
-                    <span className="ml-1 text-xs text-muted-foreground">
-                      Active
-                    </span>
-                    <Switch
-                      checked={link.active}
-                      onCheckedChange={(active) =>
-                        toggleActive({ linkId: link._id, active })
+                  link={link}
+                  actions={
+                    <LinkListItemActions
+                      link={link}
+                      onEdit={() => onLinkEdit(link)}
+                      onDelete={() => handleRemoveLink(link)}
+                      onReorder={() => () => {}}
+                      onToggleActive={() =>
+                        toggleActive({ linkId: link._id, active: !link.active })
                       }
                     />
-                  </div>
-                </li>
+                  }
+                />
               ))}
             </ul>
           </CardContent>
