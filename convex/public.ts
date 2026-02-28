@@ -18,7 +18,9 @@ export const getProfile = query({
       .withIndex("by_profile", (q) => q.eq("profileId", profile._id))
       .collect()
 
-    const links = unsortedLinks.sort((a, b) => b.order - a.order)
+    const links = unsortedLinks
+      .sort((a, b) => b.order - a.order)
+      .filter((link) => link.active)
 
     return {
       profile,

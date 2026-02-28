@@ -42,8 +42,9 @@ function RouteComponent() {
           <div className="sticky top-20 border rounded-xl shadow-lg overflow-hidden">
             <UserPage
               profile={profile}
-              links={links ?? []}
+              links={links?.filter((l) => l.active) ?? []}
               className="min-h-96"
+              onFormLinkClick={() => {}}
             />
           </div>
         </div>
