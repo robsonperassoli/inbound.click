@@ -8,10 +8,13 @@ export const Route = createFileRoute("/")({
 })
 
 const DYNAMIC_NAMES = [
-  "fitness-coach",
-  "startup-founder",
-  "creator",
-  "agency-owner",
+  "realtor_josh",
+  "coach_marcus",
+  "design_by_clara",
+  "train_with_tara",
+  "ads_with_adam",
+  "legal_by_laura",
+  "socials_with_sam",
 ]
 
 function LandingPage() {
@@ -145,11 +148,11 @@ function TypewriterUrl() {
         Your brand at
       </p>
       <p className="mt-2 text-lg font-semibold text-white sm:text-xl">
-        inbound.link/
+        s.uper.bio/
         <span className="text-[#71D0AC]">{typedName || "\u00a0"}</span>
         <span
           aria-hidden
-          className="ml-0.5 inline-block h-5 w-[2px] animate-[blink_1s_steps(1,end)_infinite] bg-[#F7C664] align-middle"
+          className="ml-0.5 inline-block h-5 w-0.5 animate-[blink_1s_steps(1,end)_infinite] bg-[#F7C664] align-middle"
         />
       </p>
     </div>
