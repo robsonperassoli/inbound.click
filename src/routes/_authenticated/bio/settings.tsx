@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { useFileUpload } from "@/hooks/use-file-upload"
 
 export const Route = createFileRoute("/_authenticated/bio/settings")({
   component: RouteComponent,
@@ -60,10 +61,11 @@ function SettingsForm({
   profileId: Id<"profiles">
   profile: Profile
 }) {
+  const { uploadFile } = useFileUpload()
   const updateProfileHeader = useMutation(
     api.profiles.mutations.updateProfileHeader,
   )
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
+
   const updateProfileAvatar = useMutation(
     api.profiles.mutations.updateProfileAvatar,
   )
@@ -111,15 +113,7 @@ function SettingsForm({
   })
 
   const handleAvatarUpload = async (file: File) => {
-    const uploadUrl = await generateUploadUrl({})
-
-    const result = await fetch(uploadUrl, {
-      method: "POST",
-      headers: { "Content-Type": file.type },
-      body: file,
-    })
-
-    const { storageId } = await result.json()
+    const { storageId } = await uploadFile(file)
 
     await updateProfileAvatar({ avatarId: storageId, profileId })
   }

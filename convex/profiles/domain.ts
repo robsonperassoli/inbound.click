@@ -29,6 +29,9 @@ export const getProfileForUserId = async (
         avatarUrl: profile?.avatarId
           ? await ctx.storage.getUrl(profile.avatarId)
           : null,
+        backgroundImageUrl: profile?.backgroundImage
+          ? await ctx.storage.getUrl(profile.backgroundImage)
+          : null,
       }
     : null
 }

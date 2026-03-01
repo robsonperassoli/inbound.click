@@ -1,7 +1,12 @@
 import { api } from "@convex/_generated/api"
 import type { Doc } from "@convex/_generated/dataModel"
+import { Image03Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQuery } from "convex/react"
+import { useFileUpload } from "@/hooks/use-file-upload"
 import { fonts } from "@/lib/themes"
+import { FileUpload } from "./file-upload"
+import { ImagePreview } from "./image-preview"
 import { Button } from "./ui/button"
 import { ColorPickerField } from "./ui/color-picker-field"
 import { Field, FieldGroup, FieldTitle } from "./ui/field"
@@ -14,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
+import { Spinner } from "./ui/spinner"
 
 type Profile = Doc<"profiles">
 
@@ -43,6 +49,7 @@ export function EditTheme({
 }: {
   profileId: Doc<"profiles">["_id"]
 }) {
+  const { uploadFile, uploading } = useFileUpload()
   const profile = useQuery(api.profiles.queries.getProfile, { profileId })
   const updateTheme = useMutation(api.profiles.mutations.updateTheme)
 
@@ -65,8 +72,37 @@ export function EditTheme({
     })
   }
 
+  const handleBackgroundUpload = async (file: File) => {
+    const { storageId } = await uploadFile(file)
+
+    await handleUpdate({ backgroundImage: storageId })
+  }
+
   return (
     <FieldGroup>
+      <Field>
+        <FieldTitle>Background Image</FieldTitle>
+        <div className="flex space-x-2">
+
+          <FileUpload onChange={(_url, file) => handleBackgroundUpload(file)}>
+            <Button variant="secondary" disabled={uploading}>
+              {uploading ? (
+                <>
+                  <Spinner /> Uploading...
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={Image03Icon} /> Select image
+                </>
+              )}
+            </Button>
+          </FileUpload>
+          {profile.backgroundImageUrl && (
+            <ImagePreview url={profile.backgroundImageUrl} />
+          )}
+        </div>
+      </Field>
+
       {/* Colors */}
       <Field>
         <FieldTitle>Background Color</FieldTitle>

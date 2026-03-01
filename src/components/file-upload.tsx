@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 
 interface FileUploadProps {
   children: React.ReactNode
-  onChange: (url: string, file: File) => void
+  onChange: (url: string, file: File) => void | Promise<void>
   accept?: string
   maxSize?: number // in bytes
   className?: string
@@ -69,7 +69,6 @@ export function FileUpload({
         onChange={handleChange}
         className="sr-only"
         disabled={disabled}
-        aria-hidden="true"
       />
     </div>
   )

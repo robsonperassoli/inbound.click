@@ -5,7 +5,7 @@ import { threadsFields } from "./threads/validators"
 export const themeFields = {
   theme: v.string(),
   backgroundColor: v.string(),
-  backgroundImage: v.optional(v.string()),
+  backgroundImage: v.optional(v.id("_storage")),
   fontFamily: v.string(),
   textColor: v.string(),
   buttonShape: v.union(
