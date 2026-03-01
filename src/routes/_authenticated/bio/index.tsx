@@ -1,20 +1,24 @@
 import { api } from "@convex/_generated/api"
 import type { Doc, Id } from "@convex/_generated/dataModel"
-import { DatabaseLightningIcon, PlusSignIcon } from "@hugeicons/core-free-icons"
+import { move } from "@dnd-kit/helpers"
+import { DragDropProvider } from "@dnd-kit/react"
+import { PlusSignIcon, Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router"
+import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateLinkButton } from "@/components/links/create-link-button"
 import { EditLinkModal } from "@/components/links/edit-link-modal"
-import { LinkListItem } from "@/components/links/link-list-item"
+import {
+  LinkListItem,
+  SortableLinkListItem,
+} from "@/components/links/link-list-item"
 import { LinkListItemActions } from "@/components/links/link-list-item-actions"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
 
 export const Route = createFileRoute("/_authenticated/bio/")({
   component: RouteComponent,
@@ -26,10 +30,12 @@ function RouteComponent() {
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
   const toggleActive = useMutation(api.links.mutations.toggleActive)
   const removeLink = useMutation(api.links.mutations.removeLink)
+  const reorderLinks = useMutation(api.links.mutations.reorderLinks)
   const [openModal, setOpenModal] = useState<
     "add-link" | "add-form-link" | "edit-link" | null
   >(null)
   const [selectedLinkId, setSelectedLinkId] = useState<Id<"links"> | null>(null)
+  const [sortModeOn, setSortModeOn] = useState(false)
 
   const headerActions = useMemo(
     () => [
@@ -102,33 +108,74 @@ function RouteComponent() {
       )}
 
       {links && links.length > 0 && (
-        <Card className="!gap-0 !py-0 overflow-hidden border-border/60 bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/70">
+        <Card className="gap-0! py-0! overflow-hidden border-border/60 bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/70">
           <CardContent className="p-0">
-            <ul>
-              {links.map((link) => (
-                <LinkListItem
-                  key={link._id}
-                  link={link}
-                  actions={
-                    <LinkListItemActions
+            <DragDropProvider
+              onDragEnd={(e) => {
+                if (!links) {
+                  return
+                }
+
+                const linksWitId = links.map((link) => ({
+                  id: link._id,
+                  ...link,
+                }))
+
+                const reorderedLinks = move(linksWitId, e).map(
+                  ({ id }, index) => ({ linkId: id, order: index }),
+                )
+
+                reorderLinks({ links: reorderedLinks })
+              }}
+            >
+              <ul>
+                {links.map((link, index) =>
+                  sortModeOn ? (
+                    <SortableLinkListItem
+                      key={link._id}
                       link={link}
-                      onEdit={() => onLinkEdit(link)}
-                      onDelete={() => handleRemoveLink(link)}
-                      onReorder={() => () => {}}
-                      onToggleActive={() =>
-                        toggleActive({ linkId: link._id, active: !link.active })
+                      index={index}
+                    />
+                  ) : (
+                    <LinkListItem
+                      key={link._id}
+                      link={link}
+                      actions={
+                        <LinkListItemActions
+                          link={link}
+                          onEdit={() => onLinkEdit(link)}
+                          onDelete={() => handleRemoveLink(link)}
+                          onReorder={() => setSortModeOn(true)}
+                          onToggleActive={() =>
+                            toggleActive({
+                              linkId: link._id,
+                              active: !link.active,
+                            })
+                          }
+                        />
                       }
                     />
-                  }
-                />
-              ))}
-            </ul>
+                  ),
+                )}
+              </ul>
+            </DragDropProvider>
           </CardContent>
         </Card>
       )}
 
-      <div className="text-xs text-muted-foreground">
-        {links ? `${links.length} total links` : ""}
+      <div className="flex items-center justify-between">
+        <div className="text-xs text-muted-foreground">
+          {links ? `${links.length} total links` : ""}
+        </div>
+        {sortModeOn && (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setSortModeOn(false)}
+          >
+            <HugeiconsIcon icon={Tick01Icon} /> Done
+          </Button>
+        )}
       </div>
 
       <AddLinkModal

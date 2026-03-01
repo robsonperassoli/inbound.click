@@ -24,6 +24,8 @@
     "@convex-dev/better-auth": "^0.10.11",
     "@convex-dev/migrations": "^0.3.1",
     "@convex-dev/react-query": "0.1.0",
+    "@dnd-kit/helpers": "^0.3.2",
+    "@dnd-kit/react": "^0.3.2",
     "@faker-js/faker": "^10.0.0",
     "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource-variable/figtree": "^5.2.10",

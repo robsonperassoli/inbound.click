@@ -1,21 +1,80 @@
 import type { Doc } from "@convex/_generated/dataModel"
-import { DatabaseLightningIcon } from "@hugeicons/core-free-icons"
+import { useSortable } from "@dnd-kit/react/sortable"
+import {
+  DatabaseLightningIcon,
+  DragDropVerticalIcon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
-import type { ReactNode } from "react"
+import { type ReactNode, type Ref, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
+
+export function SortableLinkListItem({
+  index,
+  link,
+}: {
+  index: number
+  link: Doc<"links">
+}) {
+  const [element, setElement] = useState<Element | null>(null)
+  const handleRef = useRef<HTMLButtonElement | null>(null)
+  const { isDragging } = useSortable({
+    id: link._id,
+    index,
+    element,
+    handle: handleRef,
+  })
+
+  return (
+    <LinkListItem
+      sortable
+      link={link}
+      handleRef={handleRef}
+      setElement={setElement}
+      isDragging={isDragging}
+    />
+  )
+}
 
 export function LinkListItem({
   link,
   actions,
+  sortable,
+  handleRef,
+  setElement,
+  isDragging,
 }: {
   link: Doc<"links">
   actions?: ReactNode
+  setElement?: (element: Element | null) => void
+  handleRef?: Ref<HTMLButtonElement>
+  sortable?: boolean
+  isDragging?: boolean
 }) {
   return (
     <li
+      ref={setElement}
       key={link._id}
-      className="group grid gap-4 border-b border-border/60 px-5 py-4 last:border-b-0 md:grid-cols-[1fr_auto] md:items-center"
+      className={cn(
+        "group grid border-b border-border/60 py-4 last:border-b-0 md:items-center",
+        sortable
+          ? "md:grid-cols-[1.5rem_auto] pr-5 pl-2 gap-2"
+          : "md:grid-cols-[1fr_auto] px-5 gap-4",
+        isDragging && "border-b-0",
+      )}
     >
+      {sortable && (
+        <button
+          type="button"
+          ref={handleRef}
+          className={cn(
+            "rounded py-1 hover:bg-muted",
+            isDragging && "bg-muted",
+          )}
+        >
+          <HugeiconsIcon icon={DragDropVerticalIcon} />
+        </button>
+      )}
       <div className="min-w-0 space-y-2">
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate text-sm font-semibold">{link.title}</span>
@@ -53,7 +112,7 @@ export function LinkListItem({
         )}
       </div>
 
-      {actions}
+      {!sortable && actions}
     </li>
   )
 }

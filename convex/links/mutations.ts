@@ -96,3 +96,25 @@ export const removeLink = userMutation({
     await ctx.db.delete(args.linkId)
   },
 })
+
+export const reorderLinks = userMutation({
+  args: {
+    links: v.array(
+      v.object({
+        linkId: v.id("links"),
+        order: v.number(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    for (const { linkId, order } of args.links) {
+      const link = await ctx.db.get("links", linkId)
+
+      if (!link || link.userId !== ctx.user._id) {
+        throw new Error(`Link ${linkId} not found`)
+      }
+
+      await ctx.db.patch(linkId, { order })
+    }
+  },
+})
