@@ -51,6 +51,9 @@ export const getProfileByUsername = async (ctx: QueryCtx, username: string) => {
     avatarUrl: profile?.avatarId
       ? await ctx.storage.getUrl(profile.avatarId)
       : null,
+    backgroundImageUrl: profile?.backgroundImage
+      ? await ctx.storage.getUrl(profile.backgroundImage)
+      : null,
   }
 }
 

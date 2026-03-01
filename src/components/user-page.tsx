@@ -16,6 +16,7 @@ export function UserPage({
 }: {
   profile: Doc<"profiles"> & {
     avatarUrl: string | null
+    backgroundImageUrl: string | null
   }
   links: UserPageLink[]
   className?: string
@@ -29,7 +30,7 @@ export function UserPage({
 
   return (
     <div
-      className={cn("up-theme py-10 px-8 flex", className)}
+      className={cn("up-theme relative py-10 px-8 flex", className)}
       style={createUpThemeStyles({
         backgroundColor: profile.backgroundColor,
         fontFamily: profile.fontFamily,
@@ -40,7 +41,18 @@ export function UserPage({
         buttonTextColor: profile.buttonTextColor,
       })}
     >
-      <div className="max-w-2xl mx-auto flex-1">
+      {profile.backgroundImageUrl && (
+        <div
+          className="absolute inset-0 z-0 opacity-30"
+          style={{
+            backgroundImage: `url(${profile.backgroundImageUrl})`,
+            backgroundPosition: "center top",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+      )}
+      <div className="max-w-2xl mx-auto flex-1 relative z-10">
         <header className="space-y-5">
           {profile.avatarUrl && (
             <Avatar className="size-20 mx-auto block shadow-lg">

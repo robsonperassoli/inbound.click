@@ -11,7 +11,10 @@ export const getProfile = query({
     username: v.string(),
   },
   handler: async (ctx, args) => {
-    const profile = await profiles.getProfileByUsername(ctx, args.username)
+    const { userId: _, ...profile } = await profiles.getProfileByUsername(
+      ctx,
+      args.username,
+    )
 
     const unsortedLinks = await ctx.db
       .query("links")
