@@ -25,7 +25,7 @@ function LandingPage() {
       <header className="sticky top-0 z-50 border-b border-[#2D2E2C]/8 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <a href="#top" className="flex items-center gap-3">
-            <img src={logo} alt="Inbound.click" className="h-9 w-auto" />
+            <img src={logo} alt="Inbound.click" className="h-5 md:h-9 w-auto" />
             <span className="text-sm font-semibold tracking-tight sm:text-base sr-only">
               Inbound.click
             </span>
