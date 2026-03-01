@@ -66,6 +66,47 @@ export const Route = createFileRoute("/$username/")({
       links: linksWithRedirect,
     }
   },
+  head: ({ loaderData }) => {
+    const profile = loaderData?.profile
+    if (!profile) {
+      return {
+        meta: [{ title: "Profile Not Found" }],
+      }
+    }
+
+    const title = profile.title || `${profile.username}'s Profile`
+    const description =
+      profile.bio || `Check out ${profile.username}'s profile on Superbio`
+    const url = `https://s.uper.bio/${profile.username}`
+
+    const meta = [
+      { title: title },
+      { name: "description", content: description },
+
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "profile" },
+      { property: "og:url", content: url },
+      { property: "og:site_name", content: "Superbio" },
+
+      {
+        name: "twitter:card",
+        content: profile.avatarUrl ? "summary_large_image" : "summary",
+      },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+
+      { name: "robots", content: "index, follow" },
+      { rel: "canonical", href: url },
+    ]
+
+    if (profile.avatarUrl) {
+      meta.push({ property: "og:image", content: profile.avatarUrl })
+      meta.push({ name: "twitter:image", content: profile.avatarUrl })
+    }
+
+    return { meta }
+  },
 })
 
 function RouteComponent() {
