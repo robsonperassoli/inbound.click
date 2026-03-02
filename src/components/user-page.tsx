@@ -52,7 +52,7 @@ export function UserPage({
           }}
         />
       )}
-      <div className="max-w-2xl mx-auto flex-1 relative z-10">
+      <div className="max-w-2xl mx-auto flex-1 relative z-0">
         <header className="space-y-5">
           {profile.avatarUrl && (
             <Avatar className="size-20 mx-auto block shadow-lg">
