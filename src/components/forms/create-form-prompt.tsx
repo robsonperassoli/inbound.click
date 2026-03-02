@@ -70,7 +70,11 @@ export function CreateFormPrompt({
         message: prompt.trim(),
       })
 
-      navigate({ to: "/forms/builder/$threadId", params: { threadId } })
+      navigate({
+        to: "/forms/builder/$threadId",
+        params: { threadId },
+        search: { returnTo: "bio" },
+      })
     } catch (err) {
       console.error(err)
       toast.error(err?.message ?? "Could not create form")

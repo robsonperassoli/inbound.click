@@ -30,7 +30,7 @@ export function UserPage({
 
   return (
     <div
-      className={cn("up-theme relative py-10 px-8 flex", className)}
+      className={cn("up-theme relative flex @container/user-page", className)}
       style={createUpThemeStyles({
         backgroundColor: profile.backgroundColor,
         fontFamily: profile.fontFamily,
@@ -52,7 +52,7 @@ export function UserPage({
           }}
         />
       )}
-      <div className="max-w-2xl mx-auto flex-1 relative z-0">
+      <div className="max-w-2xl mx-auto flex-1 relative z-0 py-8 @md/user-page:py-10 px-4 @md/user-page:px-6 @lg/user-page:px-8">
         <header className="space-y-5">
           {profile.avatarUrl && (
             <Avatar className="size-20 mx-auto block shadow-lg">
@@ -60,21 +60,24 @@ export function UserPage({
             </Avatar>
           )}
 
-          <div className="text-center space-y-1.5">
-            <h1 className="text-3xl font-semibold">{profile.title}</h1>
-            <p className="text-base">{profile.bio}</p>
+          <div className="text-center space-y-1 @md/userpage:space-y-1.5">
+            <h1 className="text-xl @md/user-page:text-3xl font-semibold">
+              {profile.title}
+            </h1>
+            <p className="text-sm @md/user-page:text-base">{profile.bio}</p>
           </div>
         </header>
 
-        <ul className="flex flex-col justify-center gap-y-5 mt-8 max-w-md mx-auto">
+        <ul className="flex flex-col justify-center gap-y-3 @md/user-page:gap-y-5 mt-6 @md/user-page:mt-8 max-w-sm mx-auto">
           {links.map((link) => (
-            <li key={link._id}>
+            <li key={link._id} className="min-w-0 truncate flex">
               <Button
                 {...(link.type === "url"
                   ? { href: link.url }
                   : { onClick: () => onFormLinkClick(link) })}
                 shape={profile.buttonShape}
                 buttonStyle={profile.buttonStyle}
+                className="truncate text-ellipsis"
               >
                 {link.title}
               </Button>

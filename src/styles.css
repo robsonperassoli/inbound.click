@@ -163,7 +163,6 @@
 
   /* Button base */
   .up-button {
-    padding: 0.75rem 1.5rem;
     font-weight: 500;
     transition: all 150ms ease;
     border-radius: var(--up-button-radius, 12px);

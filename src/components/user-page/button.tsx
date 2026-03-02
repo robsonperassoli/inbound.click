@@ -8,10 +8,11 @@ const buttonVariants = cva(
   flex items-center justify-center
   whitespace-nowrap
   transition-all
-  shrink-0
   outline-none
   select-none
-  w-full
+  flex-1
+  text-sm @md/user-page:text-base
+  px-4 @md/user-page:px-6
   `,
   {
     variants: {

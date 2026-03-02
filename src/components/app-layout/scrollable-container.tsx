@@ -8,7 +8,7 @@ export function ScrollableContainer({
   className?: string
 }) {
   return (
-    <div className={cn("flex-1 overflow-y-auto p-6", className)}>
+    <div className={cn("flex-1 overflow-y-auto p-4 md:p-6", className)}>
       {children}
     </div>
   )
