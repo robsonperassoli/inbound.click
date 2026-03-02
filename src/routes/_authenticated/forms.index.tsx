@@ -4,6 +4,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { useMemo, useState } from "react"
+import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { CreateFormSheet } from "@/components/forms/create-form-sheet"
 import { useSiteHeader } from "@/components/site-header"
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/forms/")({
 function RouteComponent() {
   const headerActions = useMemo(
     () => [
-      <ButtonGroup>
+      <ButtonGroup key="create-form-actions">
         <Button size="sm" onClick={() => setOpenDialog("prompt-create")}>
           <HugeiconsIcon icon={Sparkles} /> Create Form
         </Button>
@@ -57,7 +58,7 @@ function RouteComponent() {
   >(null)
 
   return (
-    <div className="space-y-5">
+    <ScrollableContainer className="space-y-5">
       {forms === undefined && (
         <Card className="border-border/60 bg-muted/20">
           <CardContent className="py-10 text-sm text-muted-foreground">
@@ -86,7 +87,9 @@ function RouteComponent() {
               >
                 <div className="min-w-0 space-y-2">
                   <div className="flex min-w-0 items-center gap-2">
-                    <h3 className="truncate text-sm font-semibold">{item.title}</h3>
+                    <h3 className="truncate text-sm font-semibold">
+                      {item.title}
+                    </h3>
                     <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
                       {item.fields.length} fields
                     </span>
@@ -135,6 +138,6 @@ function RouteComponent() {
         open={openDialog === "prompt-create"}
         onClose={() => setOpenDialog(null)}
       />
-    </div>
+    </ScrollableContainer>
   )
 }

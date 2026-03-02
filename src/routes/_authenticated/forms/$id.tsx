@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { useMemo } from "react"
+import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
 import { useSiteHeader } from "@/components/site-header"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -35,7 +36,7 @@ function RouteComponent() {
   )
 
   return (
-    <div className="p-6 space-y-4">
+    <ScrollableContainer className="space-y-4">
       <Tabs value={activeTab} className="w-full">
         <TabsList>
           <TabsTrigger value="submissions" asChild>
@@ -63,6 +64,6 @@ function RouteComponent() {
       </Tabs>
 
       <Outlet />
-    </div>
+    </ScrollableContainer>
   )
 }

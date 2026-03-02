@@ -12,6 +12,7 @@ import { Temporal } from "@js-temporal/polyfill"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 import z from "zod"
+import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -643,7 +644,7 @@ function RouteComponent() {
   const totalClicks = overview?.total_link_clicks ?? 0
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] space-y-6 px-3 py-4">
+    <ScrollableContainer className="mx-auto w-full max-w-350 space-y-6">
       <AnalyticsHeader period={period} onPeriodChange={handlePeriodChange} />
 
       <KpiRow overview={overview} rangeLabel={periodToRangeLabel[period]} />
@@ -665,6 +666,6 @@ function RouteComponent() {
           totalViews={totalViews}
         />
       </div>
-    </div>
+    </ScrollableContainer>
   )
 }

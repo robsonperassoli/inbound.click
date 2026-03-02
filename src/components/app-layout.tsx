@@ -13,12 +13,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             "--header-height": "calc(var(--spacing) * 12)",
           } as React.CSSProperties
         }
+        className="h-screen flex overflow-hidden"
       >
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex flex-1 flex-col overflow-hidden">
           <SiteHeader />
 
-          <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+          {/* overflow-auto */}
+          {/*<div className="flex flex-1 overflow-auto">{children}</div>*/}
+
+          {/* fixed viewport for internal scroll */}
+          <div className="flex flex-1 min-h-0">{children}</div>
           <Toaster />
         </SidebarInset>
       </SidebarProvider>

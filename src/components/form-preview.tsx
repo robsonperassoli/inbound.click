@@ -1,5 +1,7 @@
 import { api } from "@convex/_generated/api"
 import type { Doc, Id } from "@convex/_generated/dataModel"
+import { Tick02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "convex/react"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -9,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Button } from "./ui/button"
 
 type FormField = Doc<"forms">["fields"][number]
 
@@ -56,12 +59,18 @@ const FIELD_META: Record<FormField["type"], FieldMeta> = {
   },
 }
 
-export function FormPreview({ formId }: { formId: Id<"forms"> }) {
+export function FormPreview({
+  formId,
+  onDoneClicked,
+}: {
+  formId: Id<"forms">
+  onDoneClicked: () => void
+}) {
   const form = useQuery(api.forms.queries.getUserForm, { formId })
 
   if (!form) {
     return (
-      <Card className="w-full max-w-xl">
+      <Card className="w-full max-w-xl mx-auto">
         <CardHeader className="px-4 py-4">
           <CardTitle>Form preview</CardTitle>
         </CardHeader>
@@ -73,13 +82,15 @@ export function FormPreview({ formId }: { formId: Id<"forms"> }) {
   }
 
   return (
-    <Card className="w-full max-w-xl">
+    <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="border-b">
         <CardTitle className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
           Built So Far
         </CardTitle>
         <CardAction>
-          <Badge variant="outline">{form.fields.length} fields</Badge>
+          <Button size="sm" onClick={onDoneClicked}>
+            <HugeiconsIcon icon={Tick02Icon} /> Done
+          </Button>
         </CardAction>
       </CardHeader>
 
@@ -170,5 +181,20 @@ function PreviewField({ field, index }: { field: FormField; index: number }) {
         </div>
       ) : null}
     </div>
+  )
+}
+
+export function EmptyFormPreview() {
+  return (
+    <Card className="w-full max-w-xl">
+      <CardHeader className="px-4 py-4">
+        <CardTitle>Form preview</CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pb-4">
+        <p className="text-sm text-muted-foreground">
+          Agent working on creating the form
+        </p>
+      </CardContent>
+    </Card>
   )
 }
