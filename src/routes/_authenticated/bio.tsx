@@ -41,7 +41,7 @@ function RouteComponent() {
   }
 
   return (
-    <ScrollableContainer>
+    <ScrollableContainer className="pb-20">
       <div className="flex gap-x-4 md:gap-x-6 justify-center">
         <div className="grow w-3/5">
           <Outlet />

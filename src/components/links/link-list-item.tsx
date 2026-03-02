@@ -58,8 +58,8 @@ export function LinkListItem({
       className={cn(
         "group grid border-b border-border/60 py-4 last:border-b-0 md:items-center",
         sortable
-          ? "md:grid-cols-[1.5rem_auto] pr-5 pl-2 gap-2"
-          : "md:grid-cols-[1fr_auto] px-5 gap-4",
+          ? "grid-cols-[1.5rem_auto] pr-5 pl-2 gap-2"
+          : "grid-cols-[1fr_auto] px-5 gap-4",
         isDragging && "border-b-0",
       )}
     >
@@ -68,7 +68,7 @@ export function LinkListItem({
           type="button"
           ref={handleRef}
           className={cn(
-            "rounded py-1 hover:bg-muted",
+            "rounded py-1 hover:bg-muted w-6",
             isDragging && "bg-muted",
           )}
         >
