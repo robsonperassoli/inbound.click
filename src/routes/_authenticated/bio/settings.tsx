@@ -9,6 +9,7 @@ import type { FunctionReturnType } from "convex/server"
 import { useState } from "react"
 import z from "zod"
 import { FileUpload } from "@/components/file-upload"
+import { BIO_DOMAIN } from "@/components/share-button"
 import { useSiteHeader } from "@/components/site-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
 import { useFileUpload } from "@/hooks/use-file-upload"
 
@@ -152,15 +159,21 @@ function SettingsForm({
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel>Username</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="the_real_john"
-                      autoComplete="off"
-                    />
+
+                    <InputGroup className="[--radius:9999px]">
+                      <InputGroupAddon className="pl-1.5 text-muted-foreground">
+                        {BIO_DOMAIN}/
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="the_real_john"
+                        autoComplete="off"
+                      />
+                    </InputGroup>
 
                     {isInvalid ? (
                       <FieldError errors={field.state.meta.errors} />

@@ -20,11 +20,13 @@ import {
   PopoverTrigger,
 } from "./ui/popover"
 
+export const BIO_DOMAIN = "s.uper.bio"
+
 export function ShareButton() {
   const profile = useQuery(api.profiles.queries.getProfile, {})
   const { copyToClipboard, copied } = useCopyToClipboard()
   const visibleLink = useMemo(
-    () => (profile ? `s.uper.bio/${profile.username}` : ""),
+    () => (profile ? `${BIO_DOMAIN}/${profile.username}` : ""),
     [profile],
   )
 
