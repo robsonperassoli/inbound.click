@@ -243,3 +243,220 @@
     opacity: 0;
   }
 }
+
+@keyframes notFoundBlobFloatA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.3rem, -0.9rem, 0) scale(1.04);
+  }
+}
+
+@keyframes notFoundBlobFloatB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-1rem, 1rem, 0) scale(1.03);
+  }
+}
+
+@keyframes notFoundBlobFloatC {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0.8rem, 1.2rem, 0) scale(1.04);
+  }
+}
+
+@keyframes notFoundNumberPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    filter: saturate(1);
+  }
+  50% {
+    transform: translateY(-0.12rem);
+    filter: saturate(1.06);
+  }
+}
+
+@keyframes notFoundNumberHue {
+  0% {
+    filter: hue-rotate(0deg) saturate(1.05);
+  }
+  50% {
+    filter: hue-rotate(5deg) saturate(1.1);
+  }
+  100% {
+    filter: hue-rotate(0deg) saturate(1.05);
+  }
+}
+
+@keyframes notFoundDigitBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.14rem);
+  }
+}
+
+@keyframes lostDotDrift {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dot-start-x, 0rem)), calc(-50% + var(--dot-start-y, 0rem)))
+      scale(0.75);
+  }
+  28% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translate(calc(-50% + var(--dot-end-x, 0rem)), calc(-50% + var(--dot-end-y, 0rem)))
+      scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(-50% + (var(--dot-end-x, 0rem) * 1.18)),
+        calc(-50% + (var(--dot-end-y, 0rem) * 1.18))
+      )
+      scale(0.85);
+  }
+}
+
+.not-found-scene {
+  background: radial-gradient(
+      circle at 14% 12%,
+      rgb(255 249 236) 0%,
+      rgb(255 255 255) 32%,
+      rgb(244 255 249) 70%,
+      rgb(236 252 248) 100%
+    )
+    fixed;
+}
+
+.not-found-blob {
+  animation-duration: 22s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.not-found-blob-coral {
+  animation-name: notFoundBlobFloatA;
+}
+
+.not-found-blob-gold {
+  animation-name: notFoundBlobFloatB;
+}
+
+.not-found-blob-mint {
+  animation-name: notFoundBlobFloatC;
+}
+
+.not-found-hero-number {
+  display: inline-block;
+  background: linear-gradient(90deg, #ee775f 0%, #f8c751 50%, #69d0b2 100%);
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 10px 30px rgb(248 199 81 / 0.22);
+  animation:
+    notFoundNumberPulse 6.5s ease-in-out infinite,
+    notFoundNumberHue 13s ease-in-out infinite;
+}
+
+.not-found-digit {
+  display: inline-block;
+  animation: notFoundDigitBob 4.8s ease-in-out infinite;
+}
+
+.not-found-digit-center {
+  animation-delay: 0.55s;
+}
+
+.not-found-card-glow {
+  background:
+    radial-gradient(circle at 20% 18%, rgb(238 119 95 / 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 84% 76%, rgb(105 208 178 / 0.14) 0%, transparent 44%),
+    radial-gradient(circle at 60% 8%, rgb(248 199 81 / 0.14) 0%, transparent 36%);
+  filter: blur(0.2px);
+}
+
+.lost-dot {
+  --dot-size: 0.55rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 9999px;
+  opacity: 0;
+  animation: lostDotDrift 10s ease-in-out infinite;
+}
+
+.lost-dot-a {
+  --dot-start-x: -8rem;
+  --dot-start-y: -3.7rem;
+  --dot-end-x: -7.4rem;
+  --dot-end-y: -4.3rem;
+  background: rgb(238 119 95 / 0.7);
+}
+
+.lost-dot-b {
+  --dot-start-x: 7.2rem;
+  --dot-start-y: -5.2rem;
+  --dot-end-x: 7.8rem;
+  --dot-end-y: -4.6rem;
+  background: rgb(248 199 81 / 0.75);
+  animation-delay: 0.65s;
+}
+
+.lost-dot-c {
+  --dot-start-x: -7.2rem;
+  --dot-start-y: 5.1rem;
+  --dot-end-x: -6.7rem;
+  --dot-end-y: 5.8rem;
+  background: rgb(105 208 178 / 0.72);
+  animation-delay: 1.25s;
+}
+
+.lost-dot-d {
+  --dot-start-x: 8.5rem;
+  --dot-start-y: 4.2rem;
+  --dot-end-x: 9rem;
+  --dot-end-y: 4.8rem;
+  background: rgb(111 171 230 / 0.68);
+  animation-delay: 1.85s;
+}
+
+.not-found-btn-primary:hover,
+.not-found-btn-primary:focus-visible {
+  transform: translateY(-3px);
+  filter: brightness(1.03);
+  box-shadow: 0 18px 36px rgb(45 45 45 / 0.32);
+}
+
+.not-found-btn-secondary:hover,
+.not-found-btn-secondary:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgb(45 45 45 / 0.3);
+  background: rgb(255 255 255 / 0.97);
+  box-shadow: 0 14px 28px rgb(45 45 45 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-blob,
+  .not-found-hero-number,
+  .not-found-digit,
+  .lost-dot {
+    animation: none !important;
+  }
+}

@@ -1,7 +1,7 @@
 import { api } from "@convex/_generated/api"
 import { convexQuery } from "@convex-dev/react-query"
 import { Temporal } from "@js-temporal/polyfill"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 import { createMiddleware, useServerFn } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { useState } from "react"
@@ -25,19 +25,28 @@ const trackPageView = createMiddleware().server(
     const segments = pathname.split("/")
     const username = segments[segments.length - 1]
 
-    const viewPageData = await convexHttpClient.query(api.public.getProfile, {
-      username,
-    })
-
-    if (!isBot) {
-      await tinybird.pageViews.ingest({
-        profile_id: viewPageData.profile._id,
-        visitor_id: visitorId,
-        timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
-        referrer: request.headers.get("referer") ?? null,
-        referrer_name: extractReferrerName(request.headers.get("referer")),
-        device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
+    try {
+      const viewPageData = await convexHttpClient.query(api.public.getProfile, {
+        username,
       })
+
+      if (!isBot) {
+        await tinybird.pageViews.ingest({
+          profile_id: viewPageData.profile._id,
+          visitor_id: visitorId,
+          timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
+          referrer: request.headers.get("referer") ?? null,
+          referrer_name: extractReferrerName(request.headers.get("referer")),
+          device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
+        })
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      if (errorMessage.toLowerCase().includes("profile not found")) {
+        return await next()
+      }
+      throw error
     }
 
     return await next()
@@ -50,20 +59,29 @@ export const Route = createFileRoute("/$username/")({
     middleware: [trackPageView],
   },
   loader: async ({ context, params }) => {
-    const { profile, links } = await context.queryClient.ensureQueryData(
-      convexQuery(api.public.getProfile, {
-        username: params.username,
-      }),
-    )
+    try {
+      const { profile, links } = await context.queryClient.ensureQueryData(
+        convexQuery(api.public.getProfile, {
+          username: params.username,
+        }),
+      )
 
-    const linksWithRedirect = links.map((l) => ({
-      ...l,
-      url: `/${profile.username}/link/${l._id}`,
-    }))
+      const linksWithRedirect = links.map((l) => ({
+        ...l,
+        url: `/${profile.username}/link/${l._id}`,
+      }))
 
-    return {
-      profile,
-      links: linksWithRedirect,
+      return {
+        profile,
+        links: linksWithRedirect,
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      if (errorMessage.toLowerCase().includes("profile not found")) {
+        throw notFound()
+      }
+      throw error
     }
   },
   head: ({ loaderData }) => {
