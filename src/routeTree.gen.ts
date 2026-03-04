@@ -13,6 +13,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
+import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
@@ -46,6 +47,11 @@ const UsernameIndexRoute = UsernameIndexRouteImport.update({
   id: '/$username/',
   path: '/$username/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username/': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username/': typeof UsernameIndexRoute
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/bio'
     | '/onboarding'
+    | '/upgrade'
     | '/$username/'
     | '/bio/appearance'
     | '/bio/settings'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/analytics'
     | '/onboarding'
+    | '/upgrade'
     | '/$username'
     | '/bio/appearance'
     | '/bio/settings'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/onboarding'
+    | '/_authenticated/upgrade'
     | '/$username/'
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
@@ -278,6 +290,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$username/'
       preLoaderRoute: typeof UsernameIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/upgrade': {
+      id: '/_authenticated/upgrade'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof AuthenticatedUpgradeRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
@@ -414,6 +433,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
   AuthenticatedFormsBuilderThreadIdRoute: typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -423,6 +443,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
   AuthenticatedFormsBuilderThreadIdRoute:

@@ -1,8 +1,15 @@
-import { httpRouter } from "convex/server";
-import { authComponent, createAuth } from "./auth";
+import { registerRoutes } from "@convex-dev/stripe"
+import { httpRouter } from "convex/server"
+import { components } from "./_generated/api"
+import { authComponent, createAuth } from "./auth"
 
-const http = httpRouter();
+const http = httpRouter()
 
-authComponent.registerRoutes(http, createAuth);
+authComponent.registerRoutes(http, createAuth)
 
-export default http;
+// Register Stripe webhook handler at /stripe/webhook
+registerRoutes(http, components.stripe, {
+  webhookPath: "/stripe/webhook",
+})
+
+export default http

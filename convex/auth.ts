@@ -12,7 +12,6 @@ import {
   query,
 } from "./_generated/server"
 import authConfig from "./auth.config"
-import { userQuery } from "./custom"
 import { getAuthUser } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
