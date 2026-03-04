@@ -14,6 +14,7 @@ import type * as files from "../files.js";
 import type * as forms_domain from "../forms/domain.js";
 import type * as forms_mutations from "../forms/mutations.js";
 import type * as forms_queries from "../forms/queries.js";
+import type * as frontend from "../frontend.js";
 import type * as http from "../http.js";
 import type * as links_domain from "../links/domain.js";
 import type * as links_mutations from "../links/mutations.js";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   "forms/domain": typeof forms_domain;
   "forms/mutations": typeof forms_mutations;
   "forms/queries": typeof forms_queries;
+  frontend: typeof frontend;
   http: typeof http;
   "links/domain": typeof links_domain;
   "links/mutations": typeof links_mutations;

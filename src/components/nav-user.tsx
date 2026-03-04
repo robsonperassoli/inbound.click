@@ -3,7 +3,6 @@
 import { api } from "@convex/_generated/api"
 
 import {
-  CheckmarkBadgeIcon,
   CreditCardIcon,
   LogoutIcon,
   NotificationIcon,
@@ -11,7 +10,8 @@ import {
   UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useQuery } from "convex/react"
+import { Link } from "@tanstack/react-router"
+import { useAction, useQuery } from "convex/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -33,6 +33,8 @@ import { getInitials } from "@/lib/names"
 
 export function NavUser() {
   const user = useQuery(api.auth.getCurrentUser, {})
+  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const getCustomerPortalUrl = useAction(api.stripe.getCustomerPortalUrl, {})
 
   const signOut = async () => {
     await authClient.signOut({
@@ -45,6 +47,16 @@ export function NavUser() {
   }
 
   const { isMobile } = useSidebar()
+
+  const goToStripeCustomerPortal = async () => {
+    const result = await getCustomerPortalUrl()
+    if (!result?.url) {
+      console.error("Empty customer portal URL")
+      return
+    }
+
+    window.location.href = result.url
+  }
 
   return (
     <SidebarMenu>
@@ -97,23 +109,33 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+
+            {subscription === "free" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link to="/upgrade">
+                      <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} />
+                      Upgrade to Pro
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </>
+            )}
+
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
+              {/*<DropdownMenuItem>
                 <HugeiconsIcon icon={CheckmarkBadgeIcon} strokeWidth={2} />
                 Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} />
-                Billing
-              </DropdownMenuItem>
+              </DropdownMenuItem>*/}
+              {subscription && subscription !== "free" && (
+                <DropdownMenuItem onClick={goToStripeCustomerPortal}>
+                  <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} />
+                  Billing
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem>
                 <HugeiconsIcon icon={NotificationIcon} strokeWidth={2} />
                 Notifications

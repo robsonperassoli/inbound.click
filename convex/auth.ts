@@ -12,11 +12,10 @@ import {
   query,
 } from "./_generated/server"
 import authConfig from "./auth.config"
+import { SITE_URL } from "./frontend"
 import { getAuthUser } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
-
-const siteUrl = process.env.SITE_URL!
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
@@ -42,7 +41,7 @@ export const authComponent = createClient<DataModel>(components.betterAuth, {
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
   return betterAuth({
-    baseURL: siteUrl,
+    baseURL: SITE_URL,
     database: authComponent.adapter(ctx),
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {

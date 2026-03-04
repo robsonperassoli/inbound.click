@@ -1,7 +1,8 @@
 import { StripeSubscriptions } from "@convex-dev/stripe"
 import { v } from "convex/values"
 import { components } from "./_generated/api"
-import { userAction } from "./custom"
+import { userAction, userQuery } from "./custom"
+import { SITE_URL } from "./frontend"
 
 const stripeClient = new StripeSubscriptions(components.stripe, {})
 
@@ -17,10 +18,10 @@ export const createSubscriptionCheckout = userAction({
     if (!identity) {
       throw new Error("Not authenticated")
     }
-
+    const userId = ctx.user._id
     // Get or create a Stripe customer
     const customer = await stripeClient.getOrCreateCustomer(ctx, {
-      userId: ctx.user._id,
+      userId: userId,
       email: identity.email,
       name: identity.name,
     })
@@ -30,39 +31,69 @@ export const createSubscriptionCheckout = userAction({
       priceId: args.priceId,
       customerId: customer.customerId,
       mode: "subscription",
-      successUrl: "http://localhost:3000/?success=true",
-      cancelUrl: "http://localhost:3000/?canceled=true",
-      subscriptionMetadata: { userId: identity.subject },
+      successUrl: `${SITE_URL}/bio?success=true`,
+      cancelUrl: `${SITE_URL}/bio?canceled=true`,
+      subscriptionMetadata: { userId },
     })
   },
 })
 
-// Create a checkout session for a one-time payment
-export const createPaymentCheckout = userAction({
-  args: { priceId: v.string() },
-  returns: v.object({
-    sessionId: v.string(),
-    url: v.union(v.string(), v.null()),
-  }),
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
-    if (!identity) {
-      throw new Error("Not authenticated")
+export const getUserSubscription = userQuery({
+  args: {},
+  returns: v.union(v.string(), v.literal("free")),
+  handler: async (ctx, _args) => {
+    const subscriptions = await ctx.runQuery(
+      components.stripe.public.listSubscriptionsByUserId,
+      { userId: ctx.user._id },
+    )
+
+    const active = subscriptions.find((s) => s.status === "active")
+
+    if (!active) {
+      return "free"
     }
 
-    const customer = await stripeClient.getOrCreateCustomer(ctx, {
-      userId: ctx.user._id,
-      email: identity.email,
-      name: identity.name,
-    })
+    return active.priceId
+  },
+})
 
-    return await stripeClient.createCheckoutSession(ctx, {
-      priceId: args.priceId,
-      customerId: customer.customerId,
-      mode: "payment",
-      successUrl: "http://localhost:3000/?success=true",
-      cancelUrl: "http://localhost:3000/?canceled=true",
-      paymentIntentMetadata: { userId: identity.subject },
-    })
+export const getCustomerPortalUrl = userAction({
+  args: {},
+  returns: v.union(
+    v.object({
+      url: v.string(),
+    }),
+    v.null(),
+  ),
+  handler: async (ctx, _args) => {
+    const userId = ctx.user._id
+
+    // Find customer ID from subscriptions or payments
+    const subscriptions = await ctx.runQuery(
+      components.stripe.public.listSubscriptionsByUserId,
+      { userId },
+    )
+
+    if (subscriptions.length > 0) {
+      return await stripeClient.createCustomerPortalSession(ctx, {
+        customerId: subscriptions[0].stripeCustomerId,
+        returnUrl: `${SITE_URL}/bio`,
+      })
+    }
+
+    const payments = await ctx.runQuery(
+      components.stripe.public.listPaymentsByUserId,
+      { userId },
+    )
+
+    if (payments.length > 0 && payments[0].stripeCustomerId) {
+      return await stripeClient.createCustomerPortalSession(ctx, {
+        customerId: payments[0].stripeCustomerId,
+        returnUrl: `${SITE_URL}/bio`,
+      })
+    }
+
+    // No customer found
+    return null
   },
 })
