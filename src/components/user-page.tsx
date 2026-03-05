@@ -86,7 +86,7 @@ export function UserPage({
 
         <ul className="flex flex-col justify-center gap-y-3 @md/user-page:gap-y-5 mt-6 @md/user-page:mt-8 max-w-sm mx-auto">
           {links.map((link) => (
-            <li key={link._id} className="min-w-0 truncate flex">
+            <li key={link._id} className="min-w-0 flex">
               <Button
                 {...(link.type === "url"
                   ? { href: link.url }
