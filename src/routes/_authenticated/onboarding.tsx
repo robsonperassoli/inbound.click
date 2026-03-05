@@ -72,6 +72,25 @@ const stepItems: Array<{ step: OnboardingStep; label: string }> = [
   { step: 3, label: "Appearance" },
 ]
 
+const stepContent: Record<OnboardingStep, { title: string; subtitle: string }> =
+  {
+    1: {
+      title: "Welcome to Inbound Click!",
+      subtitle:
+        "Set up your basic profile details. You can change everything later.",
+    },
+    2: {
+      title: "Add your social handles",
+      subtitle:
+        "This step is optional. We will turn handles into buttons on your page.",
+    },
+    3: {
+      title: "Customize appearance",
+      subtitle:
+        "Pick a starting theme now and fine-tune it later from Appearance settings.",
+    },
+  }
+
 const emptySocialHandles: SocialHandles = {
   instagram: "",
   tiktok: "",
@@ -94,6 +113,9 @@ function RouteComponent() {
 
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(1)
   const [username, setUsername] = useState("")
+  const [usernameBlurred, setUsernameBlurred] = useState(false)
+  const [hasAttemptedStepOneContinue, setHasAttemptedStepOneContinue] =
+    useState(false)
   const [title, setTitle] = useState("")
   const [bio, setBio] = useState("")
   const [stepOneErrors, setStepOneErrors] = useState<StepOneErrors>({})
@@ -224,6 +246,8 @@ function RouteComponent() {
   }
 
   const advanceFromStepOne = async () => {
+    setHasAttemptedStepOneContinue(true)
+
     const isValid = validateStepOne()
     if (!isValid) {
       return
@@ -264,6 +288,8 @@ function RouteComponent() {
     if (isSubmitting) {
       return
     }
+
+    setHasAttemptedStepOneContinue(true)
 
     const validStepOne = validateStepOne()
     if (!validStepOne) {
@@ -321,8 +347,14 @@ function RouteComponent() {
       return stepOneErrors.username
     }
 
-    if (!normalizedUsername || usernameError) {
-      return usernameError || "Choose a unique handle for your URL."
+    if (!normalizedUsername) {
+      return "Choose a unique handle for your URL."
+    }
+
+    if (usernameError) {
+      return usernameBlurred || hasAttemptedStepOneContinue
+        ? usernameError
+        : "Use 3-30 characters with letters, numbers, _ or -."
     }
 
     if (usernameStatus === "checking") {
@@ -349,6 +381,8 @@ function RouteComponent() {
     lastCheckedUsername,
     normalizedUsername,
     stepOneErrors.username,
+    hasAttemptedStepOneContinue,
+    usernameBlurred,
     usernameError,
     usernameStatus,
   ])
@@ -357,6 +391,7 @@ function RouteComponent() {
     () => (currentStep / stepItems.length) * 100,
     [currentStep],
   )
+  const currentStepContent = stepContent[currentStep]
 
   return (
     <Dialog open>
@@ -365,16 +400,15 @@ function RouteComponent() {
         showCloseButton={false}
       >
         <DialogHeader>
-          <DialogTitle>Welcome to Inbound Click!</DialogTitle>
-          <DialogDescription>
-            Set up your profile in three quick steps. You can change everything
-            later.
-          </DialogDescription>
+          <p className="text-xs font-medium text-muted-foreground">
+            Step {currentStep} of {stepItems.length}
+          </p>
+          <DialogTitle>{currentStepContent.title}</DialogTitle>
+          <DialogDescription>{currentStepContent.subtitle}</DialogDescription>
         </DialogHeader>
 
-        <div className="mb-4 space-y-2">
-          <Progress value={progressValue} />
-          <ol className="grid grid-cols-3 gap-2 text-xs sm:text-sm">
+        <div className="mt-6 mb-3 space-y-1.5">
+          <ol className="grid grid-cols-3 gap-2 text-[11px] sm:text-xs">
             {stepItems.map((item) => (
               <li
                 key={item.step}
@@ -382,7 +416,7 @@ function RouteComponent() {
                   item.step === currentStep
                     ? "text-primary font-medium"
                     : item.step < currentStep
-                      ? "text-foreground"
+                      ? "text-foreground/80 font-normal"
                       : "text-muted-foreground"
                 }
               >
@@ -390,6 +424,7 @@ function RouteComponent() {
               </li>
             ))}
           </ol>
+          <Progress value={progressValue} className="h-1" />
         </div>
 
         {currentStep === 1 && (
@@ -409,7 +444,7 @@ function RouteComponent() {
                         handleAvatarUpload(tempUrl, file)
                       }
                     >
-                      <Button variant="secondary" disabled={uploading}>
+                      <Button variant="outline" disabled={uploading}>
                         {uploading ? "Uploading..." : "Select image"}
                       </Button>
                     </FileUpload>
@@ -430,12 +465,14 @@ function RouteComponent() {
                     value={username}
                     onChange={(event) => {
                       setUsername(event.target.value)
+                      setHasAttemptedStepOneContinue(false)
                       setStepOneErrors((current) => ({
                         ...current,
                         username: undefined,
                       }))
                     }}
                     autoComplete="off"
+                    onBlur={() => setUsernameBlurred(true)}
                     placeholder="the_real_john"
                   />
                 </InputGroup>
@@ -497,7 +534,7 @@ function RouteComponent() {
               </Field>
             </FieldGroup>
 
-            <div className="flex justify-end">
+            <div className="mt-2 border-t border-border/60 pt-4 sm:pt-5 flex justify-end">
               <Button
                 onClick={() => void advanceFromStepOne()}
                 disabled={uploading}
@@ -622,7 +659,7 @@ function RouteComponent() {
               </Field>
             </FieldGroup>
 
-            <div className="flex items-center justify-between">
+            <div className="mt-2 border-t border-border/60 pt-4 sm:pt-5 flex items-center justify-between">
               <Button variant="secondary" onClick={() => setCurrentStep(1)}>
                 Back
               </Button>
@@ -646,14 +683,6 @@ function RouteComponent() {
 
         {currentStep === 3 && (
           <div className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="font-semibold">Choose a theme</h3>
-              <p className="text-sm text-muted-foreground">
-                Pick one now. You can fully customize this later in Appearance
-                settings.
-              </p>
-            </div>
-
             <div className="flex w-full gap-x-6">
               <div className="grid grid-cols-2 mx-auto justify-center gap-3">
                 {basicThemes.map((theme) => (
@@ -693,7 +722,7 @@ function RouteComponent() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-6">
+            <div className="mt-2 border-t border-border/60 pt-4 sm:pt-5 flex items-center justify-between">
               <Button variant="secondary" onClick={() => setCurrentStep(2)}>
                 Back
               </Button>
