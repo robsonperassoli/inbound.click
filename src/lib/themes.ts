@@ -96,7 +96,7 @@ export type Theme = {
   buttonTextColor: string
 }
 
-export const themes: Theme[] = [
+const basicThemes: Theme[] = [
   {
     name: "SaaS Clean", // Default theme preserved but modernized
     backgroundColor: "#F8FAFC",
@@ -107,6 +107,40 @@ export const themes: Theme[] = [
     buttonColor: "#2563EB",
     buttonTextColor: "#FFFFFF",
   },
+  {
+    name: "Earthy Minimal", // Creators/Lifestyle
+    backgroundColor: "#FDFBF7",
+    fontFamily: "DM Sans",
+    textColor: "#4A3F35",
+    buttonShape: "pill",
+    buttonStyle: "solid",
+    buttonColor: "#8C7A6B",
+    buttonTextColor: "#FFFFFF",
+  },
+  {
+    name: "Monochrome", // Ultimate minimal black & white
+    backgroundColor: "#FFFFFF",
+    fontFamily: "Inter",
+    textColor: "#000000",
+    buttonShape: "pill",
+    buttonStyle: "solid",
+    buttonColor: "#000000",
+    buttonTextColor: "#FFFFFF",
+  },
+  {
+    name: "Neon Mint", // Electric & fresh dark mode
+    backgroundColor: "#0A1F1C",
+    fontFamily: "Outfit",
+    textColor: "#CCFFF2",
+    buttonShape: "pill",
+    buttonStyle: "outline",
+    buttonColor: "#00FFAA",
+    buttonTextColor: "#00FFAA",
+  },
+]
+
+export const themes: Theme[] = [
+  ...basicThemes,
   {
     name: "Midnight Onyx", // Premium minimal dark mode
     backgroundColor: "#09090B",
@@ -127,16 +161,7 @@ export const themes: Theme[] = [
     buttonColor: "#FFFFFF",
     buttonTextColor: "#101820",
   },
-  {
-    name: "Earthy Minimal", // Creators/Lifestyle
-    backgroundColor: "#FDFBF7",
-    fontFamily: "DM Sans",
-    textColor: "#4A3F35",
-    buttonShape: "pill",
-    buttonStyle: "solid",
-    buttonColor: "#8C7A6B",
-    buttonTextColor: "#FFFFFF",
-  },
+
   {
     name: "Cyber Punk", // Y2K / Tech dark mode
     backgroundColor: "#0D0E15",
@@ -227,16 +252,7 @@ export const themes: Theme[] = [
     buttonColor: "#965B3B",
     buttonTextColor: "#965B3B",
   },
-  {
-    name: "Monochrome", // Ultimate minimal black & white
-    backgroundColor: "#FFFFFF",
-    fontFamily: "Inter",
-    textColor: "#000000",
-    buttonShape: "pill",
-    buttonStyle: "solid",
-    buttonColor: "#000000",
-    buttonTextColor: "#FFFFFF",
-  },
+
   {
     name: "Cherry Blossom", // Cute / Illustration
     backgroundColor: "#FFF0F3",
@@ -257,16 +273,7 @@ export const themes: Theme[] = [
     buttonColor: "#EAE0C8",
     buttonTextColor: "#374151",
   },
-  {
-    name: "Neon Mint", // Electric & fresh dark mode
-    backgroundColor: "#0A1F1C",
-    fontFamily: "Outfit",
-    textColor: "#CCFFF2",
-    buttonShape: "pill",
-    buttonStyle: "outline",
-    buttonColor: "#00FFAA",
-    buttonTextColor: "#00FFAA",
-  },
+
   {
     name: "Crimson Velvet", // Luxury / Premium
     backgroundColor: "#2B0E11",

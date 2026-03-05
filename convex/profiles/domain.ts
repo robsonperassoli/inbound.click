@@ -95,3 +95,15 @@ export const checkProfileUsernameAvailable = async (
     throw new Error("Username already taken")
   }
 }
+
+export const isProfileUsernameAvailable = async (
+  ctx: QueryCtx,
+  username: string,
+) => {
+  const profile = await ctx.db
+    .query("profiles")
+    .withIndex("by_username", (q) => q.eq("username", username))
+    .unique()
+
+  return !profile
+}
