@@ -80,6 +80,46 @@ export async function createEmptyForm(
   })
 }
 
+export async function createBasicLeadForm(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+) {
+  return await ctx.db.insert("forms", {
+    userId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    title: "Get in Touch",
+    description:
+      "Capture key contact information from prospective clients to facilitate follow‑up and better understand their needs.",
+    fields: [
+      {
+        id: "name",
+        label: "Name",
+        required: true,
+        type: "shortText",
+      },
+      {
+        id: "email",
+        label: "Email",
+        required: true,
+        type: "email",
+      },
+      {
+        id: "phone",
+        label: "Phone Number",
+        required: false,
+        type: "phoneNumber",
+      },
+      {
+        id: "message",
+        label: "Message",
+        required: false,
+        type: "longText",
+      },
+    ],
+  })
+}
+
 export async function updateForm(
   ctx: MutationCtx,
   formId: Id<"forms">,

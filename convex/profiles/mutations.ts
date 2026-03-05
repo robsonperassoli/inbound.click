@@ -1,15 +1,23 @@
 import { v } from "convex/values"
 import { mutation } from "../_generated/server"
 import * as auth from "../auth"
+import { userMutation } from "../custom"
+import * as forms from "../forms/domain"
 import { themeFields } from "../schema"
 import * as domain from "./domain"
 
-export const createProfile = mutation({
+export const createProfile = userMutation({
   args: {
     username: v.string(),
     title: v.string(),
     bio: v.string(),
     ...themeFields,
+    links: v.array(
+      v.object({
+        url: v.string(),
+        title: v.string(),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     const userId = await auth.authenticatedUser(ctx)
@@ -25,7 +33,7 @@ export const createProfile = mutation({
 
     await domain.checkProfileUsernameAvailable(ctx, args.username)
 
-    await ctx.db.insert("profiles", {
+    const profileId = await ctx.db.insert("profiles", {
       userId,
       title: args.title,
       username: args.username,
@@ -40,6 +48,32 @@ export const createProfile = mutation({
       buttonColor: args.buttonColor,
       buttonTextColor: args.buttonTextColor,
     })
+    const formId = await forms.createBasicLeadForm(ctx, userId)
+
+    await ctx.db.insert("links", {
+      userId: ctx.user._id,
+      profileId,
+      active: true,
+      type: "url",
+      title: "Get In Touch",
+      formId,
+      order: 0,
+    })
+
+    for (let i = 0; i < args.links.length; i++) {
+      const link = args.links[i]
+      await ctx.db.insert("links", {
+        userId: ctx.user._id,
+        profileId,
+        active: true,
+        type: "url",
+        title: link.title,
+        url: link.url,
+        order: i + 1,
+      })
+    }
+
+    return profileId
   },
 })
 
