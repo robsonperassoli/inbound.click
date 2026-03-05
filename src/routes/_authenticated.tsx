@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router"
 import { Authenticated, useConvexAuth } from "convex/react"
 import { useEffect } from "react"
 import { AppLayout } from "@/components/app-layout"
+import { PostHogUserIdentify } from "@/components/posthog-user-identity"
 
 export const Route = createFileRoute("/_authenticated")({
   component: RouteComponent,
@@ -22,6 +23,7 @@ function RouteComponent() {
 
   return (
     <Authenticated>
+      <PostHogUserIdentify />
       <AppLayout>
         <Outlet />
       </AppLayout>
