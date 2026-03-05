@@ -1,9 +1,11 @@
 import { v } from "convex/values"
+import { internal } from "../_generated/api"
 import { mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
 import { themeFields } from "../schema"
+import { getInitials } from "../utils/names"
 import * as domain from "./domain"
 
 export const createProfile = userMutation({
@@ -21,8 +23,10 @@ export const createProfile = userMutation({
     ),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
+    const identity = await ctx.auth.getUserIdentity()
     const normalizedUsername = domain.assertValidProfileUsername(args.username)
+
+    const userId = ctx.user._id
 
     const profile = await ctx.db
       .query("profiles")
@@ -74,6 +78,20 @@ export const createProfile = userMutation({
         url: link.url,
         order: i + 1,
       })
+    }
+
+    if (identity?.email) {
+      const tenMinutes = 10 * 60 * 1000
+
+      await ctx.scheduler.runAfter(
+        tenMinutes,
+        internal.emails.sendActivationEmail,
+        {
+          to: identity.email,
+          firstName: identity?.name ? getInitials(identity.name) : args.title,
+          username: args.username,
+        },
+      )
     }
 
     return profileId
