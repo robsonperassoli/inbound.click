@@ -63,7 +63,7 @@ pnpm dlx shadcn@latest add button
 
 ## Tinybird
 
-`tb local start` to start the local Tinybird server
+`./tb_start.sh` to start the local Tinybird server
 `tb token copy "admin local_testing@tinybird.co"` to copy the local tinybird management token
 `bun run tinybird:dev`
 
