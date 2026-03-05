@@ -96,7 +96,7 @@ export type Theme = {
   buttonTextColor: string
 }
 
-const basicThemes: Theme[] = [
+export const basicThemes: Theme[] = [
   {
     name: "SaaS Clean", // Default theme preserved but modernized
     backgroundColor: "#F8FAFC",

@@ -1,6 +1,22 @@
 import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 
+const profileUsernameRegex = /^[a-zA-Z0-9_-]+$/
+
+export const assertValidProfileUsername = (username: string) => {
+  const normalizedUsername = username.trim()
+
+  if (normalizedUsername.length < 3 || normalizedUsername.length > 30) {
+    throw new Error("Username must be between 3 and 30 characters")
+  }
+
+  if (!profileUsernameRegex.test(normalizedUsername)) {
+    throw new Error("Username can only contain letters, numbers, _ and -")
+  }
+
+  return normalizedUsername
+}
+
 export const getUserProfile = async (
   ctx: QueryCtx | MutationCtx,
   userId: Id<"users">,
@@ -80,9 +96,11 @@ export const checkProfileUsernameAvailable = async (
   username: string,
   excludeProfileId?: Id<"profiles">,
 ) => {
+  const normalizedUsername = assertValidProfileUsername(username)
+
   const profile = await ctx.db
     .query("profiles")
-    .withIndex("by_username", (q) => q.eq("username", username))
+    .withIndex("by_username", (q) => q.eq("username", normalizedUsername))
     .unique()
 
   if (!profile) {
@@ -100,9 +118,18 @@ export const isProfileUsernameAvailable = async (
   ctx: QueryCtx,
   username: string,
 ) => {
+  const normalizedUsername = username.trim()
+  if (
+    normalizedUsername.length < 3 ||
+    normalizedUsername.length > 30 ||
+    !profileUsernameRegex.test(normalizedUsername)
+  ) {
+    return false
+  }
+
   const profile = await ctx.db
     .query("profiles")
-    .withIndex("by_username", (q) => q.eq("username", username))
+    .withIndex("by_username", (q) => q.eq("username", normalizedUsername))
     .unique()
 
   return !profile

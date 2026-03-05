@@ -1,4 +1,3 @@
-import type { Doc } from "@convex/_generated/dataModel"
 import { useEffect } from "react"
 import { loadFont } from "@/lib/load-font"
 import { createUpThemeStyles } from "@/lib/themes"
@@ -6,7 +5,27 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
 
-export type UserPageLink = Omit<Doc<"links">, "userId">
+export type UserPageProfile = {
+  title: string
+  bio: string
+  avatarUrl: string | null
+  backgroundImageUrl: string | null
+  backgroundColor: string
+  fontFamily: string
+  textColor: string
+  buttonShape: "square" | "rounded" | "pill"
+  buttonStyle: "solid" | "outline" | "paper" | "shadow" | "3d" | "ghost"
+  buttonColor: string
+  buttonTextColor: string
+}
+
+export type UserPageLink = {
+  _id: string
+  type: "url" | "form"
+  title: string
+  url?: string
+  formId?: string
+}
 
 export function UserPage({
   profile,
@@ -14,10 +33,7 @@ export function UserPage({
   className,
   onFormLinkClick,
 }: {
-  profile: Doc<"profiles"> & {
-    avatarUrl: string | null
-    backgroundImageUrl: string | null
-  }
+  profile: UserPageProfile
   links: UserPageLink[]
   className?: string
   onFormLinkClick: (link: UserPageLink) => void

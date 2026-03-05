@@ -11,6 +11,7 @@ export const createProfile = userMutation({
     username: v.string(),
     title: v.string(),
     bio: v.string(),
+    avatarId: v.optional(v.id("_storage")),
     ...themeFields,
     links: v.array(
       v.object({
@@ -21,6 +22,7 @@ export const createProfile = userMutation({
   },
   handler: async (ctx, args) => {
     const userId = await auth.authenticatedUser(ctx)
+    const normalizedUsername = domain.assertValidProfileUsername(args.username)
 
     const profile = await ctx.db
       .query("profiles")
@@ -31,13 +33,14 @@ export const createProfile = userMutation({
       throw new Error("Profile already exists for user")
     }
 
-    await domain.checkProfileUsernameAvailable(ctx, args.username)
+    await domain.checkProfileUsernameAvailable(ctx, normalizedUsername)
 
     const profileId = await ctx.db.insert("profiles", {
       userId,
       title: args.title,
-      username: args.username,
+      username: normalizedUsername,
       bio: args.bio,
+      avatarId: args.avatarId,
       theme: args.theme,
       backgroundColor: args.backgroundColor,
       backgroundImage: args.backgroundImage,
@@ -109,13 +112,18 @@ export const updateProfileHeader = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await auth.authenticatedUser(ctx)
+    const normalizedUsername = domain.assertValidProfileUsername(args.username)
 
     const profile = await domain.getUserProfile(ctx, userId, args.profileId)
 
-    await domain.checkProfileUsernameAvailable(ctx, args.username, profile._id)
+    await domain.checkProfileUsernameAvailable(
+      ctx,
+      normalizedUsername,
+      profile._id,
+    )
 
     await ctx.db.patch(profile._id, {
-      username: args.username,
+      username: normalizedUsername,
       title: args.title,
       bio: args.bio,
     })

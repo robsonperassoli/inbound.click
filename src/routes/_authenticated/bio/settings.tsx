@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input"
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
@@ -37,7 +36,15 @@ export const Route = createFileRoute("/_authenticated/bio/settings")({
 })
 
 const profileHeaderSchema = z.object({
-  username: z.string().trim().min(3, "Username must be at least 3 characters"),
+  username: z
+    .string()
+    .trim()
+    .min(3, "Username must be at least 3 characters")
+    .max(30, "Username must be at most 30 characters")
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Use letters, numbers, underscores, and hyphens only",
+    ),
   title: z.string().trim().min(2, "Title must be at least 2 characters"),
   bio: z.string().trim().min(2, "Bio must be at least 2 characters"),
 })
