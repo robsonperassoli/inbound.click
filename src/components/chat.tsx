@@ -8,10 +8,12 @@ export function Chat({
   viewType = "fullscreen",
   messages,
   sendMessage,
+  chatActions,
 }: {
   viewType?: "fullscreen" | "sidebar"
   messages: Doc<"messages">[]
   sendMessage: (message: string) => Promise<void>
+  chatActions?: React.ReactNode
 }) {
   const lastMessage = useMemo(() => {
     if (!messages) {
@@ -34,6 +36,7 @@ export function Chat({
         viewType === "sidebar" && "self-stretch",
       )}
     >
+      {chatActions}
       <div className="flex-1 overflow-auto grow flex flex-col-reverse w-full gap-y-4 py-4 pl-4 pr-2">
         {lastMessage?.status === "pending" && (
           <div className="w-full max-w-prose prose-sm mx-auto">
@@ -61,6 +64,7 @@ export function Chat({
           )
         })}
       </div>
+
       <div className="shrink-0 w-full px-4 pb-4">
         <ChatMessageForm
           onSubmit={sendMessage}

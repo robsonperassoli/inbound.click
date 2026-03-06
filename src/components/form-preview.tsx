@@ -83,7 +83,7 @@ export function FormPreview({
 
   return (
     <Card className="w-full max-w-xl mx-auto">
-      <CardHeader className="border-b">
+      <CardHeader className="border-b hidden sm:block">
         <CardTitle className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
           Built So Far
         </CardTitle>
@@ -94,7 +94,7 @@ export function FormPreview({
         </CardAction>
       </CardHeader>
 
-      <CardContent className="space-y-4 px-4 pb-4">
+      <CardContent className="space-y-4 px-4 pb-4 overflow-auto">
         <div className="space-y-1.5">
           <h2 className="text-xl font-semibold tracking-tight">{form.title}</h2>
           <p className="text-xs text-muted-foreground">
