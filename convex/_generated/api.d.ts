@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as custom from "../custom.js";
 import type * as emails from "../emails.js";
+import type * as feedback from "../feedback.js";
 import type * as files from "../files.js";
 import type * as forms_domain from "../forms/domain.js";
 import type * as forms_mutations from "../forms/mutations.js";
@@ -25,6 +26,7 @@ import type * as profiles_mutations from "../profiles/mutations.js";
 import type * as profiles_queries from "../profiles/queries.js";
 import type * as public_ from "../public.js";
 import type * as stripe from "../stripe.js";
+import type * as support from "../support.js";
 import type * as threads_actions from "../threads/actions.js";
 import type * as threads_agents from "../threads/agents.js";
 import type * as threads_agents_formBuilder from "../threads/agents/formBuilder.js";
@@ -47,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   custom: typeof custom;
   emails: typeof emails;
+  feedback: typeof feedback;
   files: typeof files;
   "forms/domain": typeof forms_domain;
   "forms/mutations": typeof forms_mutations;
@@ -61,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   "profiles/queries": typeof profiles_queries;
   public: typeof public_;
   stripe: typeof stripe;
+  support: typeof support;
   "threads/actions": typeof threads_actions;
   "threads/agents": typeof threads_agents;
   "threads/agents/formBuilder": typeof threads_agents_formBuilder;

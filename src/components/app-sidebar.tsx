@@ -10,9 +10,11 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
 import type * as React from "react"
+import { useState } from "react"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
+import { SidebarContactModals } from "@/components/sidebar-contact-modals"
 import {
   Sidebar,
   SidebarContent,
@@ -59,45 +61,54 @@ const data = {
       items: [],
     },
   ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: <HugeiconsIcon icon={LifeBuoy} strokeWidth={2} />,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: <HugeiconsIcon icon={Send} strokeWidth={2} />,
-    },
-  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link
-                to="/bio"
-                className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
-              >
-                <img src={logo} alt="Inbound.click logo" className="w-32" />
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
+  const [openModal, setOpenModal] = useState<"support" | "feedback" | null>(
+    null,
+  )
 
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
-    </Sidebar>
+  const secondaryItems = [
+    {
+      title: "Support",
+      icon: <HugeiconsIcon icon={LifeBuoy} strokeWidth={2} />,
+      onClick: () => setOpenModal("support"),
+    },
+    {
+      title: "Feedback",
+      icon: <HugeiconsIcon icon={Send} strokeWidth={2} />,
+      onClick: () => setOpenModal("feedback"),
+    },
+  ]
+
+  return (
+    <>
+      <Sidebar variant="inset" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  to="/bio"
+                  className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
+                >
+                  <img src={logo} alt="Inbound.click logo" className="w-32" />
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} />
+
+          <NavSecondary items={secondaryItems} className="mt-auto" />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser />
+        </SidebarFooter>
+      </Sidebar>
+
+      <SidebarContactModals openModal={openModal} onOpenChange={setOpenModal} />
+    </>
   )
 }
