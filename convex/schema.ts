@@ -79,7 +79,9 @@ export default defineSchema({
     .index("by_profile", ["profileId"])
     .index("by_user", ["userId"]),
 
-  threads: defineTable(threadsFields),
+  threads: defineTable(threadsFields)
+    .index("by_type_and_session_ended", ["type", "sessionEndedAt"])
+    .index("by_form_submission", ["formSubmissionId"]),
 
   messages: defineTable({
     threadId: v.id("threads"),
@@ -112,6 +114,7 @@ export default defineSchema({
     userId: v.id("users"),
     formId: v.id("forms"),
     values: v.record(v.string(), formSubmissionValue),
+    completedAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })

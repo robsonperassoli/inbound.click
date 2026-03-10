@@ -5,7 +5,7 @@ import * as auth from "../auth"
 import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
 import { themeFields } from "../schema"
-import { getInitials } from "../utils/names"
+import { getFirstName } from "../utils/names"
 import * as domain from "./domain"
 
 export const createProfile = userMutation({
@@ -88,7 +88,7 @@ export const createProfile = userMutation({
         internal.emails.sendActivationEmail,
         {
           to: identity.email,
-          firstName: identity?.name ? getInitials(identity.name) : args.title,
+          firstName: identity?.name ? getFirstName(identity.name) : args.title,
           username: args.username,
         },
       )

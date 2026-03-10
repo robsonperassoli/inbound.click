@@ -28,6 +28,7 @@ import { Route as UsernameLinkLinkIdIndexRouteImport } from './routes/$username.
 import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
+import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -129,6 +130,12 @@ const AuthenticatedFormsIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
+const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
+  AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport.update({
+    id: '/$submissionId/transcript',
+    path: '/$submissionId/transcript',
+    getParentRoute: () => AuthenticatedFormsIdSubmissionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,10 +152,11 @@ export interface FileRoutesByFullPath {
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
-  '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
   '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
+  '/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -163,10 +171,11 @@ export interface FileRoutesByTo {
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
-  '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId': typeof UsernameLinkLinkIdIndexRoute
   '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
+  '/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,10 +194,11 @@ export interface FileRoutesById {
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
-  '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRoute
+  '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
   '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
+  '/_authenticated/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/forms/builder/$threadId'
     | '/$username/link/$linkId/'
     | '/forms/$id/'
+    | '/forms/$id/submissions/$submissionId/transcript'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/forms/builder/$threadId'
     | '/$username/link/$linkId'
     | '/forms/$id'
+    | '/forms/$id/submissions/$submissionId/transcript'
   id:
     | '__root__'
     | '/'
@@ -250,6 +262,7 @@ export interface FileRouteTypes {
     | '/_authenticated/forms/builder/$threadId'
     | '/$username/link/$linkId/'
     | '/_authenticated/forms/$id/'
+    | '/_authenticated/forms/$id/submissions/$submissionId/transcript'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIdSettingsRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
     }
+    '/_authenticated/forms/$id/submissions/$submissionId/transcript': {
+      id: '/_authenticated/forms/$id/submissions/$submissionId/transcript'
+      path: '/$submissionId/transcript'
+      fullPath: '/forms/$id/submissions/$submissionId/transcript'
+      preLoaderRoute: typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport
+      parentRoute: typeof AuthenticatedFormsIdSubmissionsRoute
+    }
   }
 }
 
@@ -414,15 +434,31 @@ const AuthenticatedBioRouteChildren: AuthenticatedBioRouteChildren = {
 const AuthenticatedBioRouteWithChildren =
   AuthenticatedBioRoute._addFileChildren(AuthenticatedBioRouteChildren)
 
+interface AuthenticatedFormsIdSubmissionsRouteChildren {
+  AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute: typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
+}
+
+const AuthenticatedFormsIdSubmissionsRouteChildren: AuthenticatedFormsIdSubmissionsRouteChildren =
+  {
+    AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute:
+      AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute,
+  }
+
+const AuthenticatedFormsIdSubmissionsRouteWithChildren =
+  AuthenticatedFormsIdSubmissionsRoute._addFileChildren(
+    AuthenticatedFormsIdSubmissionsRouteChildren,
+  )
+
 interface AuthenticatedFormsIdRouteChildren {
   AuthenticatedFormsIdSettingsRoute: typeof AuthenticatedFormsIdSettingsRoute
-  AuthenticatedFormsIdSubmissionsRoute: typeof AuthenticatedFormsIdSubmissionsRoute
+  AuthenticatedFormsIdSubmissionsRoute: typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   AuthenticatedFormsIdIndexRoute: typeof AuthenticatedFormsIdIndexRoute
 }
 
 const AuthenticatedFormsIdRouteChildren: AuthenticatedFormsIdRouteChildren = {
   AuthenticatedFormsIdSettingsRoute: AuthenticatedFormsIdSettingsRoute,
-  AuthenticatedFormsIdSubmissionsRoute: AuthenticatedFormsIdSubmissionsRoute,
+  AuthenticatedFormsIdSubmissionsRoute:
+    AuthenticatedFormsIdSubmissionsRouteWithChildren,
   AuthenticatedFormsIdIndexRoute: AuthenticatedFormsIdIndexRoute,
 }
 

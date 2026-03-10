@@ -2,8 +2,9 @@ import type { AuthFunctions, GenericCtx } from "@convex-dev/better-auth"
 import { createClient } from "@convex-dev/better-auth"
 import { convex } from "@convex-dev/better-auth/plugins"
 import { betterAuth } from "better-auth/minimal"
+import { v } from "convex/values"
 import { components, internal } from "./_generated/api"
-import type { DataModel, Doc } from "./_generated/dataModel"
+import type { DataModel, Doc, Id } from "./_generated/dataModel"
 import {
   type ActionCtx,
   internalQuery,
@@ -80,6 +81,15 @@ export const getCurrentUserInternal = internalQuery({
   },
 })
 
+export const getUserByIdInternal = internalQuery({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, { userId }) => {
+    return await ctx.db.get("users", userId)
+  },
+})
+
 export const authenticatedUser = async (
   ctx: MutationCtx | ActionCtx | QueryCtx,
 ) => {
@@ -88,4 +98,25 @@ export const authenticatedUser = async (
   )
 
   return user?._id
+}
+
+export const getUserDetails = async (
+  ctx: MutationCtx | ActionCtx | QueryCtx,
+  userId: Id<"users">,
+) => {
+  const user = await ctx.runQuery(internal.auth.getUserByIdInternal, { userId })
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  const authUser = await authComponent.getAnyUserById(ctx, user.authId!)
+
+  if (!authUser) {
+    throw new Error("Auth User not found")
+  }
+
+  return {
+    name: authUser.name,
+    email: authUser.email,
+  }
 }

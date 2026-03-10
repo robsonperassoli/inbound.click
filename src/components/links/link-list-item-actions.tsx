@@ -4,6 +4,7 @@ import {
   Edit02Icon,
   MoreHorizontal,
   Sorting01Icon,
+  Sparkles,
   ViewIcon,
   ViewOffSlashIcon,
 } from "@hugeicons/core-free-icons"
@@ -25,12 +26,14 @@ export function LinkListItemActions({
   onDelete,
   onReorder,
   onToggleActive,
+  onEditForm,
 }: {
   link: Doc<"links">
   onEdit: () => void
   onDelete: () => void
   onReorder: () => void
   onToggleActive: () => void
+  onEditForm?: () => void
 }) {
   return (
     <ButtonGroup>
@@ -46,6 +49,13 @@ export function LinkListItemActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuGroup>
+            {link.type === "form" && (
+              <DropdownMenuItem onClick={onEditForm}>
+                <HugeiconsIcon icon={Sparkles} size={16} className="mr-2" />
+                Edit Form
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuItem onClick={onReorder}>
               <HugeiconsIcon icon={Sorting01Icon} size={16} className="mr-2" />
               Reorder

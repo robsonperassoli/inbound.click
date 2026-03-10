@@ -65,6 +65,11 @@ export async function sendUserMessage(
   threadId: Id<"threads">,
   message: string,
 ) {
+  await ctx.db.patch("threads", threadId, {
+    lastUserMessageAt: Date.now(),
+    updatedAt: Date.now(),
+  })
+
   const messageId = await ctx.db.insert("messages", {
     threadId,
     content: message,
@@ -82,6 +87,18 @@ export async function sendUserMessage(
   })
 
   return { messageId, assistantMessageId }
+}
+
+export const getThreadAndMessages = async (
+  ctx: QueryCtx,
+  threadId: Id<"threads">,
+) => {
+  const thread = await getThread(ctx, threadId)
+
+  return {
+    ...thread,
+    messages: await getMessagesByThreadId(ctx, threadId),
+  }
 }
 
 export const getThread = async (ctx: QueryCtx, threadId: Id<"threads">) => {
@@ -145,4 +162,33 @@ export async function buildThreadState(ctx: QueryCtx, thread: Doc<"threads">) {
   }
 
   throw new Error("Thread type not handled")
+}
+
+export async function endFormSubmissionThreads(
+  ctx: MutationCtx,
+  ids: Array<Id<"threads">>,
+) {
+  for (const id of ids) {
+    await ctx.db.patch("threads", id, {
+      sessionEndedAt: Date.now(),
+    })
+  }
+}
+
+export async function getThreadByFormSubmissionId(
+  ctx: QueryCtx,
+  formSubmissionId: Id<"formSubmissions">,
+) {
+  const submission = await ctx.db
+    .query("threads")
+    .withIndex("by_form_submission", (q) =>
+      q.eq("formSubmissionId", formSubmissionId),
+    )
+    .unique()
+
+  if (!submission) {
+    throw new Error(`No thread found for form submission ${formSubmissionId}`)
+  }
+
+  return submission
 }

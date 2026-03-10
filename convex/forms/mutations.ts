@@ -1,9 +1,12 @@
 import { v } from "convex/values"
+import { internal } from "../_generated/api"
 import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userMutation } from "../custom"
+import { formSubmissionTranscriptUrl } from "../frontend"
 import { formField, formSubmissionValue } from "../schema"
 import * as threads from "../threads/domain"
+import { getFirstName } from "../utils/names"
 import * as forms from "./domain"
 
 export const createForm = userMutation({
@@ -134,13 +137,69 @@ export const fillForm = internalMutation({
       )
 
       await threads.setFormSubmissionId(ctx, thread._id, formSubmissionId)
+
+      const userDetails = await auth.getUserDetails(ctx, thread.userId)
+      await ctx.scheduler.runAfter(0, internal.emails.sendNewConversation, {
+        formSubmissionId: formSubmissionId,
+        to: userDetails.email,
+        firstName: getFirstName(userDetails.name),
+        formSubmissionTranscriptUrl: formSubmissionTranscriptUrl(
+          thread.formId,
+          formSubmissionId,
+        ),
+      })
     }
 
-    ctx.db.patch("formSubmissions", formSubmissionId, {
-      values: args.values,
+    const formSubmission = await ctx.db.get("formSubmissions", formSubmissionId)
+
+    await ctx.db.patch("formSubmissions", formSubmissionId, {
+      values: {
+        ...(formSubmission?.values ?? {}),
+        ...args.values,
+      },
       updatedAt: Date.now(),
     })
 
     return formSubmissionId
+  },
+})
+
+export const setSubmissionComplete = internalMutation({
+  args: {
+    threadId: v.id("threads"),
+  },
+  handler: async (ctx, args) => {
+    const thread = await threads.getThread(ctx, args.threadId)
+
+    if (thread.type !== "formSubmission") {
+      throw new Error("Invalid session type")
+    }
+
+    if (!thread.formSubmissionId) {
+      throw new Error("Submission not found for thread")
+    }
+
+    await ctx.db.patch("formSubmissions", thread.formSubmissionId, {
+      completedAt: Date.now(),
+      updatedAt: Date.now(),
+    })
+
+    await ctx.db.patch("threads", thread._id, {
+      sessionEndedAt: Date.now(),
+      updatedAt: Date.now(),
+    })
+
+    const userDetails = await auth.getUserDetails(ctx, thread.userId)
+
+    await ctx.scheduler.runAfter(0, internal.emails.sendChatCompleted, {
+      formSubmissionId: thread.formSubmissionId,
+      to: userDetails.email,
+      conversationStatus: "finished",
+      firstName: getFirstName(userDetails.name),
+      formSubmissionTranscriptUrl: formSubmissionTranscriptUrl(
+        thread.formId,
+        thread.formSubmissionId,
+      ),
+    })
   },
 })

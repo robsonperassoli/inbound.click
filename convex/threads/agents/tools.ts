@@ -3,7 +3,6 @@ import { z } from "zod/v4"
 import { internal } from "../../_generated/api"
 import type { Id } from "../../_generated/dataModel"
 import type { ActionCtx } from "../../_generated/server"
-import { formField } from "../../schema"
 
 export function createFillFormTool(ctx: ActionCtx, threadId: Id<"threads">) {
   return tool({
@@ -30,6 +29,21 @@ export function createFillFormTool(ctx: ActionCtx, threadId: Id<"threads">) {
       await ctx.runMutation(internal.forms.mutations.fillForm, {
         threadId,
         values,
+      })
+    },
+  })
+}
+
+export function completeFormSubmission(
+  ctx: ActionCtx,
+  threadId: Id<"threads">,
+) {
+  return tool({
+    description: "Close the current chat session and submit the form",
+    inputSchema: z.object({}),
+    execute: async (_args) => {
+      await ctx.runMutation(internal.forms.mutations.setSubmissionComplete, {
+        threadId,
       })
     },
   })

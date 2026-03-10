@@ -4,9 +4,11 @@ import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
+import { formSubmissionTranscriptUrl } from "../frontend"
 import * as links from "../links/domain"
 import * as profiles from "../profiles/domain"
 import { formField } from "../schema"
+import { getFirstName } from "../utils/names"
 import * as threads from "./domain"
 
 export const updateMessageContent = internalMutation({
@@ -122,5 +124,76 @@ export const updateThreadForm = internalMutation({
       args.fields,
       args.description,
     )
+  },
+})
+
+export const autoCloseAbandonedThreads = internalMutation({
+  args: {},
+  handler: async (ctx, _args) => {
+    const threadList = await ctx.db
+      .query("threads")
+      .withIndex("by_type_and_session_ended", (q) =>
+        q.eq("type", "formSubmission").eq("sessionEndedAt", undefined),
+      )
+      .collect()
+
+    const twentyFiveMinutesAgo = Date.now() - 25 * 60 * 1000
+    const twoHoursAgo = Date.now() - 25 * 60 * 1000
+
+    // no user message or submission, opened and abandoned
+    const endWithNoAction = threadList
+      .filter((thread) => {
+        if (thread.type !== "formSubmission") {
+          throw new Error(`Invalid thread type`)
+        }
+
+        return (
+          (!thread.lastUserMessageAt || !thread.formSubmissionId) &&
+          thread.createdAt < twoHoursAgo
+        )
+      })
+      .map(({ _id }) => _id)
+
+    await threads.endFormSubmissionThreads(ctx, endWithNoAction)
+
+    const endWithCompleteEmail = threadList.filter((thread) => {
+      if (thread.type !== "formSubmission") {
+        throw new Error(`Invalid thread type`)
+      }
+
+      if (!thread.lastUserMessageAt || !thread.formSubmissionId) {
+        return false
+      }
+
+      return thread.lastUserMessageAt < twentyFiveMinutesAgo
+    })
+
+    for (const thread of endWithCompleteEmail) {
+      if (thread.type !== "formSubmission") {
+        throw new Error(`Invalid thread type`)
+      }
+
+      if (!thread.lastUserMessageAt) {
+        throw new Error(`The thread has no lastUserMessageAt: ${thread._id}`)
+      }
+
+      if (!thread.formSubmissionId) {
+        throw new Error(`The thread has no formSubmissionId: ${thread._id}`)
+      }
+
+      await threads.endFormSubmissionThreads(ctx, [thread._id])
+
+      const user = await auth.getUserDetails(ctx, thread.userId)
+      ctx.runMutation(internal.emails.sendChatCompleted, {
+        formSubmissionId: thread.formSubmissionId,
+        conversationStatus: "abandoned",
+        to: user.email,
+        firstName: getFirstName(user.name),
+        formSubmissionTranscriptUrl: formSubmissionTranscriptUrl(
+          thread.formId,
+          thread.formSubmissionId,
+        ),
+      })
+    }
   },
 })

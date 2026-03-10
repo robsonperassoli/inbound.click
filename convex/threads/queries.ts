@@ -1,6 +1,7 @@
 import { v } from "convex/values"
+import { internal } from "../_generated/api"
 import { internalQuery, query } from "../_generated/server"
-import { authenticatedUser } from "../auth"
+import { userQuery } from "../custom"
 import * as threads from "./domain"
 
 export const getFullChat = internalQuery({
@@ -8,38 +9,22 @@ export const getFullChat = internalQuery({
     threadId: v.id("threads"),
   },
   handler: async (ctx, args) => {
-    const thread = await ctx.db
-      .query("threads")
-      .withIndex("by_id", (q) => q.eq("_id", args.threadId))
-      .unique()
-
-    if (!thread) {
-      throw new Error("thread not found")
-    }
-
-    return {
-      thread,
-      messages: await threads.getMessagesByThreadId(ctx, args.threadId),
-    }
+    return await threads.getThreadAndMessages(ctx, args.threadId)
   },
 })
 
-export const getFullThread = query({
+export const getFullThread = userQuery({
   args: {
     threadId: v.id("threads"),
   },
   handler: async (ctx, args) => {
-    const userId = await authenticatedUser(ctx)
-    const thread = await threads.getThread(ctx, args.threadId)
+    const thread = await threads.getThreadAndMessages(ctx, args.threadId)
 
-    if (thread.userId !== userId) {
+    if (thread.userId !== ctx.user._id) {
       throw new Error("thread not found")
     }
 
-    return {
-      ...thread,
-      messages: await threads.getMessagesByThreadId(ctx, args.threadId),
-    }
+    return thread
   },
 })
 
@@ -49,6 +34,22 @@ export const getMessages = query({
   },
   handler: async (ctx, args) => {
     return await threads.getMessagesByThreadId(ctx, args.threadId)
+  },
+})
+
+export const getUserFormSubmissionTranscript = userQuery({
+  args: { formSubmissionId: v.id("formSubmissions") },
+  handler: async (ctx, args) => {
+    const thread = await threads.getThreadByFormSubmissionId(
+      ctx,
+      args.formSubmissionId,
+    )
+
+    if (thread.userId !== ctx.user._id) {
+      throw new Error("Thread not found")
+    }
+
+    return await threads.getThreadAndMessages(ctx, thread._id)
   },
 })
 

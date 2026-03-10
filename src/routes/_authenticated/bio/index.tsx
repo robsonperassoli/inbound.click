@@ -4,7 +4,11 @@ import { move } from "@dnd-kit/helpers"
 import { DragDropProvider } from "@dnd-kit/react"
 import { PlusSignIcon, Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { createFileRoute, useLoaderData } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  useLoaderData,
+  useNavigate,
+} from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
@@ -28,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/bio/")({
 
 function RouteComponent() {
   const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
+  const navigate = useNavigate()
   const links = useQuery(api.links.queries.getProfileLinks, { profileId })
   const toggleActive = useMutation(api.links.mutations.toggleActive)
   const removeLink = useMutation(api.links.mutations.removeLink)
@@ -152,6 +157,15 @@ function RouteComponent() {
                               linkId: link._id,
                               active: !link.active,
                             })
+                          }
+                          onEditForm={
+                            link.formId
+                              ? () =>
+                                  navigate({
+                                    to: "/forms/$id/settings",
+                                    params: { id: link.formId! },
+                                  })
+                              : undefined
                           }
                         />
                       }

@@ -7,6 +7,7 @@ const commonThreadFields = {
   systemPrompt: v.string(),
   createdAt: v.number(),
   updatedAt: v.number(),
+  lastUserMessageAt: v.optional(v.number()),
 }
 
 export const threadsFields = v.union(
@@ -14,6 +15,7 @@ export const threadsFields = v.union(
     type: v.literal("formSubmission"),
     formSubmissionId: v.optional(v.id("formSubmissions")),
     formId: v.id("forms"),
+    sessionEndedAt: v.optional(v.number()),
     ...commonThreadFields,
   }),
   v.object({

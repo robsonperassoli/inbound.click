@@ -19,6 +19,7 @@
     "convex:dev": "convex dev"
   },
   "dependencies": {
+    "@ai-sdk/fireworks": "^2.0.40",
     "@ai-sdk/openai": "^3.0.29",
     "@ai-sdk/react": "^3.0.88",
     "@convex-dev/better-auth": "^0.10.11",

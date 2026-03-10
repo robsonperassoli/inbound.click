@@ -1,17 +1,18 @@
 import { v } from "convex/values"
 import { internalQuery, query } from "../_generated/server"
 import * as auth from "../auth"
+import { userQuery } from "../custom"
+import * as threads from "../threads/queries"
 import * as forms from "./domain"
 
-export const getUserForm = query({
+export const getUserForm = userQuery({
   args: {
     formId: v.id("forms"),
   },
   handler: async (ctx, { formId }) => {
-    const userId = await auth.authenticatedUser(ctx)
     const form = await forms.getForm(ctx, formId)
 
-    if (form.userId !== userId) {
+    if (form.userId !== ctx.user._id) {
       throw new Error(`Form not found`)
     }
 
@@ -19,22 +20,18 @@ export const getUserForm = query({
   },
 })
 
-export const getUserForms = query({
+export const getUserForms = userQuery({
   handler: async (ctx, _args) => {
-    const userId = await auth.authenticatedUser(ctx)
-
-    return await forms.getForms(ctx, userId)
+    return await forms.getForms(ctx, ctx.user._id)
   },
 })
 
-export const getUserFormSubmissions = query({
+export const getUserFormSubmissions = userQuery({
   args: {
     formId: v.optional(v.id("forms")),
   },
   handler: async (ctx, { formId }) => {
-    const userId = await auth.authenticatedUser(ctx)
-
-    return await forms.getFormSubmissions(ctx, userId, formId)
+    return await forms.getFormSubmissions(ctx, ctx.user._id, formId)
   },
 })
 

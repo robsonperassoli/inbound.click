@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as cron from "../cron.js";
 import type * as custom from "../custom.js";
 import type * as emails from "../emails.js";
 import type * as feedback from "../feedback.js";
@@ -47,6 +48,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  cron: typeof cron;
   custom: typeof custom;
   emails: typeof emails;
   feedback: typeof feedback;

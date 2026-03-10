@@ -248,3 +248,74 @@ export const sendFeedbackEmail = internalMutation({
     })
   },
 })
+
+export const sendNewConversation = internalMutation({
+  args: {
+    formSubmissionId: v.string(),
+    to: v.string(),
+    firstName: v.string(),
+    formSubmissionTranscriptUrl: v.string(),
+  },
+  handler: async (
+    ctx,
+    { to, firstName, formSubmissionTranscriptUrl, formSubmissionId },
+  ) => {
+    await resend.sendEmail(ctx, {
+      from: "Inbound.Click <notifications@send.inbound.click>",
+      to,
+      template: {
+        id: "new-conversation",
+        variables: {
+          firstName,
+          formSubmissionTranscriptUrl,
+        },
+      },
+      headers: createProfileChatHeaders(formSubmissionId),
+    })
+  },
+})
+
+export const sendChatCompleted = internalMutation({
+  args: {
+    formSubmissionId: v.string(),
+    to: v.string(),
+    firstName: v.string(),
+    formSubmissionTranscriptUrl: v.string(),
+    conversationStatus: v.union(v.literal("finished"), v.literal("abandoned")),
+  },
+  handler: async (
+    ctx,
+    {
+      to,
+      firstName,
+      formSubmissionTranscriptUrl,
+      conversationStatus,
+      formSubmissionId,
+    },
+  ) => {
+    const completed =
+      "The conversation finished and Hugo collected all the key details. The lead is ready for you to review."
+    const abandoned =
+      "The visitor stopped responding before finishing the conversation. You can still review what was captured up to that moment."
+
+    await resend.sendEmail(ctx, {
+      from: "Inbound.Click <notifications@send.inbound.click>",
+      to,
+      template: {
+        id: "chat-completed",
+        variables: {
+          firstName,
+          formSubmissionTranscriptUrl,
+          statusMessage:
+            conversationStatus === "abandoned" ? abandoned : completed,
+        },
+      },
+      headers: createProfileChatHeaders(formSubmissionId),
+    })
+  },
+})
+
+const createProfileChatHeaders = (formSubmissionId: string) => [
+  { name: "In-Reply-To", value: `<${formSubmissionId}@inbound.click>` },
+  { name: "References", value: `<${formSubmissionId}@inbound.click>` },
+]
