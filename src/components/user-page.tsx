@@ -134,7 +134,7 @@ export function UserPage({
 
       <div
         className={cn(
-          "max-w-2xl mx-auto flex-1 relative z-0 border border-white/10",
+          "max-w-xl mx-auto flex-1 relative z-0 border border-white/10",
           "py-8 @2xl/user-page:py-16 px-4 @2xl/user-page:px-8",
           "@2xl/user-page:shadow-2xl @2xl/user-page:mt-8 @2xl/user-page:rounded-t-[3rem]",
         )}
