@@ -7,6 +7,49 @@ import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
 import { SocialLink } from "./user-page/social-link"
 
+function hexToRgb(hex: string) {
+  const value = hex.trim().replace("#", "")
+
+  if (!/^[\da-f]{3}$|^[\da-f]{6}$/i.test(value)) {
+    return null
+  }
+
+  const normalized =
+    value.length === 3
+      ? value
+          .split("")
+          .map((char) => `${char}${char}`)
+          .join("")
+      : value
+
+  const number = Number.parseInt(normalized, 16)
+
+  return {
+    r: (number >> 16) & 255,
+    g: (number >> 8) & 255,
+    b: number & 255,
+  }
+}
+
+function getRelativeLuminance(hex: string) {
+  const rgb = hexToRgb(hex)
+
+  if (!rgb) {
+    return 1
+  }
+
+  const toLinear = (channel: number) => {
+    const value = channel / 255
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  }
+
+  return (
+    0.2126 * toLinear(rgb.r) +
+    0.7152 * toLinear(rgb.g) +
+    0.0722 * toLinear(rgb.b)
+  )
+}
+
 export type UserPageProfile = {
   title: string
   bio: string
@@ -49,6 +92,19 @@ export function UserPage({
 
   const socialLinks = links.filter((link) => link.type === "social")
   const buttonLinks = links.filter((link) => link.type !== "social")
+  const luminance = getRelativeLuminance(profile.backgroundColor)
+  const isDarkCard = luminance < 0.2
+  const isLightCard = luminance > 0.75
+  const overlayColor = isDarkCard
+    ? "rgb(255 255 255 / 0.22)"
+    : isLightCard
+      ? "rgb(15 23 42 / 0.18)"
+      : "rgb(17 24 39 / 0.4)"
+  const overlayGradient = isDarkCard
+    ? "linear-gradient(180deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.32))"
+    : isLightCard
+      ? "linear-gradient(180deg, rgb(15 23 42 / 0.08), rgb(15 23 42 / 0.2))"
+      : "linear-gradient(180deg, rgb(17 24 39 / 0.28), rgb(17 24 39 / 0.5))"
 
   return (
     <div
@@ -64,11 +120,12 @@ export function UserPage({
       })}
     >
       <div
-        className="absolute inset-0 z-0 opacity-30 bg-gray-900/80"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage: profile.backgroundImageUrl
-            ? `url(${profile.backgroundImageUrl})`
-            : undefined,
+            ? `${overlayGradient}, url(${profile.backgroundImageUrl})`
+            : overlayGradient,
+          backgroundColor: overlayColor,
           backgroundPosition: "center top",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
@@ -77,11 +134,18 @@ export function UserPage({
 
       <div
         className={cn(
-          "max-w-2xl mx-auto flex-1 relative z-0",
+          "max-w-2xl mx-auto flex-1 relative z-0 border border-white/10",
           "py-8 @2xl/user-page:py-16 px-4 @2xl/user-page:px-8",
           "@2xl/user-page:shadow-2xl @2xl/user-page:mt-8 @2xl/user-page:rounded-t-[3rem]",
         )}
-        style={{ backgroundColor: profile.backgroundColor }}
+        style={{
+          backgroundColor: profile.backgroundColor,
+          boxShadow: isDarkCard
+            ? "0 28px 80px rgb(0 0 0 / 0.45)"
+            : isLightCard
+              ? "0 28px 80px rgb(15 23 42 / 0.08)"
+              : "0 28px 80px rgb(15 23 42 / 0.14)",
+        }}
       >
         <header className="space-y-4">
           {profile.avatarUrl && (
