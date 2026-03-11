@@ -63,18 +63,26 @@ export function UserPage({
         buttonTextColor: profile.buttonTextColor,
       })}
     >
-      {profile.backgroundImageUrl && (
-        <div
-          className="absolute inset-0 z-0 opacity-30"
-          style={{
-            backgroundImage: `url(${profile.backgroundImageUrl})`,
-            backgroundPosition: "center top",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-      )}
-      <div className="max-w-2xl mx-auto flex-1 relative z-0 py-8 @md/user-page:py-10 px-4 @md/user-page:px-6 @lg/user-page:px-8">
+      <div
+        className="absolute inset-0 z-0 opacity-30 bg-gray-900/80"
+        style={{
+          backgroundImage: profile.backgroundImageUrl
+            ? `url(${profile.backgroundImageUrl})`
+            : undefined,
+          backgroundPosition: "center top",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+
+      <div
+        className={cn(
+          "max-w-2xl mx-auto flex-1 relative z-0",
+          "py-8 @2xl/user-page:py-16 px-4 @2xl/user-page:px-8",
+          "@2xl/user-page:shadow-2xl @2xl/user-page:mt-8 @2xl/user-page:rounded-t-[3rem]",
+        )}
+        style={{ backgroundColor: profile.backgroundColor }}
+      >
         <header className="space-y-4">
           {profile.avatarUrl && (
             <Avatar className="size-24 mx-auto block shadow-lg">
