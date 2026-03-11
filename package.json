@@ -74,6 +74,7 @@
     "posthog-js": "^1.358.1",
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
+    "react-colorful": "^5.6.1",
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "react-textarea-autosize": "^8.5.9",
