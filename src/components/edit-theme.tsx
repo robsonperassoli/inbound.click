@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
+import { Separator } from "./ui/separator"
 import { Spinner } from "./ui/spinner"
 
 type Profile = Doc<"profiles">
@@ -80,10 +81,12 @@ export function EditTheme({
 
   return (
     <FieldGroup>
-      <Field>
+      <Field orientation="horizontal">
         <FieldTitle>Background Image</FieldTitle>
         <div className="flex space-x-2">
-
+          {profile.backgroundImageUrl && (
+            <ImagePreview url={profile.backgroundImageUrl} />
+          )}
           <FileUpload onChange={(_url, file) => handleBackgroundUpload(file)}>
             <Button variant="secondary" disabled={uploading}>
               {uploading ? (
@@ -97,14 +100,13 @@ export function EditTheme({
               )}
             </Button>
           </FileUpload>
-          {profile.backgroundImageUrl && (
-            <ImagePreview url={profile.backgroundImageUrl} />
-          )}
         </div>
       </Field>
 
+      <Separator />
+
       {/* Colors */}
-      <Field>
+      <Field orientation="horizontal">
         <FieldTitle>Background Color</FieldTitle>
         <ColorPickerField
           value={profile.backgroundColor}
@@ -112,7 +114,9 @@ export function EditTheme({
         />
       </Field>
 
-      <Field>
+      <Separator />
+
+      <Field orientation="horizontal">
         <FieldTitle>Text Color</FieldTitle>
         <ColorPickerField
           value={profile.textColor}
@@ -120,7 +124,9 @@ export function EditTheme({
         />
       </Field>
 
-      <Field>
+      <Separator />
+
+      <Field orientation="horizontal">
         <FieldTitle>Button Color</FieldTitle>
         <ColorPickerField
           value={profile.buttonColor}
@@ -128,7 +134,9 @@ export function EditTheme({
         />
       </Field>
 
-      <Field>
+      <Separator />
+
+      <Field orientation="horizontal">
         <FieldTitle>Button Text Color</FieldTitle>
         <ColorPickerField
           value={profile.buttonTextColor}
@@ -136,8 +144,10 @@ export function EditTheme({
         />
       </Field>
 
+      <Separator />
+
       {/* Button Shape */}
-      <Field>
+      <Field orientation="horizontal">
         <FieldTitle>Button Shape</FieldTitle>
         <div className="flex gap-2">
           {buttonShapes.map((shape) => (
@@ -155,10 +165,12 @@ export function EditTheme({
         </div>
       </Field>
 
+      <Separator />
+
       {/* Button Style */}
-      <Field>
+      <Field orientation="horizontal">
         <FieldTitle>Button Style</FieldTitle>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 max-w-72 justify-end">
           {buttonStyles.map((style) => (
             <Button
               key={style.value}
@@ -174,14 +186,16 @@ export function EditTheme({
         </div>
       </Field>
 
+      <Separator />
+
       {/* Font Family */}
-      <Field>
+      <Field orientation="horizontal">
         <FieldTitle>Font Family</FieldTitle>
         <Select
           value={profile.fontFamily}
           onValueChange={(value) => handleUpdate({ fontFamily: value })}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-52">
             <SelectValue placeholder="Select a font" />
           </SelectTrigger>
           <SelectContent>
