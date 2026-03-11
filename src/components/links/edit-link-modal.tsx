@@ -48,7 +48,7 @@ export function EditLinkModal({
           }}
           onSubmit={handleSubmit}
           onCancel={onClose}
-          editUrl={link.type === "url"}
+          editUrl={link.type !== "form"}
         />
       </DialogContent>
     </Dialog>
