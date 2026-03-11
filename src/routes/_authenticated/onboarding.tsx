@@ -97,6 +97,7 @@ const emptySocialHandles: SocialHandles = {
   facebook: "",
   linkedin: "",
   youtube: "",
+  x: "",
 }
 
 function RouteComponent() {
@@ -148,6 +149,7 @@ function RouteComponent() {
         facebook: socialHandles.facebook,
         linkedin: socialHandles.linkedin,
         youtube: socialHandles.youtube,
+        x: socialHandles.x,
       }),
     [socialHandles],
   )

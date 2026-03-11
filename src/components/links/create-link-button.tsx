@@ -13,11 +13,13 @@ import {
 
 type CreateLinkButtonProps = {
   onAddLink: () => void
+  onAddSocial: () => void
   onAddAiLeadCapture: () => void
 }
 
 export function CreateLinkButton({
   onAddLink,
+  onAddSocial,
   onAddAiLeadCapture,
 }: CreateLinkButtonProps) {
   return (
@@ -40,6 +42,16 @@ export function CreateLinkButton({
           <div className="text-sm font-medium leading-none">Add a link</div>
           <div className="text-xs text-muted-foreground">
             Add a title and destination to your bio page
+          </div>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          className="flex flex-col items-start gap-0.5 py-2"
+          onSelect={() => onAddSocial()}
+        >
+          <div className="text-sm font-medium leading-none">Add social</div>
+          <div className="text-xs text-muted-foreground">
+            Add social links for Instagram, TikTok, X, and more
           </div>
         </DropdownMenuItem>
 

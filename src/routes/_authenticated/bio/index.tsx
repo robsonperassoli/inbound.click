@@ -14,6 +14,7 @@ import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
 import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
+import { AddSocialLinkModal } from "@/components/links/add-social-link-modal"
 import { CreateLinkButton } from "@/components/links/create-link-button"
 import { EditLinkModal } from "@/components/links/edit-link-modal"
 import {
@@ -38,7 +39,7 @@ function RouteComponent() {
   const removeLink = useMutation(api.links.mutations.removeLink)
   const reorderLinks = useMutation(api.links.mutations.reorderLinks)
   const [openModal, setOpenModal] = useState<
-    "add-link" | "add-form-link" | "edit-link" | null
+    "add-link" | "add-social" | "add-form-link" | "edit-link" | null
   >(null)
   const [selectedLinkId, setSelectedLinkId] = useState<Id<"links"> | null>(null)
   const [sortModeOn, setSortModeOn] = useState(false)
@@ -48,6 +49,7 @@ function RouteComponent() {
       <CreateLinkButton
         key="add-link"
         onAddLink={() => setOpenModal("add-link")}
+        onAddSocial={() => setOpenModal("add-social")}
         onAddAiLeadCapture={() => setOpenModal("add-form-link")}
       />,
     ],
@@ -195,6 +197,13 @@ function RouteComponent() {
 
       <AddLinkModal
         open={openModal === "add-link"}
+        onClose={() => setOpenModal(null)}
+        order={nextOrder}
+        profileId={profileId}
+      />
+
+      <AddSocialLinkModal
+        open={openModal === "add-social"}
         onClose={() => setOpenModal(null)}
         order={nextOrder}
         profileId={profileId}

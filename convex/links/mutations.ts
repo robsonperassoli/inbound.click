@@ -1,5 +1,6 @@
 import { v } from "convex/values"
 import { userMutation } from "../custom"
+import { platformField } from "./validators"
 
 export const addLink = userMutation({
   args: {
@@ -16,6 +17,11 @@ export const addLink = userMutation({
         type: v.literal("form"),
         formId: v.id("forms"),
       }),
+      v.object({
+        type: v.literal("social"),
+        platform: platformField,
+        url: v.string(),
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -26,8 +32,13 @@ export const addLink = userMutation({
       order: args.order,
       active: args.active,
       type: args.details.type,
-      url: args.details.type === "url" ? args.details.url : undefined,
+      url:
+        args.details.type === "url" || args.details.type === "social"
+          ? args.details.url
+          : undefined,
       formId: args.details.type === "form" ? args.details.formId : undefined,
+      platform:
+        args.details.type === "social" ? args.details.platform : undefined,
     })
   },
 })

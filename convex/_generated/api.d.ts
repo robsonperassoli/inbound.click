@@ -22,6 +22,7 @@ import type * as http from "../http.js";
 import type * as links_domain from "../links/domain.js";
 import type * as links_mutations from "../links/mutations.js";
 import type * as links_queries from "../links/queries.js";
+import type * as links_validators from "../links/validators.js";
 import type * as profiles_domain from "../profiles/domain.js";
 import type * as profiles_mutations from "../profiles/mutations.js";
 import type * as profiles_queries from "../profiles/queries.js";
@@ -61,6 +62,7 @@ declare const fullApi: ApiFromModules<{
   "links/domain": typeof links_domain;
   "links/mutations": typeof links_mutations;
   "links/queries": typeof links_queries;
+  "links/validators": typeof links_validators;
   "profiles/domain": typeof profiles_domain;
   "profiles/mutations": typeof profiles_mutations;
   "profiles/queries": typeof profiles_queries;

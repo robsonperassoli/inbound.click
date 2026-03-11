@@ -36,6 +36,11 @@ describe("normalizeSocialHandle", () => {
       normalizeSocialHandle("youtube", "https://youtube.com/@mychannel"),
     ).toBe("mychannel")
   })
+
+  it("normalizes x handles", () => {
+    expect(normalizeSocialHandle("x", "@creator")).toBe("creator")
+    expect(normalizeSocialHandle("x", "https://x.com/creator")).toBe("creator")
+  })
 })
 
 describe("buildSocialUrl", () => {
@@ -55,6 +60,7 @@ describe("buildSocialUrl", () => {
     expect(buildSocialUrl("youtube", "creator")).toBe(
       "https://youtube.com/@creator",
     )
+    expect(buildSocialUrl("x", "creator")).toBe("https://x.com/creator")
   })
 })
 
@@ -66,12 +72,14 @@ describe("buildSocialLinks", () => {
       facebook: "fb-page",
       linkedin: "in/jane-doe",
       youtube: "",
+      x: "@xcreator",
     }
 
     expect(buildSocialLinks(handles)).toEqual([
       { title: "Instagram", url: "https://instagram.com/insta" },
       { title: "Facebook", url: "https://facebook.com/fb-page" },
       { title: "LinkedIn", url: "https://linkedin.com/in/jane-doe" },
+      { title: "X", url: "https://x.com/xcreator" },
     ])
   })
 })

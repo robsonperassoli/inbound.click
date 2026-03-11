@@ -1,32 +1,84 @@
+import {
+  Facebook01Icon,
+  InstagramIcon,
+  Linkedin01Icon,
+  NewTwitterIcon,
+  TiktokIcon,
+  YoutubeIcon,
+} from "@hugeicons/core-free-icons"
+import type { HugeiconsIconProps } from "@hugeicons/react"
+
 export type SocialPlatform =
   | "instagram"
   | "tiktok"
   | "facebook"
   | "linkedin"
   | "youtube"
+  | "x"
 
 export type SocialHandles = Record<SocialPlatform, string>
 
 type SocialConfig = {
   title: string
   prefix: string
+  icon: HugeiconsIconProps["icon"]
+  fieldLabel: string
+  placeholder: string
 }
 
 export const socialConfig: Record<SocialPlatform, SocialConfig> = {
-  instagram: { title: "Instagram", prefix: "instagram.com/" },
-  tiktok: { title: "TikTok", prefix: "tiktok.com/@" },
-  facebook: { title: "Facebook", prefix: "facebook.com/" },
-  linkedin: { title: "LinkedIn", prefix: "linkedin.com/in/" },
-  youtube: { title: "YouTube", prefix: "youtube.com/@" },
+  instagram: {
+    title: "Instagram",
+    prefix: "instagram.com/",
+    icon: InstagramIcon,
+    fieldLabel: "username",
+    placeholder: "@creator",
+  },
+  tiktok: {
+    title: "TikTok",
+    prefix: "tiktok.com/@",
+    icon: TiktokIcon,
+    fieldLabel: "username",
+    placeholder: "@creator",
+  },
+  facebook: {
+    title: "Facebook",
+    prefix: "facebook.com/",
+    icon: Facebook01Icon,
+    fieldLabel: "username",
+    placeholder: "yourpage",
+  },
+  linkedin: {
+    title: "LinkedIn",
+    prefix: "linkedin.com/in/",
+    icon: Linkedin01Icon,
+    fieldLabel: "username",
+    placeholder: "jane-doe",
+  },
+  youtube: {
+    title: "YouTube",
+    prefix: "youtube.com/@",
+    icon: YoutubeIcon,
+    fieldLabel: "handle",
+    placeholder: "@channelname",
+  },
+  x: {
+    title: "X",
+    prefix: "x.com/",
+    icon: NewTwitterIcon,
+    fieldLabel: "handle",
+    placeholder: "@creator",
+  },
 }
 
-const socialPlatforms: SocialPlatform[] = [
+export const socialPlatforms = [
   "instagram",
   "tiktok",
   "facebook",
   "linkedin",
   "youtube",
-]
+  "x",
+] as const satisfies readonly SocialPlatform[]
 
 const sanitizeRawInput = (value: string) => {
   const trimmed = value.trim()
@@ -75,6 +127,10 @@ export const normalizeSocialHandle = (
     }
   }
 
+  if (platform === "x" && segments[0]?.toLowerCase() === "@" && segments[1]) {
+    handle = segments[1]
+  }
+
   handle = handle.replace(/^@+/, "").trim()
 
   return handle
@@ -92,6 +148,10 @@ export const buildSocialUrl = (platform: SocialPlatform, handle: string) => {
 
   if (platform === "linkedin") {
     return `https://linkedin.com/in/${normalized}`
+  }
+
+  if (platform === "x") {
+    return `https://x.com/${normalized}`
   }
 
   return `https://${platform}.com/${normalized}`
