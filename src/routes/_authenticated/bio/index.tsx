@@ -2,7 +2,7 @@ import { api } from "@convex/_generated/api"
 import type { Doc, Id } from "@convex/_generated/dataModel"
 import { move } from "@dnd-kit/helpers"
 import { DragDropProvider } from "@dnd-kit/react"
-import { PlusSignIcon, Tick01Icon } from "@hugeicons/core-free-icons"
+import { Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   createFileRoute,
@@ -17,11 +17,16 @@ import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { AddSocialLinkModal } from "@/components/links/add-social-link-modal"
 import { CreateLinkButton } from "@/components/links/create-link-button"
 import { EditLinkModal } from "@/components/links/edit-link-modal"
+import { EmptyLinksList } from "@/components/links/empty-links-list"
 import {
   LinkListItem,
   SortableLinkListItem,
 } from "@/components/links/link-list-item"
 import { LinkListItemActions } from "@/components/links/link-list-item-actions"
+import {
+  SocialLinkItem,
+  SortableSocialLinkItem,
+} from "@/components/links/social-link-item"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -42,7 +47,7 @@ function RouteComponent() {
     "add-link" | "add-social" | "add-form-link" | "edit-link" | null
   >(null)
   const [selectedLinkId, setSelectedLinkId] = useState<Id<"links"> | null>(null)
-  const [sortModeOn, setSortModeOn] = useState(false)
+  const [sortMode, setSortMode] = useState<"social" | "buttons" | null>(null)
 
   const headerActions = useMemo(
     () => [
@@ -62,7 +67,20 @@ function RouteComponent() {
     actions: headerActions,
   })
 
-  const nextOrder = useMemo(() => (links?.at(-1)?.order ?? 0) + 1, [links])
+  const buttonLinks = useMemo(
+    () => (links ? links.filter((l) => l.type !== "social") : []),
+    [links],
+  )
+
+  const socialLinks = useMemo(
+    () => (links ? links.filter((l) => l.type === "social") : []),
+    [links],
+  )
+
+  const nextButtonOrder = useMemo(
+    () => (buttonLinks.at(-1)?.order ?? 0) + 1,
+    [buttonLinks],
+  )
 
   const handleRemoveLink = async (link: {
     _id: Id<"links">
@@ -100,31 +118,15 @@ function RouteComponent() {
       )}
 
       {links?.length === 0 && (
-        <Card className="border-border/60 bg-muted/20">
-          <CardContent className="flex flex-col gap-3 py-10">
-            <p className="text-sm text-muted-foreground">
-              No links yet. Add your first link to start building your page.
-            </p>
-            <div>
-              <Button size="sm" onClick={() => setOpenModal("add-link")}>
-                <HugeiconsIcon icon={PlusSignIcon} />
-                Add first link
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <EmptyLinksList onAddlinkClick={() => setOpenModal("add-link")} />
       )}
 
-      {links && links.length > 0 && (
+      {buttonLinks.length > 0 && (
         <Card className="gap-0! py-0! overflow-hidden border-border/60 bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/70">
           <CardContent className="p-0">
             <DragDropProvider
               onDragEnd={(e) => {
-                if (!links) {
-                  return
-                }
-
-                const linksWitId = links.map((link) => ({
+                const linksWitId = buttonLinks.map((link) => ({
                   id: link._id,
                   ...link,
                 }))
@@ -137,8 +139,8 @@ function RouteComponent() {
               }}
             >
               <ul>
-                {links.map((link, index) =>
-                  sortModeOn ? (
+                {buttonLinks.map((link, index) =>
+                  sortMode === "buttons" ? (
                     <SortableLinkListItem
                       key={link._id}
                       link={link}
@@ -150,10 +152,73 @@ function RouteComponent() {
                       link={link}
                       actions={
                         <LinkListItemActions
+                          viewMode="normal"
                           link={link}
                           onEdit={() => onLinkEdit(link)}
                           onDelete={() => handleRemoveLink(link)}
-                          onReorder={() => setSortModeOn(true)}
+                          onReorder={() => setSortMode("buttons")}
+                          onToggleActive={() =>
+                            toggleActive({
+                              linkId: link._id,
+                              active: !link.active,
+                            })
+                          }
+                          onEditForm={
+                            link.formId
+                              ? () =>
+                                  navigate({
+                                    to: "/forms/$id/settings",
+                                    params: { id: link.formId! },
+                                  })
+                              : undefined
+                          }
+                        />
+                      }
+                    />
+                  ),
+                )}
+              </ul>
+            </DragDropProvider>
+          </CardContent>
+        </Card>
+      )}
+
+      {socialLinks.length > 0 && (
+        <Card className="gap-0! py-0! overflow-hidden border-border/60 bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/70">
+          <CardContent className="p-0">
+            <DragDropProvider
+              onDragEnd={(e) => {
+                const linksWitId = socialLinks.map((link) => ({
+                  id: link._id,
+                  ...link,
+                }))
+
+                const reorderedLinks = move(linksWitId, e).map(
+                  ({ id }, index) => ({ linkId: id, order: index }),
+                )
+
+                reorderLinks({ links: reorderedLinks })
+              }}
+            >
+              <ul className="p-2 flex gap-x-2">
+                {socialLinks.map((link, index) =>
+                  sortMode === "social" ? (
+                    <SortableSocialLinkItem
+                      key={link._id}
+                      link={link}
+                      index={index}
+                    />
+                  ) : (
+                    <SocialLinkItem
+                      key={link._id}
+                      link={link}
+                      actions={
+                        <LinkListItemActions
+                          viewMode="compact"
+                          link={link}
+                          onEdit={() => onLinkEdit(link)}
+                          onDelete={() => handleRemoveLink(link)}
+                          onReorder={() => setSortMode("social")}
                           onToggleActive={() =>
                             toggleActive({
                               linkId: link._id,
@@ -184,11 +249,11 @@ function RouteComponent() {
         <div className="text-xs text-muted-foreground">
           {links ? `${links.length} total links` : ""}
         </div>
-        {sortModeOn && (
+        {sortMode !== null && (
           <Button
             size="sm"
             variant="secondary"
-            onClick={() => setSortModeOn(false)}
+            onClick={() => setSortMode(null)}
           >
             <HugeiconsIcon icon={Tick01Icon} /> Done
           </Button>
@@ -198,14 +263,14 @@ function RouteComponent() {
       <AddLinkModal
         open={openModal === "add-link"}
         onClose={() => setOpenModal(null)}
-        order={nextOrder}
+        order={nextButtonOrder}
         profileId={profileId}
       />
 
       <AddSocialLinkModal
         open={openModal === "add-social"}
         onClose={() => setOpenModal(null)}
-        order={nextOrder}
+        order={nextButtonOrder}
         profileId={profileId}
       />
 

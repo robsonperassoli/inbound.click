@@ -27,6 +27,7 @@ export function LinkListItemActions({
   onReorder,
   onToggleActive,
   onEditForm,
+  viewMode,
 }: {
   link: Doc<"links">
   onEdit: () => void
@@ -34,21 +35,34 @@ export function LinkListItemActions({
   onReorder: () => void
   onToggleActive: () => void
   onEditForm?: () => void
+  viewMode: "normal" | "compact"
 }) {
   return (
     <ButtonGroup>
-      <Button size="sm" variant="outline" onClick={onEdit}>
-        <HugeiconsIcon icon={Edit02Icon} size={16} className="mr-2" />
-        Edit
-      </Button>
+      {viewMode === "normal" && (
+        <Button size="sm" variant="outline" onClick={onEdit}>
+          <HugeiconsIcon icon={Edit02Icon} size={16} className="mr-2" />
+          Edit
+        </Button>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" variant="outline" className="pl-2!">
+          <Button
+            size={viewMode === "compact" ? "icon-sm" : "sm"}
+            variant={viewMode === "compact" ? "ghost" : "outline"}
+            className={viewMode === "normal" ? "pl-2!" : ""}
+          >
             <HugeiconsIcon icon={MoreHorizontal} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuGroup>
+            {viewMode === "compact" && (
+              <DropdownMenuItem onClick={onEdit}>
+                <HugeiconsIcon icon={Edit02Icon} size={16} className="mr-2" />
+                Edit
+              </DropdownMenuItem>
+            )}
             {link.type === "form" && (
               <DropdownMenuItem onClick={onEditForm}>
                 <HugeiconsIcon icon={Sparkles} size={16} className="mr-2" />

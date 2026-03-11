@@ -8,3 +8,9 @@ export const platformField = v.union(
   v.literal("facebook"),
   v.literal("linkedin"),
 )
+
+export const typeField = v.union(
+  v.literal("url"),
+  v.literal("social"),
+  v.literal("form"),
+)

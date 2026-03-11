@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
-import { platformField } from "./links/validators"
+import { platformField, typeField } from "./links/validators"
 import { threadsFields } from "./threads/validators"
 
 export const themeFields = {
@@ -73,7 +73,7 @@ export default defineSchema({
     title: v.string(),
     order: v.number(),
     active: v.boolean(),
-    type: v.union(v.literal("url"), v.literal("form"), v.literal("social")),
+    type: v.union(typeField),
     formId: v.optional(v.id("forms")),
     url: v.optional(v.string()),
     platform: v.optional(platformField),
