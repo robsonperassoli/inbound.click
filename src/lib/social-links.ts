@@ -57,10 +57,10 @@ export const socialConfig: Record<SocialPlatform, SocialConfig> = {
   },
   youtube: {
     title: "YouTube",
-    prefix: "youtube.com/@",
+    prefix: "youtube.com/",
     icon: YoutubeIcon,
     fieldLabel: "handle",
-    placeholder: "@channelname",
+    placeholder: "@channelname or channelname",
   },
   x: {
     title: "X",
@@ -142,8 +142,15 @@ export const buildSocialUrl = (platform: SocialPlatform, handle: string) => {
     return null
   }
 
-  if (platform === "tiktok" || platform === "youtube") {
+  if (platform === "tiktok") {
     return `https://${platform}.com/@${normalized}`
+  }
+
+  if (platform === "youtube") {
+    const trimmed = handle.trim()
+    const usesHandle = trimmed.startsWith("@") || trimmed.includes("/@")
+
+    return `https://youtube.com/${usesHandle ? "@" : ""}${normalized}`
   }
 
   if (platform === "linkedin") {

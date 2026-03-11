@@ -136,7 +136,7 @@ describe("AddSocialLinkModal", () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText("handle").getAttribute("placeholder")).toBe(
-        "@channelname",
+        "@channelname or channelname",
       )
     })
   })

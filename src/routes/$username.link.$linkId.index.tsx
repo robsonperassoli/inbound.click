@@ -35,7 +35,7 @@ const trackLinkClick = createMiddleware().server(
       timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
     })
 
-    if (link.type !== "url") {
+    if (link.type === "form") {
       throw new Error("invalid link type")
     }
 

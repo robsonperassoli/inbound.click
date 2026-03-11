@@ -58,6 +58,9 @@ describe("buildSocialUrl", () => {
       "https://linkedin.com/in/creator",
     )
     expect(buildSocialUrl("youtube", "creator")).toBe(
+      "https://youtube.com/creator",
+    )
+    expect(buildSocialUrl("youtube", "@creator")).toBe(
       "https://youtube.com/@creator",
     )
     expect(buildSocialUrl("x", "creator")).toBe("https://x.com/creator")
