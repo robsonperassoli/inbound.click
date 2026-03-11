@@ -1,9 +1,11 @@
 import { useEffect } from "react"
 import { loadFont } from "@/lib/load-font"
+import type { SocialPlatform } from "@/lib/social-links"
 import { createUpThemeStyles } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
+import { SocialLink } from "./user-page/social-link"
 
 export type UserPageProfile = {
   title: string
@@ -21,10 +23,11 @@ export type UserPageProfile = {
 
 export type UserPageLink = {
   _id: string
-  type: "url" | "form"
+  type: "url" | "form" | "social"
   title: string
   url?: string
   formId?: string
+  platform?: SocialPlatform
 }
 
 export function UserPage({
@@ -43,6 +46,9 @@ export function UserPage({
       loadFont(profile.fontFamily)
     }
   }, [profile.fontFamily])
+
+  const socialLinks = links.filter((link) => link.type === "social")
+  const buttonLinks = links.filter((link) => link.type !== "social")
 
   return (
     <div
@@ -69,23 +75,25 @@ export function UserPage({
         />
       )}
       <div className="max-w-2xl mx-auto flex-1 relative z-0 py-8 @md/user-page:py-10 px-4 @md/user-page:px-6 @lg/user-page:px-8">
-        <header className="space-y-5">
+        <header className="space-y-4">
           {profile.avatarUrl && (
-            <Avatar className="size-20 mx-auto block shadow-lg">
+            <Avatar className="size-24 mx-auto block shadow-lg">
               <AvatarImage src={profile.avatarUrl} />
             </Avatar>
           )}
 
           <div className="text-center space-y-1 @md/userpage:space-y-1.5">
-            <h1 className="text-xl @md/user-page:text-3xl font-semibold">
+            <h1 className="text-xl @md/user-page:text-2xl font-semibold">
               {profile.title}
             </h1>
-            <p className="text-sm @md/user-page:text-base">{profile.bio}</p>
+            {profile.bio && (
+              <p className="text-sm @md/user-page:text-base">{profile.bio}</p>
+            )}
           </div>
         </header>
 
         <ul className="flex flex-col justify-center gap-y-3 @md/user-page:gap-y-5 mt-6 @md/user-page:mt-8 max-w-sm mx-auto">
-          {links.map((link) => (
+          {buttonLinks.map((link) => (
             <li key={link._id} className="min-w-0 flex">
               <Button
                 {...(link.type === "url"
@@ -100,6 +108,16 @@ export function UserPage({
             </li>
           ))}
         </ul>
+
+        {socialLinks.length > 0 && (
+          <ul className="flex justify-center mt-6">
+            {socialLinks.map((l) => (
+              <li key={l._id}>
+                <SocialLink link={l} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )
