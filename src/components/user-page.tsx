@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { getRelativeLuminance } from "@/lib/colors"
 import { loadFont } from "@/lib/load-font"
 import type { SocialPlatform } from "@/lib/social-links"
 import { createUpThemeStyles } from "@/lib/themes"
@@ -6,49 +7,6 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
 import { SocialLink } from "./user-page/social-link"
-
-function hexToRgb(hex: string) {
-  const value = hex.trim().replace("#", "")
-
-  if (!/^[\da-f]{3}$|^[\da-f]{6}$/i.test(value)) {
-    return null
-  }
-
-  const normalized =
-    value.length === 3
-      ? value
-          .split("")
-          .map((char) => `${char}${char}`)
-          .join("")
-      : value
-
-  const number = Number.parseInt(normalized, 16)
-
-  return {
-    r: (number >> 16) & 255,
-    g: (number >> 8) & 255,
-    b: number & 255,
-  }
-}
-
-function getRelativeLuminance(hex: string) {
-  const rgb = hexToRgb(hex)
-
-  if (!rgb) {
-    return 1
-  }
-
-  const toLinear = (channel: number) => {
-    const value = channel / 255
-    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
-  }
-
-  return (
-    0.2126 * toLinear(rgb.r) +
-    0.7152 * toLinear(rgb.g) +
-    0.0722 * toLinear(rgb.b)
-  )
-}
 
 export type UserPageProfile = {
   title: string
@@ -122,9 +80,7 @@ export function UserPage({
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          backgroundImage: profile.backgroundImageUrl
-            ? `${overlayGradient}, url(${profile.backgroundImageUrl})`
-            : overlayGradient,
+          backgroundImage: overlayGradient,
           backgroundColor: overlayColor,
           backgroundPosition: "center top",
           backgroundSize: "cover",
@@ -134,12 +90,18 @@ export function UserPage({
 
       <div
         className={cn(
-          "max-w-xl mx-auto flex-1 relative z-0 border border-white/10",
-          "py-8 @2xl/user-page:py-16 px-4 @2xl/user-page:px-8",
-          "@2xl/user-page:shadow-2xl @2xl/user-page:mt-8 @2xl/user-page:rounded-t-[3rem]",
+          "max-w-xl mx-auto flex-1 relative z-0",
+          "py-8 @xl/user-page:py-16 px-4 @xl/user-page:px-8",
+          "@xl/user-page:shadow-2xl @xl/user-page:mt-8 @xl/user-page:rounded-t-[3rem]",
         )}
         style={{
           backgroundColor: profile.backgroundColor,
+          backgroundImage: profile.backgroundImageUrl
+            ? `url(${profile.backgroundImageUrl})`
+            : undefined,
+          backgroundPosition: "center top",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
           boxShadow: isDarkCard
             ? "0 28px 80px rgb(0 0 0 / 0.45)"
             : isLightCard

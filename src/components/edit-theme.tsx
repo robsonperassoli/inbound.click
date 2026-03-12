@@ -62,6 +62,7 @@ export function EditTheme({
     await updateTheme({
       profileId: profile._id,
       theme: "Custom",
+      backgroundImage: profile.backgroundImage,
       backgroundColor: profile.backgroundColor,
       fontFamily: profile.fontFamily,
       textColor: profile.textColor,
