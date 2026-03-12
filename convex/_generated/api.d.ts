@@ -31,6 +31,7 @@ import type * as stripe from "../stripe.js";
 import type * as support from "../support.js";
 import type * as threads_actions from "../threads/actions.js";
 import type * as threads_agents from "../threads/agents.js";
+import type * as threads_agents_designer from "../threads/agents/designer.js";
 import type * as threads_agents_formBuilder from "../threads/agents/formBuilder.js";
 import type * as threads_agents_formSubmission from "../threads/agents/formSubmission.js";
 import type * as threads_agents_tools from "../threads/agents/tools.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   support: typeof support;
   "threads/actions": typeof threads_actions;
   "threads/agents": typeof threads_agents;
+  "threads/agents/designer": typeof threads_agents_designer;
   "threads/agents/formBuilder": typeof threads_agents_formBuilder;
   "threads/agents/formSubmission": typeof threads_agents_formSubmission;
   "threads/agents/tools": typeof threads_agents_tools;

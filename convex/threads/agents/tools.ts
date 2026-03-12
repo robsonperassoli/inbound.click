@@ -125,3 +125,40 @@ export function createUpdateFormTool(ctx: ActionCtx, threadId: Id<"threads">) {
     },
   })
 }
+
+export function createUpdateThemeTool(
+  ctx: ActionCtx,
+  profileId: Id<"profiles">,
+) {
+  return tool({
+    description:
+      "Update the users page design using with the provided theme settings",
+    inputSchema: z.object({
+      theme: z.string().describe("The name of the theme"),
+      backgroundColor: z.string(),
+      backgroundImage: z.string(),
+      fontFamily: z.string(),
+      textColor: z.string(),
+      buttonShape: z.enum(["square", "rounded", "pill"]),
+      buttonStyle: z.enum([
+        "solid",
+        "outline",
+        "paper",
+        "shadow",
+        "3d",
+        "ghost",
+      ]),
+      buttonColor: z.string(),
+      buttonTextColor: z.string(),
+    }),
+    execute: async (args) => {
+      await ctx.runMutation(internal.profiles.mutations.updateThemeInternal, {
+        profileId,
+        ...args,
+        backgroundImage: undefined, // TODO: fix this eventually
+      })
+
+      return "Theme updated sucessfuly"
+    },
+  })
+}

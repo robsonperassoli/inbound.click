@@ -1,5 +1,5 @@
 import type { Id } from "../_generated/dataModel"
-import type { MutationCtx } from "../_generated/server"
+import type { MutationCtx, QueryCtx } from "../_generated/server"
 
 type CreateFormLinkArgs = {
   userId: Id<"users">
@@ -21,4 +21,16 @@ export async function createFormLink(
     type: "form",
     formId,
   })
+}
+
+export async function getProfileLinks(
+  ctx: MutationCtx | QueryCtx,
+  profileId: Id<"profiles">,
+) {
+  const links = await ctx.db
+    .query("links")
+    .withIndex("by_profile", (q) => q.eq("profileId", profileId))
+    .collect()
+
+  return links.sort((a, b) => a.order - b.order)
 }

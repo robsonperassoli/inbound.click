@@ -29,6 +29,7 @@ import { Route as UsernameLinkLinkIdIndexRouteImport } from './routes/$username.
 import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
+import { Route as AuthenticatedDesignThemeThreadIdRouteImport } from './routes/_authenticated/design.theme.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
 const SigninRoute = SigninRouteImport.update({
@@ -136,6 +137,12 @@ const AuthenticatedFormsIdSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
+const AuthenticatedDesignThemeThreadIdRoute =
+  AuthenticatedDesignThemeThreadIdRouteImport.update({
+    id: '/design/theme/$threadId',
+    path: '/design/theme/$threadId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
   AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport.update({
     id: '/$submissionId/transcript',
@@ -158,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
+  '/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -178,6 +186,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
+  '/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -202,6 +211,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
+  '/_authenticated/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/bio/'
     | '/forms/'
+    | '/design/theme/$threadId'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/bio'
     | '/forms'
+    | '/design/theme/$threadId'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
+    | '/_authenticated/design/theme/$threadId'
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
     | '/_authenticated/forms/builder/$threadId'
@@ -428,6 +441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIdSettingsRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
     }
+    '/_authenticated/design/theme/$threadId': {
+      id: '/_authenticated/design/theme/$threadId'
+      path: '/design/theme/$threadId'
+      fullPath: '/design/theme/$threadId'
+      preLoaderRoute: typeof AuthenticatedDesignThemeThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/forms/$id/submissions/$submissionId/transcript': {
       id: '/_authenticated/forms/$id/submissions/$submissionId/transcript'
       path: '/$submissionId/transcript'
@@ -491,6 +511,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
+  AuthenticatedDesignThemeThreadIdRoute: typeof AuthenticatedDesignThemeThreadIdRoute
   AuthenticatedFormsBuilderThreadIdRoute: typeof AuthenticatedFormsBuilderThreadIdRoute
 }
 
@@ -501,6 +522,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
+  AuthenticatedDesignThemeThreadIdRoute: AuthenticatedDesignThemeThreadIdRoute,
   AuthenticatedFormsBuilderThreadIdRoute:
     AuthenticatedFormsBuilderThreadIdRoute,
 }

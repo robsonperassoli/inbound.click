@@ -2,6 +2,7 @@ import { api } from "@convex/_generated/api"
 import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useState } from "react"
+import { DesignAiButton } from "@/components/bio/design-ai-button"
 import { EditTheme } from "@/components/edit-theme"
 import { useSiteHeader } from "@/components/site-header"
 import { ThemePreview } from "@/components/theme-preview"
@@ -66,7 +67,7 @@ function RouteComponent() {
   return (
     <div className="space-y-6">
       <section className="space-y-4 rounded-xl border p-4">
-        <div className="space-y-2">
+        <div className="flex justify-between">
           <div>
             <h2 className="text-lg font-semibold">Appearance</h2>
             <p className="text-sm text-muted-foreground">
@@ -75,6 +76,8 @@ function RouteComponent() {
                 : `Current style: ${profile.theme}`}
             </p>
           </div>
+
+          <DesignAiButton />
         </div>
 
         <Tabs

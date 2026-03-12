@@ -3,7 +3,12 @@ import type { Infer } from "convex/values"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 import * as forms from "../forms/domain"
-import { systemPrompt as formBuilderSystemPrompt } from "../threads/agents/formBuilder"
+import * as profiles from "../profiles/domain"
+import {
+  greetingMessage as themeDesignerGreetingMessage,
+  systemPrompt as themeDesignerSystemPrompt,
+} from "./agents/designer"
+import { systemPrompt as formBuilderSystemPrompt } from "./agents/formBuilder"
 import type { threadsFields } from "./validators"
 
 export type Thread = Infer<typeof threadsFields>
@@ -24,14 +29,35 @@ export async function createFormBuilderThread(
       createdAt: Date.now(),
       updatedAt: Date.now(),
     },
-    firstPrompt,
+    { userMessage: firstPrompt },
+  )
+}
+
+export async function createThemeDesignerThread(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+  profileId: Id<"profiles">,
+) {
+  return await createThread(
+    ctx,
+    {
+      userId,
+      model: "gpt-4o-mini",
+      title: "Theme Designer Session",
+      type: "themeDesigner",
+      profileId,
+      systemPrompt: themeDesignerSystemPrompt,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+    { assistantMessage: themeDesignerGreetingMessage },
   )
 }
 
 async function createThread(
   ctx: MutationCtx,
   args: Thread,
-  userMessage: string,
+  initOpts: { userMessage: string } | { assistantMessage: string },
 ) {
   const values = {
     ...args,
@@ -41,23 +67,39 @@ async function createThread(
 
   const threadId = await ctx.db.insert("threads", values)
 
-  const messageId = await ctx.db.insert("messages", {
-    threadId,
-    content: userMessage,
-    role: "user",
-    status: "complete",
-    createdAt: Date.now(),
-  })
+  let userMessageId: Id<"messages"> | undefined
+  let assistantMessageId: Id<"messages"> | undefined
+  if ("userMessage" in initOpts) {
+    // init with user prompt (pending assistant message)
+    userMessageId = await ctx.db.insert("messages", {
+      threadId,
+      content: initOpts.userMessage,
+      role: "user",
+      status: "complete",
+      createdAt: Date.now(),
+    })
 
-  const assistantMessageId = await ctx.db.insert("messages", {
-    threadId,
-    content: "",
-    role: "assistant",
-    status: "pending",
-    createdAt: Date.now(),
-  })
+    assistantMessageId = await ctx.db.insert("messages", {
+      threadId,
+      content: "",
+      role: "assistant",
+      status: "pending",
+      createdAt: Date.now(),
+    })
+  }
 
-  return { threadId, messageId, assistantMessageId }
+  if ("assistantMessage" in initOpts) {
+    // init with assistant greeting (user replies via chat)
+    assistantMessageId = await ctx.db.insert("messages", {
+      threadId,
+      content: initOpts.assistantMessage,
+      role: "assistant",
+      status: "complete",
+      createdAt: Date.now(),
+    })
+  }
+
+  return { threadId, messageId: userMessageId, assistantMessageId }
 }
 
 export async function sendUserMessage(
@@ -159,6 +201,24 @@ export async function buildThreadState(ctx: QueryCtx, thread: Doc<"threads">) {
     FORM_DEFINITION: ${encode(form.fields)}
     COLLECTED_VALUES: ${encode(submission?.values)}
     `
+  }
+
+  if (thread.type === "themeDesigner") {
+    const profile = await profiles.getProfileById(ctx, thread.profileId)
+
+    const themeValues = {
+      theme: profile.theme,
+      backgroundColor: profile.backgroundColor,
+      backgroundImage: profile.backgroundImage,
+      fontFamily: profile.fontFamily,
+      textColor: profile.textColor,
+      buttonShape: profile.buttonShape,
+      buttonStyle: profile.buttonStyle,
+      buttonColor: profile.buttonColor,
+      buttonTextColor: profile.buttonTextColor,
+    }
+
+    return `CURRENT_THEME:\n${encode(themeValues)}`
   }
 
   throw new Error("Thread type not handled")

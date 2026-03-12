@@ -4,9 +4,8 @@ import { Tick02Icon, ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
-import z from "zod"
+import { UserPagePreview } from "@/components/bio/user-page-preview"
 import { Chat } from "@/components/chat"
-import { EmptyFormPreview, FormPreview } from "@/components/form-preview"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,19 +14,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export const Route = createFileRoute("/_authenticated/forms/builder/$threadId")(
-  {
-    validateSearch: z.object({ returnTo: z.enum(["bio"]) }),
-    component: RouteComponent,
-    ssr: false,
-  },
-)
+export const Route = createFileRoute("/_authenticated/design/theme/$threadId")({
+  component: RouteComponent,
+  ssr: false,
+})
 
 function RouteComponent() {
   useSiteHeader({ title: "Form Builder" })
 
   const { threadId } = Route.useParams()
-  const { returnTo } = Route.useSearch()
+
   const navigate = useNavigate()
   const thread = useQuery(api.threads.queries.getFullThread, {
     threadId: threadId as Id<"threads">,
@@ -35,19 +31,13 @@ function RouteComponent() {
   const sendMessage = useMutation(api.threads.mutations.addMessage)
 
   const onDoneClicked = () => {
-    if (returnTo === "bio") {
-      navigate({ to: "/bio" })
-    }
+    navigate({ to: "/bio" })
   }
 
   return (
     <div className="flex flex-1">
-      <div className="hidden sm:block grow overflow-auto p-4">
-        {thread?.formId ? (
-          <FormPreview formId={thread.formId} onDoneClicked={onDoneClicked} />
-        ) : (
-          <EmptyFormPreview />
-        )}
+      <div className="hidden sm:block grow overflow-auto">
+        <UserPagePreview />
       </div>
 
       <div className="w-full sm:w-96 border-l flex">
@@ -73,14 +63,7 @@ function RouteComponent() {
                   align="start"
                   className="p-0 w-sm max-w-full overflow-hidden max-h-[70vh]"
                 >
-                  {thread?.formId ? (
-                    <FormPreview
-                      formId={thread.formId}
-                      onDoneClicked={onDoneClicked}
-                    />
-                  ) : (
-                    <EmptyFormPreview />
-                  )}
+                  <UserPagePreview />
                 </PopoverContent>
               </Popover>
               <Button size="sm" onClick={onDoneClicked}>

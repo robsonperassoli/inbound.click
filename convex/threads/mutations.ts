@@ -40,6 +40,20 @@ export const createFormBuilderThread = userMutation({
   },
 })
 
+export const createThemeDesignerThread = userMutation({
+  handler: async (ctx, _args) => {
+    const profile = await profiles.getProfileForUserId(ctx, ctx.user._id)
+    if (!profile) {
+      throw new Error("Profile not found")
+    }
+
+    const { threadId, messageId, assistantMessageId } =
+      await threads.createThemeDesignerThread(ctx, ctx.user._id, profile._id)
+
+    return { threadId, messageId, assistantMessageId }
+  },
+})
+
 export const addMessage = mutation({
   args: {
     threadId: v.id("threads"),
@@ -75,6 +89,10 @@ export const createFormForThread = internalMutation({
   },
   handler: async (ctx, args) => {
     const thread = await threads.getThread(ctx, args.threadId)
+    if (thread.type !== "formBuilder") {
+      throw new Error("Thread is not a form builder")
+    }
+
     if (thread.formId) {
       throw new Error("Thread already has a form")
     }
@@ -113,6 +131,10 @@ export const updateThreadForm = internalMutation({
   },
   handler: async (ctx, args) => {
     const thread = await threads.getThread(ctx, args.threadId)
+    if (thread.type !== "formBuilder") {
+      throw new Error("Thread is not a form builder")
+    }
+
     if (!thread.formId) {
       throw new Error("Not form linked to this thread")
     }

@@ -18,6 +18,10 @@ type CreateAgentArgs =
       type: "formBuilder"
       state: string
     }
+  | {
+      type: "themeDesigner"
+      state: string
+    }
 
 export function createAgent(
   ctx: ActionCtx,
@@ -41,6 +45,17 @@ export function createAgent(
           thread._id,
         ),
         updateForm: agentTools.createUpdateFormTool(ctx, thread._id),
+      }
+
+      break
+
+    case "themeDesigner":
+      if (thread.type !== "themeDesigner") {
+        throw new Error(`Invalid thread type for themeDesigner agent`)
+      }
+
+      tools = {
+        updateTheme: agentTools.createUpdateThemeTool(ctx, thread.profileId),
       }
 
       break

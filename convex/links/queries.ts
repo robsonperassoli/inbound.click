@@ -1,19 +1,15 @@
 import { v } from "convex/values"
 import { userQuery } from "../custom"
+import * as domain from "./domain"
 
 export const getProfileLinks = userQuery({
   args: {
     profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
-    const links = await ctx.db
-      .query("links")
-      .withIndex("by_user", (q) => q.eq("userId", ctx.user._id))
-      .collect()
+    const links = await domain.getProfileLinks(ctx, args.profileId)
 
-    return links
-      .filter((l) => l.profileId === args.profileId)
-      .sort((a, b) => a.order - b.order)
+    return links.filter((l) => l.userId === ctx.user._id)
   },
 })
 

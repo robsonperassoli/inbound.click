@@ -1,6 +1,6 @@
 import { v } from "convex/values"
 import { internal } from "../_generated/api"
-import { mutation } from "../_generated/server"
+import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
@@ -98,26 +98,28 @@ export const createProfile = userMutation({
   },
 })
 
-export const updateTheme = mutation({
+export const updateTheme = userMutation({
   args: {
     profileId: v.id("profiles"),
     ...themeFields,
   },
-  handler: async (ctx, args) => {
-    const userId = await auth.authenticatedUser(ctx)
-    const profile = await domain.getUserProfile(ctx, userId, args.profileId)
+  handler: async (ctx, { profileId, ...theme }) => {
+    const profile = await domain.getUserProfile(ctx, ctx.user._id, profileId)
 
-    await ctx.db.patch(profile._id, {
-      theme: args.theme,
-      backgroundColor: args.backgroundColor,
-      backgroundImage: args.backgroundImage,
-      fontFamily: args.fontFamily,
-      textColor: args.textColor,
-      buttonShape: args.buttonShape,
-      buttonStyle: args.buttonStyle,
-      buttonColor: args.buttonColor,
-      buttonTextColor: args.buttonTextColor,
+    await domain.patchProfileTheme(ctx, profile._id, {
+      ...theme,
+      backgroundImage: theme.backgroundImage ?? undefined,
     })
+  },
+})
+
+export const updateThemeInternal = internalMutation({
+  args: {
+    profileId: v.id("profiles"),
+    ...themeFields,
+  },
+  handler: async (ctx, { profileId, ...theme }) => {
+    return await domain.patchProfileTheme(ctx, profileId, theme)
   },
 })
 

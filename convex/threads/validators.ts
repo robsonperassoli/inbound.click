@@ -23,4 +23,9 @@ export const threadsFields = v.union(
     formId: v.optional(v.id("forms")),
     ...commonThreadFields,
   }),
+  v.object({
+    type: v.literal("themeDesigner"),
+    profileId: v.id("profiles"),
+    ...commonThreadFields,
+  }),
 )

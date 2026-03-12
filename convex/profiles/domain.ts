@@ -1,5 +1,7 @@
+import { type Infer, v } from "convex/values"
 import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
+import { themeFields } from "../schema"
 
 const profileUsernameRegex = /^[a-zA-Z0-9_-]+$/
 
@@ -133,4 +135,15 @@ export const isProfileUsernameAvailable = async (
     .unique()
 
   return !profile
+}
+
+const themeFieldsObject = v.object(themeFields)
+type Theme = Infer<typeof themeFieldsObject>
+
+export async function patchProfileTheme(
+  ctx: MutationCtx,
+  profileId: Id<"profiles">,
+  theme: Theme,
+) {
+  return await ctx.db.patch(profileId, theme)
 }
