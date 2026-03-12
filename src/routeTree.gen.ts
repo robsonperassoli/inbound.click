@@ -13,6 +13,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
+import { Route as SigninCompleteRouteImport } from './routes/signin.complete'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
@@ -48,6 +49,11 @@ const UsernameIndexRoute = UsernameIndexRouteImport.update({
   id: '/$username/',
   path: '/$username/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SigninCompleteRoute = SigninCompleteRouteImport.update({
+  id: '/complete',
+  path: '/complete',
+  getParentRoute: () => SigninRoute,
 } as any)
 const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
   id: '/upgrade',
@@ -139,11 +145,12 @@ const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/signin': typeof SigninRoute
+  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
+  '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -160,10 +167,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/signin': typeof SigninRoute
+  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
+  '/signin/complete': typeof SigninCompleteRoute
   '/$username': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -181,11 +189,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/signin': typeof SigninRoute
+  '/signin': typeof SigninRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
+  '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/bio'
     | '/onboarding'
     | '/upgrade'
+    | '/signin/complete'
     | '/$username/'
     | '/bio/appearance'
     | '/bio/settings'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/onboarding'
     | '/upgrade'
+    | '/signin/complete'
     | '/$username'
     | '/bio/appearance'
     | '/bio/settings'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bio'
     | '/_authenticated/onboarding'
     | '/_authenticated/upgrade'
+    | '/signin/complete'
     | '/$username/'
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
@@ -268,7 +280,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  SigninRoute: typeof SigninRoute
+  SigninRoute: typeof SigninRouteWithChildren
   UsernameIndexRoute: typeof UsernameIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
@@ -303,6 +315,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$username/'
       preLoaderRoute: typeof UsernameIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/signin/complete': {
+      id: '/signin/complete'
+      path: '/complete'
+      fullPath: '/signin/complete'
+      preLoaderRoute: typeof SigninCompleteRouteImport
+      parentRoute: typeof SigninRoute
     }
     '/_authenticated/upgrade': {
       id: '/_authenticated/upgrade'
@@ -490,10 +509,21 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface SigninRouteChildren {
+  SigninCompleteRoute: typeof SigninCompleteRoute
+}
+
+const SigninRouteChildren: SigninRouteChildren = {
+  SigninCompleteRoute: SigninCompleteRoute,
+}
+
+const SigninRouteWithChildren =
+  SigninRoute._addFileChildren(SigninRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  SigninRoute: SigninRoute,
+  SigninRoute: SigninRouteWithChildren,
   UsernameIndexRoute: UsernameIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
