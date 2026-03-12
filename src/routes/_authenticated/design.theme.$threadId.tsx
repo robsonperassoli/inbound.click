@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/design/theme/$threadId")({
 })
 
 function RouteComponent() {
-  useSiteHeader({ title: "Form Builder" })
+  useSiteHeader({ title: "Theme Designer" })
 
   const { threadId } = Route.useParams()
 
