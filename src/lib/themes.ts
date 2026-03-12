@@ -7,27 +7,27 @@ export const fonts = [
   {
     category: "sans",
     name: "Inter",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "'Inter Variable', sans-serif",
   },
   {
     category: "sans",
     name: "DM Sans",
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "'DM Sans Variable', sans-serif",
   },
   {
     category: "sans",
     name: "Manrope",
-    fontFamily: "'Manrope', sans-serif",
+    fontFamily: "'Manrope Variable', sans-serif",
   },
   {
     category: "sans",
     name: "Plus Jakarta Sans",
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontFamily: "'Plus Jakarta Sans Variable', sans-serif",
   },
   {
     category: "sans",
     name: "Outfit",
-    fontFamily: "'Outfit', sans-serif",
+    fontFamily: "'Outfit Variable', sans-serif",
   },
   {
     category: "sans",
@@ -37,19 +37,19 @@ export const fonts = [
   {
     category: "sans",
     name: "Montserrat",
-    fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "'Montserrat Variable', sans-serif",
   },
 
   // 📚 Serif
   {
     category: "serif",
     name: "Playfair Display",
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Playfair Display Variable', serif",
   },
   {
     category: "serif",
     name: "Merriweather",
-    fontFamily: "'Merriweather', serif",
+    fontFamily: "'Merriweather Variable', serif",
   },
   {
     category: "serif",
@@ -59,7 +59,7 @@ export const fonts = [
   {
     category: "serif",
     name: "Lora",
-    fontFamily: "'Lora', serif",
+    fontFamily: "'Lora Variable', serif",
   },
 
   // 🎯 Display / Bold
@@ -81,7 +81,7 @@ export const fonts = [
   {
     category: "display",
     name: "Space Grotesk",
-    fontFamily: "'Space Grotesk', sans-serif",
+    fontFamily: "'Space Grotesk Variable', sans-serif",
   },
 ]
 

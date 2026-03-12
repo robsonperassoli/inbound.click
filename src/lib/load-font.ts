@@ -21,22 +21,18 @@ const fontLoaders: Record<FontName, () => Promise<unknown>> = {
   Inter: () => import("@fontsource-variable/inter"),
   "DM Sans": () => import("@fontsource-variable/dm-sans"),
   Manrope: () => import("@fontsource-variable/manrope"),
-  "Plus Jakarta Sans": () =>
-    import("@fontsource-variable/plus-jakarta-sans"),
+  "Plus Jakarta Sans": () => import("@fontsource-variable/plus-jakarta-sans"),
   Outfit: () => import("@fontsource-variable/outfit"),
   Poppins: () => import("@fontsource/poppins"),
   Montserrat: () => import("@fontsource-variable/montserrat"),
-  "Playfair Display": () =>
-    import("@fontsource-variable/playfair-display"),
+  "Playfair Display": () => import("@fontsource-variable/playfair-display"),
   Merriweather: () => import("@fontsource-variable/merriweather"),
-  "Libre Baskerville": () =>
-    import("@fontsource/libre-baskerville"),
+  "Libre Baskerville": () => import("@fontsource/libre-baskerville"),
   Lora: () => import("@fontsource-variable/lora"),
   "Bebas Neue": () => import("@fontsource/bebas-neue"),
   Anton: () => import("@fontsource/anton"),
   "Archivo Black": () => import("@fontsource/archivo-black"),
-  "Space Grotesk": () =>
-    import("@fontsource-variable/space-grotesk"),
+  "Space Grotesk": () => import("@fontsource-variable/space-grotesk"),
 }
 
 export async function loadFont(fontName: string) {
