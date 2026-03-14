@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
@@ -35,6 +36,11 @@ import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImpo
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
+  id: '/real-estate-agents',
+  path: '/real-estate-agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -152,6 +158,7 @@ const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
@@ -175,6 +182,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/real-estate-agents'
     | '/signin'
     | '/analytics'
     | '/bio'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/real-estate-agents'
     | '/signin'
     | '/analytics'
     | '/onboarding'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/real-estate-agents'
     | '/signin'
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
@@ -293,6 +305,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  RealEstateAgentsRoute: typeof RealEstateAgentsRoute
   SigninRoute: typeof SigninRouteWithChildren
   UsernameIndexRoute: typeof UsernameIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate-agents': {
+      id: '/real-estate-agents'
+      path: '/real-estate-agents'
+      fullPath: '/real-estate-agents'
+      preLoaderRoute: typeof RealEstateAgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -545,6 +565,7 @@ const SigninRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  RealEstateAgentsRoute: RealEstateAgentsRoute,
   SigninRoute: SigninRouteWithChildren,
   UsernameIndexRoute: UsernameIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

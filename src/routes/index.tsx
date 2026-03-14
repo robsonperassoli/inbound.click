@@ -4,6 +4,50 @@ import { useEffect, useMemo, useState } from "react"
 import logo from "../assets/logo.svg"
 
 export const Route = createFileRoute("/")({
+  head: () => {
+    const title =
+      "Inbound.click | AI Link in Bio for Lead Capture, Qualification, and Conversion"
+    const description =
+      "Inbound.click turns your link in bio into an AI lead capture funnel that qualifies prospects, collects contact details, and sends instant SMS or WhatsApp alerts."
+    const keywords = [
+      "link in bio",
+      "ai link in bio",
+      "lead capture",
+      "ai lead capture",
+      "lead generation",
+      "social media lead generation",
+      "qualified leads",
+      "lead qualification",
+      "conversational forms",
+      "conversational lead capture",
+      "bio link for business",
+      "instagram lead generation",
+      "tiktok lead generation",
+      "creator lead capture",
+      "coach lead capture",
+      "realtor lead capture",
+      "real estate lead capture",
+      "whatsapp lead alerts",
+      "sms lead alerts",
+      "social bio funnel",
+      "link in bio tool",
+    ].join(", ")
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "keywords", content: keywords },
+        { name: "robots", content: "index, follow" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+    }
+  },
   component: LandingPage,
 })
 
@@ -25,7 +69,7 @@ function LandingPage() {
       <header className="sticky top-0 z-50 border-b border-[#2D2E2C]/8 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <a href="#top" className="flex items-center gap-3">
-            <img src={logo} alt="Inbound.click" className="h-5 md:h-9 w-auto" />
+            <img src={logo} alt="Inbound.click" className="h-5 md:h-7 w-auto" />
             <span className="text-sm font-semibold tracking-tight sm:text-base sr-only">
               Inbound.click
             </span>
@@ -50,6 +94,7 @@ function LandingPage() {
         </div>
       </header>
 
+      {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves deep links for the landing page */}
       <main
         id="top"
         className="relative mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8"
@@ -62,6 +107,22 @@ function LandingPage() {
         <SpeedDivider />
         <WorkflowSection />
       </main>
+
+      <footer className="border-t border-[#2D2E2C]/8 bg-white/75">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <p className="text-sm text-[#2D2E2C]/62">
+            Inbound.click turns social traffic into qualified leads.
+          </p>
+          <div className="flex flex-wrap items-center gap-4 text-sm font-semibold">
+            <Link to="/real-estate-agents" className="text-[#2D2E2C]">
+              For Realtors
+            </Link>
+            <Link to="/signin" className="text-[#2D2E2C]/72">
+              Start Free
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
@@ -73,18 +134,19 @@ function HeroSection() {
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-[#2D2E2C]/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/70 shadow-[0_6px_20px_rgba(45,46,44,0.08)]">
             <SpeedLines />
-            Social Lead Engine
+            AI Link in Bio for Lead Capture
           </p>
 
           <h1 className="mt-6 text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl">
-            Turn Your Social Traffic into Qualified Leads, Automatically.
+            Turn Your Link in Bio Traffic into Qualified Leads, Automatically.
           </h1>
 
           <TypewriterUrl />
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#2D2E2C]/75 sm:text-lg">
-            Built for Social Bios. Stop leaking traffic and start capturing
-            high-intent leads through zero-setup conversational AI flows.
+            Built for Instagram, TikTok, YouTube, and creator bio links. Stop
+            leaking social traffic and start capturing high-intent leads with
+            conversational AI forms that qualify prospects in real time.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -214,7 +276,8 @@ function ProblemSection() {
         The Problem
       </p>
       <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        Traditional links are just menus. Inbound.click is an engine.
+        Traditional link-in-bio tools are just menus. Inbound.click is a lead
+        capture engine.
       </h2>
 
       <div className="mt-7 grid gap-4 md:grid-cols-3">
@@ -240,103 +303,109 @@ function ProblemSection() {
 
 function AiArchitectSection() {
   return (
-    <section id="ai-architect" className="py-12 sm:py-14">
-      <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
-            AI Architect
-          </p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Prompt the flow. Ship the form instantly.
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-[#2D2E2C]/73">
-            Describe what you need in one sentence and Inbound.click generates a
-            complete conversational capture flow with the right fields,
-            sequencing, and qualification logic.
-          </p>
-        </div>
-
-        <div className="rounded-[2rem] border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_18px_42px_rgba(45,46,44,0.1)] sm:p-6">
-          <div className="rounded-2xl border border-[#2D2E2C]/8 bg-[#f8f9f8] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
-              You
+    <>
+      {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */}
+      <section id="ai-architect" className="py-12 sm:py-14">
+        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
+              AI Architect
             </p>
-            <p className="mt-2 inline-flex rounded-2xl rounded-bl-md bg-[#2D2E2C] px-4 py-2 text-sm font-medium text-white">
-              Collect name and budget
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Prompt the flow. Ship an AI lead capture form instantly.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-[#2D2E2C]/73">
+              Describe what you need in one sentence and Inbound.click generates
+              a complete conversational lead capture flow with the right fields,
+              sequencing, and qualification logic for your business.
             </p>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-[#2D2E2C]/8 bg-[linear-gradient(145deg,rgba(113,208,172,0.25),rgba(255,255,255,0.95))] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
-              AI Architect
-            </p>
-            <div className="mt-3 space-y-2">
-              <GeneratedField name="Full name" />
-              <GeneratedField name="Budget range" />
-              <GeneratedField name="Preferred callback time" />
+          <div className="rounded-[2rem] border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_18px_42px_rgba(45,46,44,0.1)] sm:p-6">
+            <div className="rounded-2xl border border-[#2D2E2C]/8 bg-[#f8f9f8] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
+                You
+              </p>
+              <p className="mt-2 inline-flex rounded-2xl rounded-bl-md bg-[#2D2E2C] px-4 py-2 text-sm font-medium text-white">
+                Collect name and budget
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-[#2D2E2C]/8 bg-[linear-gradient(145deg,rgba(113,208,172,0.25),rgba(255,255,255,0.95))] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
+                AI Architect
+              </p>
+              <div className="mt-3 space-y-2">
+                <GeneratedField name="Full name" />
+                <GeneratedField name="Budget range" />
+                <GeneratedField name="Preferred callback time" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
 
 function WorkflowSection() {
   return (
-    <section id="workflow" className="py-12 sm:py-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
-        The Workflow
-      </p>
-      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        Three steps from social click to qualified pipeline.
-      </h2>
-
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <WorkflowStep
-          step="1"
-          title="Link your bio"
-          description="Swap your bio URL with your Inbound.click page and turn every tap into a guided entry point."
-          accent="bg-[#EE7A64]"
-        />
-        <WorkflowStep
-          step="2"
-          title="AI builds your flow"
-          description="Define your intake once. The AI creates the conversational funnel around your lead criteria."
-          accent="bg-[#F7C664]"
-        />
-        <WorkflowStep
-          step="3"
-          title="Get instant SMS/WhatsApp alerts"
-          description="High-intent responses trigger real-time notifications so your follow-up happens while urgency is high."
-          accent="bg-[#71D0AC]"
-        />
-      </div>
-
-      <div className="mt-10 rounded-[2rem] border border-[#2D2E2C]/10 bg-[#2D2E2C] px-6 py-7 text-white shadow-[0_22px_44px_rgba(45,46,44,0.24)]">
-        <h3 className="text-2xl font-bold tracking-tight">
-          Ready to stop leaking high-intent traffic?
-        </h3>
-        <p className="mt-2 max-w-2xl text-sm text-white/78 sm:text-base">
-          Replace static links with AI capture flows that qualify, convert, and
-          notify you in real time.
+    <>
+      {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */}
+      <section id="workflow" className="py-12 sm:py-14">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
+          The Workflow
         </p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link
-            to="/signin"
-            className="rounded-full bg-[#71D0AC] px-6 py-3 text-sm font-bold text-[#12382c] shadow-[0_12px_28px_rgba(113,208,172,0.4)]"
-          >
-            Build My Lead Engine
-          </Link>
-          <a
-            href="#ai-architect"
-            className="rounded-full border border-white/24 px-6 py-3 text-sm font-semibold text-white"
-          >
-            Watch It Work
-          </a>
+        <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Three steps from social media click to qualified sales pipeline.
+        </h2>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <WorkflowStep
+            step="1"
+            title="Link your bio"
+            description="Swap your bio URL with your Inbound.click page and turn every tap into a guided entry point."
+            accent="bg-[#EE7A64]"
+          />
+          <WorkflowStep
+            step="2"
+            title="AI builds your flow"
+            description="Define your intake once. The AI creates the conversational funnel around your lead criteria."
+            accent="bg-[#F7C664]"
+          />
+          <WorkflowStep
+            step="3"
+            title="Get instant SMS/WhatsApp alerts"
+            description="High-intent responses trigger real-time notifications so your follow-up happens while urgency is high."
+            accent="bg-[#71D0AC]"
+          />
         </div>
-      </div>
-    </section>
+
+        <div className="mt-10 rounded-[2rem] border border-[#2D2E2C]/10 bg-[#2D2E2C] px-6 py-7 text-white shadow-[0_22px_44px_rgba(45,46,44,0.24)]">
+          <h3 className="text-2xl font-bold tracking-tight">
+            Ready to stop leaking high-intent traffic?
+          </h3>
+          <p className="mt-2 max-w-2xl text-sm text-white/78 sm:text-base">
+            Replace static bio links with AI capture flows that qualify leads,
+            increase conversions, and notify you in real time.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              to="/signin"
+              className="rounded-full bg-[#71D0AC] px-6 py-3 text-sm font-bold text-[#12382c] shadow-[0_12px_28px_rgba(113,208,172,0.4)]"
+            >
+              Build My Lead Engine
+            </Link>
+            <a
+              href="#ai-architect"
+              className="rounded-full border border-white/24 px-6 py-3 text-sm font-semibold text-white"
+            >
+              Watch It Work
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
 
