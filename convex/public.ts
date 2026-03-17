@@ -3,7 +3,7 @@ import { internal } from "./_generated/api"
 import type { Doc } from "./_generated/dataModel"
 import { mutation, query } from "./_generated/server"
 import * as profiles from "./profiles/domain"
-import { systemPrompt } from "./threads/agents/formSubmission"
+import { greetingMessage, systemPrompt } from "./threads/agents/formSubmission"
 import * as threads from "./threads/domain"
 
 export const getProfile = query({
@@ -81,7 +81,7 @@ export const startFormSession = mutation({
     await ctx.db.insert("messages", {
       threadId,
       role: "assistant",
-      content: `Hello! Good to have you here. ${profile.username} has a few questions that I'll help you answer! Is now a good time to chat?`,
+      content: greetingMessage(profile.title),
       createdAt: Date.now(),
       status: "complete",
     })

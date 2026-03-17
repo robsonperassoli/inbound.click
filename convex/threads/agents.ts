@@ -1,12 +1,15 @@
 // import { fireworks } from "@ai-sdk/fireworks"
-import { openai } from "@ai-sdk/openai"
+import {
+  type OpenAILanguageModelResponsesOptions,
+  openai,
+} from "@ai-sdk/openai"
 import { stepCountIs, ToolLoopAgent, type ToolSet } from "ai"
 import { internal } from "../_generated/api"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { ActionCtx } from "../_generated/server"
 import * as agentTools from "./agents/tools"
 
-const model = openai("gpt-4o-mini")
+const model = openai("gpt-5-nano")
 // const model = fireworks("accounts/fireworks/models/kimi-k2-instruct-0905")
 
 type CreateAgentArgs =
@@ -70,6 +73,12 @@ export function createAgent(
     instructions,
     tools,
     stopWhen: [stepCountIs(20)],
+    providerOptions: {
+      openai: {
+        reasoningEffort: "low",
+        textVerbosity: "low",
+      } satisfies OpenAILanguageModelResponsesOptions,
+    },
   })
 }
 
