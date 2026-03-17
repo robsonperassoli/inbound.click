@@ -579,9 +579,9 @@ function ReferrerBreakdownCard({
   }
 
   return (
-    <Card className="h-[260px]">
+    <Card className="h-65">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold">Referrers</CardTitle>
+        <CardTitle className="text-base font-semibold">Channels</CardTitle>
         <CardDescription className="text-xs">
           Top traffic sources
         </CardDescription>
@@ -590,7 +590,7 @@ function ReferrerBreakdownCard({
         {isEmpty ? (
           <div className="flex h-32 items-center justify-center">
             <p className="text-muted-foreground text-sm">
-              No referrer data yet.
+              No channel data yet.
             </p>
           </div>
         ) : (
