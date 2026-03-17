@@ -1,4 +1,4 @@
-export type PricingPlanId = "free" | "pro" | "business"
+export type PricingPlanId = "starter" | "pro" | "team"
 export type BillingCycle = "monthly" | "yearly"
 
 export type PriceConfig = {
@@ -15,42 +15,74 @@ export const PRICING: Record<
   PricingPlanId,
   Record<BillingCycle, PriceConfig>
 > = {
-  free: {
+  starter: {
     monthly: {
-      priceLabel: "$0",
+      priceLabel: "$9",
       period: "/mo",
+      stripePriceId: env.VITE_STRIPE_STARTER_PRICE_ID,
     },
     yearly: {
-      priceLabel: "$0",
-      period: "/mo",
+      priceLabel: "$99",
+      period: "/yr",
+      equivalent: "equiv. $8.25/mo",
+      badge: "Save $10/year",
+      stripePriceId: env.VITE_STRIPE_STARTER_PRICE_YEARLY_ID,
     },
   },
   pro: {
     monthly: {
-      priceLabel: "$14.99",
+      priceLabel: "$19",
       period: "/mo",
       stripePriceId: env.VITE_STRIPE_PRO_PRICE_ID,
     },
     yearly: {
-      priceLabel: "$140",
+      priceLabel: "$178",
       period: "/yr",
-      equivalent: "equiv. $11.67/mo",
-      badge: "Save $40/year",
+      equivalent: "equiv. $14.83/mo",
+      badge: "Save $50/year",
       stripePriceId: env.VITE_STRIPE_PRO_PRICE_YEARLY_ID,
     },
   },
-  business: {
+  team: {
     monthly: {
-      priceLabel: "$49",
-      period: "/mo",
-      stripePriceId: env.VITE_STRIPE_BUSINESS_PRICE_ID,
+      priceLabel: "Custom",
+      period: "",
+      equivalent: "For teams and agencies",
+      badge: "Custom Pricing",
     },
     yearly: {
-      priceLabel: "$480",
-      period: "/yr",
-      equivalent: "equiv. $40/mo",
-      badge: "Best Value - 2 Months Free",
-      stripePriceId: env.VITE_STRIPE_BUSINESS_PRICE_YEARLY_ID,
+      priceLabel: "Custom",
+      period: "",
+      equivalent: "For teams and agencies",
+      badge: "Custom Pricing",
     },
   },
+}
+
+export function getPlanIdForPriceId(
+  priceId: string | null | undefined,
+): PricingPlanId | "free" {
+  if (!priceId) {
+    return "free"
+  }
+
+  if (
+    [
+      env.VITE_STRIPE_STARTER_PRICE_ID,
+      env.VITE_STRIPE_STARTER_PRICE_YEARLY_ID,
+    ].includes(priceId)
+  ) {
+    return "starter"
+  }
+
+  if (
+    [
+      env.VITE_STRIPE_PRO_PRICE_ID,
+      env.VITE_STRIPE_PRO_PRICE_YEARLY_ID,
+    ].includes(priceId)
+  ) {
+    return "pro"
+  }
+
+  return "free"
 }
