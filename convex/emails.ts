@@ -1,7 +1,8 @@
 import { Resend } from "@convex-dev/resend"
 import { v } from "convex/values"
-import { components } from "./_generated/api"
+import { api, components } from "./_generated/api"
 import { internalMutation } from "./_generated/server"
+import { userAction } from "./custom"
 
 export const resend: Resend = new Resend(components.resend, {
   testMode: false,
@@ -10,6 +11,7 @@ export const resend: Resend = new Resend(components.resend, {
 const DEFAULT_FROM = "Inbound.click <robson@send.inbound.click>"
 const DEFAULT_SUPPORT_TO =
   process.env.SUPPORT_EMAIL ?? "robson@send.inbound.click"
+const DEFAULT_SALES_TO = process.env.SALES_EMAIL ?? DEFAULT_SUPPORT_TO
 const DEFAULT_FEEDBACK_TO =
   process.env.FEEDBACK_EMAIL ??
   process.env.SUPPORT_EMAIL ??
@@ -208,6 +210,42 @@ export const sendSupportEmail = internalMutation({
       replyTo: [args.email],
       subject: `[Support] ${supportCategoryLabel[args.category]} - ${args.subject}`,
       text: buildSupportEmailText(args),
+    })
+  },
+})
+
+export const submitSalesLead = userAction({
+  args: {
+    email: v.string(),
+    phone: v.string(),
+    companyName: v.string(),
+    userAgent: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const [authUser, profile] = await Promise.all([
+      ctx.runQuery(api.auth.getCurrentUser, {}),
+      ctx.runQuery(api.profiles.queries.getProfile, {}),
+    ])
+
+    await resend.sendEmail(ctx, {
+      from: DEFAULT_FROM,
+      to: DEFAULT_SALES_TO,
+      replyTo: [args.email],
+      subject: `[Sales Lead] Team pricing inquiry`,
+      text: [
+        "A new sales lead was submitted.",
+        "",
+        formatLine("Lead email", args.email),
+        formatLine("Lead name", authUser.name || authUser.username),
+        formatLine("Phone", args.phone),
+        formatLine("Company name", args.companyName),
+        formatLine("Subject", "Team pricing inquiry"),
+        "",
+        "Technical metadata",
+        formatLine("Browser", args.userAgent),
+        formatLine("Submitted at", new Date().toISOString()),
+        formatLine("Username", profile?.username),
+      ].join("\n"),
     })
   },
 })

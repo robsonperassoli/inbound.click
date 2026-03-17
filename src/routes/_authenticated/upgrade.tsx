@@ -141,7 +141,7 @@ function RouteComponent() {
   const createSubscriptionCheckout = useAction(
     api.stripe.createSubscriptionCheckout,
   )
-  const submitSupport = useAction(api.support.submit)
+  const submitSalesLead = useAction(api.emails.submitSalesLead)
   const user = useQuery(api.auth.getCurrentUser, {})
   const subscription = useQuery(api.stripe.getUserSubscription, {})
 
@@ -360,7 +360,11 @@ function RouteComponent() {
                     <ul className="mb-6 flex-1 space-y-3">
                       {plan.features.map((feature) => (
                         <li
-                          key={typeof feature === "string" ? feature : feature.label}
+                          key={
+                            typeof feature === "string"
+                              ? feature
+                              : feature.label
+                          }
                           className="flex items-start gap-2 text-sm text-foreground/90"
                         >
                           <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary/70" />
@@ -450,10 +454,6 @@ function RouteComponent() {
                   Our team will review your details and reach out personally to
                   talk through your needs and recommend the best setup.
                 </DialogDescription>
-                <p className="text-sm font-medium text-foreground/80">
-                  No extra work on your side for now, we&apos;ll take it from
-                  here.
-                </p>
               </DialogHeader>
               <DialogFooter className="sm:justify-center" showCloseButton />
             </>
@@ -463,8 +463,8 @@ function RouteComponent() {
                 <DialogTitle>Connect with us</DialogTitle>
                 <DialogDescription>
                   Please fill in your contact information and we&apos;ll reach
-                  out personally to understand your needs and recommend the
-                  best setup for your team.
+                  out personally to understand your needs and recommend the best
+                  setup for your team.
                 </DialogDescription>
               </DialogHeader>
 
@@ -481,27 +481,11 @@ function RouteComponent() {
                     setContactSubmitting(true)
                     setContactFormError("")
 
-                    const preferredBilling =
-                      selectedContactPlan.id === "team"
-                        ? "Custom pricing"
-                        : billingCycle === "monthly"
-                          ? "Monthly"
-                          : "Yearly"
-
-                    await submitSupport({
+                    await submitSalesLead({
                       email: contactValues.email.trim(),
-                      subject: `${selectedContactPlan.title} pricing inquiry`,
-                      category: "billing",
-                      message: [
-                        `Plan: ${selectedContactPlan.title}`,
-                        `Preferred billing: ${preferredBilling}`,
-                        `Company name: ${contactValues.companyName.trim()}`,
-                        `Phone: ${contactValues.phone.trim()}`,
-                      ].join("\n"),
-                      routeContext: "Upgrade page pricing inquiry",
-                      currentPath: window.location.pathname,
+                      phone: contactValues.phone.trim(),
+                      companyName: contactValues.companyName.trim(),
                       userAgent: window.navigator.userAgent,
-                      submittedAt: new Date().toISOString(),
                     })
 
                     setContactSubmitted(true)
