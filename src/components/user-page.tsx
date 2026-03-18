@@ -2,10 +2,7 @@ import { useEffect } from "react"
 import { getRelativeLuminance } from "@/lib/colors"
 import { loadFont } from "@/lib/load-font"
 import type { SocialPlatform } from "@/lib/social-links"
-import {
-  createUserPageThemeStyles,
-  getUserPageFontClassName,
-} from "@/lib/themes"
+import { getUserPageFontClassName } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
