@@ -100,6 +100,18 @@ export const fonts = [
   },
 ]
 
+/**
+ * Theme settings for a Linktree-style profile page.
+ * `buttonShape` controls the silhouette of each link button:
+ * square = sharp corners, rounded = soft corners, pill = fully capsule-shaped.
+ * `buttonStyle` controls the visual treatment:
+ * solid = filled button, outline = transparent fill with a border,
+ * shadow = filled button with depth from a drop shadow,
+ * ghost = low-emphasis transparent button with minimal chrome,
+ * paper = flat cutout/card-like button,
+ * 3d = solid button with a slightly detached solid shadow offset to the right
+ * to create a raised, layered look.
+ */
 export type Theme = {
   name: string
   backgroundColor: string

@@ -1,3 +1,4 @@
+import type { Doc } from "@convex/_generated/dataModel"
 import { useEffect } from "react"
 import { getRelativeLuminance } from "@/lib/colors"
 import { loadFont } from "@/lib/load-font"
@@ -16,8 +17,8 @@ export type UserPageProfile = {
   backgroundColor: string
   fontFamily: string
   textColor: string
-  buttonShape: "square" | "rounded" | "pill"
-  buttonStyle: "solid" | "outline" | "paper" | "shadow" | "3d" | "ghost"
+  buttonShape: Doc<"profiles">["buttonShape"]
+  buttonStyle: Doc<"profiles">["buttonStyle"]
   buttonColor: string
   buttonTextColor: string
 }
@@ -95,7 +96,7 @@ export function UserPage({
       <div
         className={cn(
           "relative z-0 mx-auto flex-1 max-w-xl bg-up-background",
-          "py-8 @xl/user-page:py-16 px-4 @xl/user-page:px-8",
+          "px-4 py-8 @xl/user-page:px-8 @xl/user-page:py-12",
           "@xl/user-page:shadow-2xl @xl/user-page:mt-8 @xl/user-page:rounded-t-[3rem]",
         )}
         style={{
@@ -112,24 +113,26 @@ export function UserPage({
               : "0 28px 80px rgb(15 23 42 / 0.14)",
         }}
       >
-        <header className="space-y-4">
+        <header className="space-y-5 @md/user-page:space-y-6">
           {profile.avatarUrl && (
-            <Avatar className="size-24 mx-auto block shadow-lg">
+            <Avatar className="mx-auto block size-24 shadow-lg @md/user-page:size-28">
               <AvatarImage src={profile.avatarUrl} />
             </Avatar>
           )}
 
-          <div className="space-y-1 text-center @md/user-page:space-y-1.5">
-            <h1 className="text-xl @md/user-page:text-2xl font-semibold">
+          <div className="space-y-1.5 text-center @md/user-page:space-y-2">
+            <h1 className="text-[1.9rem] leading-none font-semibold tracking-[-0.03em] @md/user-page:text-[2.35rem]">
               {profile.title}
             </h1>
             {profile.bio && (
-              <p className="text-sm @md/user-page:text-base">{profile.bio}</p>
+              <p className="text-base leading-snug @md/user-page:text-lg">
+                {profile.bio}
+              </p>
             )}
           </div>
         </header>
 
-        <ul className="flex flex-col justify-center gap-y-3 @md/user-page:gap-y-5 mt-6 @md/user-page:mt-8 max-w-sm mx-auto">
+        <ul className="mx-auto mt-8 flex max-w-md flex-col justify-center gap-y-4 @md/user-page:mt-9 @md/user-page:gap-y-4.5">
           {buttonLinks.map((link) => (
             <li key={link._id} className="min-w-0 flex">
               <Button
@@ -143,11 +146,11 @@ export function UserPage({
                 {link.title}
               </Button>
             </li>
-          ))}
-        </ul>
+        ))}
+      </ul>
 
         {socialLinks.length > 0 && (
-          <ul className="flex justify-center mt-6">
+          <ul className="mt-8 flex justify-center @md/user-page:mt-9">
             {socialLinks.map((l) => (
               <li key={l._id}>
                 <SocialLink link={l} />
