@@ -313,17 +313,3 @@ export function getDefaultTheme() {
 export function getUserPageFontClassName(fontName: string) {
   return fonts.find((font) => font.name === fontName)?.className ?? "font-sans"
 }
-
-export function createUserPageThemeStyles(
-  theme: Pick<
-    Theme,
-    "backgroundColor" | "textColor" | "buttonColor" | "buttonTextColor"
-  >,
-): React.CSSProperties {
-  return {
-    "--up-background": theme.backgroundColor,
-    "--up-foreground": theme.textColor,
-    "--up-button-background": theme.buttonColor,
-    "--up-button-foreground": theme.buttonTextColor,
-  } as React.CSSProperties
-}

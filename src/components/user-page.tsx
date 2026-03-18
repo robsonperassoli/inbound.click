@@ -75,12 +75,14 @@ export function UserPage({
         fontClassName,
         className,
       )}
-      style={createUserPageThemeStyles({
-        backgroundColor: profile.backgroundColor,
-        textColor: profile.textColor,
-        buttonColor: profile.buttonColor,
-        buttonTextColor: profile.buttonTextColor,
-      })}
+      style={
+        {
+          "--up-background": profile.backgroundColor,
+          "--up-foreground": profile.textColor,
+          "--up-button-background": profile.buttonColor,
+          "--up-button-foreground": profile.buttonTextColor,
+        } as React.CSSProperties
+      }
     >
       <div
         className="pointer-events-none absolute inset-0 z-0"
