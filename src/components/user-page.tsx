@@ -2,7 +2,10 @@ import { useEffect } from "react"
 import { getRelativeLuminance } from "@/lib/colors"
 import { loadFont } from "@/lib/load-font"
 import type { SocialPlatform } from "@/lib/social-links"
-import { createUpThemeStyles } from "@/lib/themes"
+import {
+  createUserPageThemeStyles,
+  getUserPageFontClassName,
+} from "@/lib/themes"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
@@ -63,16 +66,18 @@ export function UserPage({
     : isLightCard
       ? "linear-gradient(180deg, rgb(15 23 42 / 0.08), rgb(15 23 42 / 0.2))"
       : "linear-gradient(180deg, rgb(17 24 39 / 0.28), rgb(17 24 39 / 0.5))"
+  const fontClassName = getUserPageFontClassName(profile.fontFamily)
 
   return (
     <div
-      className={cn("up-theme relative flex @container/user-page", className)}
-      style={createUpThemeStyles({
+      className={cn(
+        "relative flex @container/user-page bg-up-background text-up-foreground",
+        fontClassName,
+        className,
+      )}
+      style={createUserPageThemeStyles({
         backgroundColor: profile.backgroundColor,
-        fontFamily: profile.fontFamily,
         textColor: profile.textColor,
-        buttonShape: profile.buttonShape,
-        buttonStyle: profile.buttonStyle,
         buttonColor: profile.buttonColor,
         buttonTextColor: profile.buttonTextColor,
       })}
@@ -90,12 +95,11 @@ export function UserPage({
 
       <div
         className={cn(
-          "max-w-xl mx-auto flex-1 relative z-0",
+          "relative z-0 mx-auto flex-1 max-w-xl bg-up-background",
           "py-8 @xl/user-page:py-16 px-4 @xl/user-page:px-8",
           "@xl/user-page:shadow-2xl @xl/user-page:mt-8 @xl/user-page:rounded-t-[3rem]",
         )}
         style={{
-          backgroundColor: profile.backgroundColor,
           backgroundImage: profile.backgroundImageUrl
             ? `url(${profile.backgroundImageUrl})`
             : undefined,
@@ -116,7 +120,7 @@ export function UserPage({
             </Avatar>
           )}
 
-          <div className="text-center space-y-1 @md/userpage:space-y-1.5">
+          <div className="space-y-1 text-center @md/user-page:space-y-1.5">
             <h1 className="text-xl @md/user-page:text-2xl font-semibold">
               {profile.title}
             </h1>

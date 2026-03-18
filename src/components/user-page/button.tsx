@@ -3,31 +3,30 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   `
-  up-button
-  h-10
-  flex items-center justify-center
+  flex h-10 flex-1 items-center justify-center
   whitespace-nowrap
-  transition-all
+  border-2 border-transparent
+  px-4 text-sm font-medium
+  transition-all duration-150
   outline-none
   select-none
-  flex-1
-  text-sm @md/user-page:text-base
-  px-4 @md/user-page:px-6
+  @md/user-page:px-6 @md/user-page:text-base
   `,
   {
     variants: {
       buttonStyle: {
-        solid: "up-button-solid",
-        outline: "up-button-outline",
-        paper: "up-button-paper",
-        shadow: "up-button-solid up-button-shadow",
-        "3d": "up-button-solid up-button-3d",
-        ghost: "up-button-ghost",
+        solid: "bg-up-button text-up-button-foreground",
+        outline: "border-up-button bg-transparent text-up-button",
+        paper: "border-black bg-up-button text-up-button-foreground",
+        shadow:
+          "bg-up-button text-up-button-foreground shadow-[0_6px_12px_rgb(0_0_0_/_0.25)]",
+        "3d": "bg-up-button text-up-button-foreground shadow-[6px_6px_0px_0px_black] -translate-y-0.5 active:translate-y-0.5 active:shadow-none",
+        ghost: "bg-transparent text-up-button",
       },
       shape: {
-        square: "up-button-square",
-        rounded: "up-button-rounded",
-        pill: "up-button-pill",
+        square: "rounded-none",
+        rounded: "rounded-lg",
+        pill: "rounded-full",
       },
     },
 

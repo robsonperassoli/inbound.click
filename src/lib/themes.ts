@@ -8,36 +8,43 @@ export const fonts = [
     category: "sans",
     name: "Inter",
     fontFamily: "'Inter Variable', sans-serif",
+    className: "font-inter",
   },
   {
     category: "sans",
     name: "DM Sans",
     fontFamily: "'DM Sans Variable', sans-serif",
+    className: "font-dm-sans",
   },
   {
     category: "sans",
     name: "Manrope",
     fontFamily: "'Manrope Variable', sans-serif",
+    className: "font-manrope",
   },
   {
     category: "sans",
     name: "Plus Jakarta Sans",
     fontFamily: "'Plus Jakarta Sans Variable', sans-serif",
+    className: "font-plus-jakarta-sans",
   },
   {
     category: "sans",
     name: "Outfit",
     fontFamily: "'Outfit Variable', sans-serif",
+    className: "font-outfit",
   },
   {
     category: "sans",
     name: "Poppins",
     fontFamily: "'Poppins', sans-serif",
+    className: "font-poppins",
   },
   {
     category: "sans",
     name: "Montserrat",
     fontFamily: "'Montserrat Variable', sans-serif",
+    className: "font-montserrat",
   },
 
   // 📚 Serif
@@ -45,21 +52,25 @@ export const fonts = [
     category: "serif",
     name: "Playfair Display",
     fontFamily: "'Playfair Display Variable', serif",
+    className: "font-playfair-display",
   },
   {
     category: "serif",
     name: "Merriweather",
     fontFamily: "'Merriweather Variable', serif",
+    className: "font-merriweather",
   },
   {
     category: "serif",
     name: "Libre Baskerville",
     fontFamily: "'Libre Baskerville', serif",
+    className: "font-libre-baskerville",
   },
   {
     category: "serif",
     name: "Lora",
     fontFamily: "'Lora Variable', serif",
+    className: "font-lora",
   },
 
   // 🎯 Display / Bold
@@ -67,21 +78,25 @@ export const fonts = [
     category: "display",
     name: "Bebas Neue",
     fontFamily: "'Bebas Neue', sans-serif",
+    className: "font-bebas-neue",
   },
   {
     category: "display",
     name: "Anton",
     fontFamily: "'Anton', sans-serif",
+    className: "font-anton",
   },
   {
     category: "display",
     name: "Archivo Black",
     fontFamily: "'Archivo Black', sans-serif",
+    className: "font-archivo-black",
   },
   {
     category: "display",
     name: "Space Grotesk",
     fontFamily: "'Space Grotesk Variable', sans-serif",
+    className: "font-space-grotesk",
   },
 ]
 
@@ -295,31 +310,20 @@ export function getDefaultTheme() {
   return theme
 }
 
-export function createUpThemeStyles(
-  theme: Omit<Theme, "name">,
+export function getUserPageFontClassName(fontName: string) {
+  return fonts.find((font) => font.name === fontName)?.className ?? "font-sans"
+}
+
+export function createUserPageThemeStyles(
+  theme: Pick<
+    Theme,
+    "backgroundColor" | "textColor" | "buttonColor" | "buttonTextColor"
+  >,
 ): React.CSSProperties {
-  const radiusMap: Record<Theme["buttonShape"], string> = {
-    square: "var(--up-button-radius-square)",
-    rounded: "var(--up-button-radius-rounded)",
-    pill: "var(--up-button-radius-pill)",
-  }
-
-  const font = fonts.find((f) => f.name === theme.fontFamily)
-
   return {
-    /* Base */
-    "--up-background-color": theme.backgroundColor,
-    // "--up-background-image": theme.backgroundImage
-    //   ? `url(${theme.backgroundImage})`
-    //   : "none",
-    "--up-font-family": font?.fontFamily,
-    "--up-text-color": theme.textColor,
-
-    /* Button */
-    "--up-button-color": theme.buttonColor,
-    "--up-button-text-color": theme.buttonTextColor,
-
-    /* Shape (resolved) */
-    "--up-button-radius": radiusMap[theme.buttonShape],
+    "--up-background": theme.backgroundColor,
+    "--up-foreground": theme.textColor,
+    "--up-button-background": theme.buttonColor,
+    "--up-button-foreground": theme.buttonTextColor,
   } as React.CSSProperties
 }

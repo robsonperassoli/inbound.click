@@ -119,6 +119,37 @@
   --shadow-brutal: 6px 6px 0px 0px #000;
 }
 
+/* User Page Theme Variables */
+:root {
+  --up-background: #ffffff;
+  --up-foreground: #111827;
+  --up-button-background: #111827;
+  --up-button-foreground: #ffffff;
+}
+
+@theme inline {
+  --font-inter: "Inter Variable", sans-serif;
+  --font-dm-sans: "DM Sans Variable", sans-serif;
+  --font-manrope: "Manrope Variable", sans-serif;
+  --font-plus-jakarta-sans: "Plus Jakarta Sans Variable", sans-serif;
+  --font-outfit: "Outfit Variable", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-montserrat: "Montserrat Variable", sans-serif;
+  --font-playfair-display: "Playfair Display Variable", serif;
+  --font-merriweather: "Merriweather Variable", serif;
+  --font-libre-baskerville: "Libre Baskerville", serif;
+  --font-lora: "Lora Variable", serif;
+  --font-bebas-neue: "Bebas Neue", sans-serif;
+  --font-anton: "Anton", sans-serif;
+  --font-archivo-black: "Archivo Black", sans-serif;
+  --font-space-grotesk: "Space Grotesk Variable", sans-serif;
+
+  --color-up-background: var(--up-background);
+  --color-up-foreground: var(--up-foreground);
+  --color-up-button: var(--up-button-background);
+  --color-up-button-foreground: var(--up-button-foreground);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -131,93 +162,6 @@
   }
 }
 
-/* =========================================
-   THEME TOKENS (DEFAULTS)
-========================================= */
-@theme {
-  --up-background-color: #ffffff;
-  --up-background-image: none;
-  --up-font-family: ui-sans-serif, system-ui, sans-serif;
-  --up-text-color: #111827;
-
-  --up-button-color: #111827;
-  --up-button-text-color: #ffffff;
-
-  --up-button-radius-square: 0px;
-  --up-button-radius-rounded: 12px;
-  --up-button-radius-pill: 9999px;
-
-  --up-button-shadow: 0 6px 12px rgb(0 0 0 / 0.25);
-  --up-button-shadow-3d: 6px 6px 0px 0px black;
-}
-
-@layer components {
-  /* Scoped theme container */
-  .up-theme {
-    background-color: var(--up-background-color);
-    background-image: var(--up-background-image);
-    color: var(--up-text-color);
-    font-family: var(--up-font-family);
-    border-color: var(--up-text-color);
-  }
-
-  /* Button base */
-  .up-button {
-    font-weight: 500;
-    transition: all 150ms ease;
-    border-radius: var(--up-button-radius, 12px);
-  }
-
-  /* Shapes */
-  .up-button-square {
-    --up-button-radius: var(--up-button-radius-square);
-  }
-
-  .up-button-rounded {
-    --up-button-radius: var(--up-button-radius-rounded);
-  }
-
-  .up-button-pill {
-    --up-button-radius: var(--up-button-radius-pill);
-  }
-
-  /* Styles */
-  .up-button-solid {
-    background-color: var(--up-button-color);
-    color: var(--up-button-text-color);
-  }
-
-  .up-button-outline {
-    background: transparent;
-    color: var(--up-button-color);
-    border: 2px solid var(--up-button-color);
-  }
-
-  .up-button-ghost {
-    background: transparent;
-    color: var(--up-button-color);
-  }
-
-  .up-button-paper {
-    background: var(--up-button-color);
-    color: var(--up-button-text-color);
-    border: 2px solid black;
-  }
-
-  .up-button-shadow {
-    box-shadow: var(--up-button-shadow);
-  }
-
-  .up-button-3d {
-    box-shadow: var(--up-button-shadow-3d);
-    transform: translateY(-2px);
-  }
-
-  .up-button-3d:active {
-    transform: translateY(2px);
-    box-shadow: none;
-  }
-}
 
 @keyframes blink {
   0%,
