@@ -42,26 +42,24 @@ function RouteComponent() {
   const { profile, links } = profileData
 
   return (
-    <ScrollableContainer className="pb-20">
-      <div className="flex gap-x-4 md:gap-x-6 justify-center">
-        <div className="grow w-3/5">
+    <>
+      <div className="flex flex-1">
+        <div className="w-full overflow-auto p-4">
           <Outlet />
         </div>
 
-        <div className="shrink-0 md:w-2/5 hidden sm:block">
-          <div className="w-sm sticky top-0 border rounded-xl shadow-lg overflow-hidden">
-            <UserPage
-              profile={profile}
-              links={links?.filter((l) => l.active) ?? []}
-              className="min-h-96"
-              onFormLinkClick={() => {}}
-            />
-          </div>
+        <div className="hidden lg:flex w-xl xl:w-3xl 2xl:w-5xl border-l grow">
+          <UserPage
+            profile={profile}
+            links={links?.filter((l) => l.active) ?? []}
+            className="min-h-96 w-full"
+            onFormLinkClick={() => {}}
+          />
         </div>
       </div>
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="fixed right-5 bottom-5 sm:hidden shadow">
+          <Button className="fixed right-5 bottom-5 lg:hidden shadow">
             <HugeiconsIcon icon={ViewIcon} /> Preview
           </Button>
         </PopoverTrigger>
@@ -78,6 +76,6 @@ function RouteComponent() {
           />
         </PopoverContent>
       </Popover>
-    </ScrollableContainer>
+    </>
   )
 }
