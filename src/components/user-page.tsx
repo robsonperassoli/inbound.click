@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { getRelativeLuminance } from "@/lib/colors"
 import { loadFont } from "@/lib/load-font"
 import type { SocialPlatform } from "@/lib/social-links"
-import { getUserPageFontClassName } from "@/lib/themes"
+import { getUserPageFontClassName, getUserPageFontTracking } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import { Button } from "./user-page/button"
@@ -65,6 +65,7 @@ export function UserPage({
       ? "linear-gradient(180deg, rgb(15 23 42 / 0.08), rgb(15 23 42 / 0.2))"
       : "linear-gradient(180deg, rgb(17 24 39 / 0.28), rgb(17 24 39 / 0.5))"
   const fontClassName = getUserPageFontClassName(profile.fontFamily)
+  const fontTracking = getUserPageFontTracking(profile.fontFamily)
 
   return (
     <div
@@ -121,7 +122,12 @@ export function UserPage({
           )}
 
           <div className="space-y-1.5 text-center @md/user-page:space-y-2">
-            <h1 className="text-[1.9rem] leading-none font-semibold tracking-[-0.03em] @md/user-page:text-[2.35rem]">
+            <h1
+              className={cn(
+                "text-[1.9rem] leading-none font-semibold @md/user-page:text-[2.35rem]",
+                fontTracking.heading,
+              )}
+            >
               {profile.title}
             </h1>
             {profile.bio && (
@@ -142,6 +148,7 @@ export function UserPage({
                 shape={profile.buttonShape}
                 buttonStyle={profile.buttonStyle}
                 className="truncate text-ellipsis"
+                labelClassName={cn("block truncate text-ellipsis", fontTracking.body)}
               >
                 {link.title}
               </Button>

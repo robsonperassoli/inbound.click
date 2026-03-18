@@ -43,6 +43,7 @@ const buttonVariants = cva(
 
 interface ButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string
+  labelClassName?: string
   href?: string
   onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>
   children?: React.ReactNode
@@ -51,6 +52,7 @@ interface ButtonProps extends VariantProps<typeof buttonVariants> {
 
 function Button({
   className,
+  labelClassName,
   shape = "rounded",
   buttonStyle = "solid",
   href,
@@ -70,7 +72,7 @@ function Button({
         onClick={onClick}
         {...props}
       >
-        {children}
+        <span className={labelClassName}>{children}</span>
       </a>
     )
   }
@@ -83,7 +85,7 @@ function Button({
       onClick={onClick}
       {...props}
     >
-      {children}
+      <span className={labelClassName}>{children}</span>
     </button>
   )
 }
