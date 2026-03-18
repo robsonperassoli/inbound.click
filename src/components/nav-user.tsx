@@ -10,7 +10,7 @@ import {
   UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { useAction, useQuery } from "convex/react"
 import posthog from "posthog-js"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -29,10 +29,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { authClient } from "@/lib/auth-client"
+
 import { getInitials } from "@/lib/names"
 
 export function NavUser() {
+  const navigate = useNavigate()
   const user = useQuery(api.auth.getCurrentUser, {})
   const subscription = useQuery(api.stripe.getUserSubscription, {})
   const getCustomerPortalUrl = useAction(api.stripe.getCustomerPortalUrl, {})
@@ -40,13 +41,7 @@ export function NavUser() {
   const signOut = async () => {
     posthog.reset()
 
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          location.reload()
-        },
-      },
-    })
+    navigate({ to: "/logout" })
   }
 
   const { isMobile } = useSidebar()

@@ -25,6 +25,7 @@ export const Route = createFileRoute("/_authenticated/bio")({
     if (!profile) {
       throw redirect({ to: "/onboarding" })
     }
+
     return { profileId: profile._id }
   },
 })
@@ -32,13 +33,13 @@ export const Route = createFileRoute("/_authenticated/bio")({
 function RouteComponent() {
   useSiteHeader({ title: "Bio" })
 
-  const { profileId } = Route.useLoaderData()
-  const profile = useQuery(api.profiles.queries.getProfile, {})
-  const links = useQuery(api.links.queries.getProfileLinks, { profileId })
+  const profileData = useQuery(api.profiles.queries.getProfileWithLinks, {})
 
-  if (!profile) {
+  if (!profileData) {
     return null
   }
+
+  const { profile, links } = profileData
 
   return (
     <ScrollableContainer className="pb-20">
