@@ -5,6 +5,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 import { createMiddleware, useServerFn } from "@tanstack/react-start"
 import { setResponseHeader } from "@tanstack/react-start/server"
 import { useState } from "react"
+import { UnpublishedProfilePage } from "@/components/unpublished-profile-page"
 import { UserPage, type UserPageLink } from "@/components/user-page"
 import { ChatPopup } from "@/components/user-page/chat-popup"
 import { convexHttpClient } from "@/integrations/convex/provider"
@@ -132,6 +133,11 @@ function RouteComponent() {
   const { profile, links } = Route.useLoaderData()
   const [sessionId, setSessionId] = useState<string>()
   const [formOpen, setFormOpen] = useState(false)
+
+  // Check if profile is not published
+  if (!profile.publishedAt) {
+    return <UnpublishedProfilePage username={profile.username} />
+  }
 
   const onFormLinkClick = async (link: UserPageLink) => {
     if (!link.formId) {
