@@ -54,10 +54,17 @@ export function SocialLinkItem({
       ref={setElement}
       key={link._id}
       className={cn(
-        "bg-background size-16 border border-border/60 rounded-lg p-3 relative hover:bg-accent hover:shadow-md transition-all duration-200",
+        "size-16 border border-border/60 rounded-lg p-3 relative overflow-hidden",
+        "bg-gradient-to-br from-muted/50 to-muted/30",
+        "hover:border-border/80",
+        "transition-colors duration-200",
+        "group",
       )}
     >
-      <HugeiconsIcon icon={platformConfig.icon} className="w-full h-full" />
+      <HugeiconsIcon
+        icon={platformConfig.icon}
+        className="w-full h-full transition-transform duration-200 group-hover:scale-105"
+      />
 
       <div className="absolute -top-2 -right-2">{!sortable && actions}</div>
     </li>
