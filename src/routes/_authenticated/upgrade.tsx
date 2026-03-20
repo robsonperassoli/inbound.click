@@ -150,7 +150,7 @@ function RouteComponent() {
       ? "free"
       : getPlanIdForPriceId(subscription === "free" ? null : subscription)
 
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly")
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("yearly")
   const [checkoutPlan, setCheckoutPlan] = useState<PlanId | null>(null)
   const [contactPlan, setContactPlan] = useState<PlanId | null>(null)
   const [contactValues, setContactValues] =
@@ -270,19 +270,7 @@ function RouteComponent() {
                   <button
                     type="button"
                     className={cn(
-                      "rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
-                      billingCycle === "monthly"
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground",
-                    )}
-                    onClick={() => setBillingCycle("monthly")}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    type="button"
-                    className={cn(
-                      "rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+                      "w-30 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
                       billingCycle === "yearly"
                         ? "bg-background text-foreground shadow-sm"
                         : "text-muted-foreground",
@@ -290,6 +278,18 @@ function RouteComponent() {
                     onClick={() => setBillingCycle("yearly")}
                   >
                     Yearly
+                  </button>
+                  <button
+                    type="button"
+                    className={cn(
+                      "w-30 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+                      billingCycle === "monthly"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground",
+                    )}
+                    onClick={() => setBillingCycle("monthly")}
+                  >
+                    Monthly
                   </button>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -344,6 +344,12 @@ function RouteComponent() {
                     </div>
 
                     <div className="mb-5 border-b border-border/70 pb-5">
+                      {billingCycle === "yearly" &&
+                      plan.pricing.originalPriceLabel ? (
+                        <p className="text-sm font-medium text-muted-foreground line-through">
+                          {plan.pricing.originalPriceLabel}
+                        </p>
+                      ) : null}
                       <p className="text-4xl font-semibold tracking-tight">
                         {plan.pricing.priceLabel}
                         {plan.pricing.period ? (
@@ -353,7 +359,10 @@ function RouteComponent() {
                         ) : null}
                       </p>
                       <p className="mt-2 min-h-5 text-sm text-muted-foreground transition-opacity duration-300">
-                        {plan.pricing.equivalent || " "}
+                        {billingCycle === "yearly" &&
+                        plan.pricing.originalPriceLabel
+                          ? " "
+                          : plan.pricing.equivalent || " "}
                       </p>
                     </div>
 

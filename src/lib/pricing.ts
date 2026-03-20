@@ -6,6 +6,7 @@ export type PriceConfig = {
   period: string
   equivalent?: string
   badge?: string
+  originalPriceLabel?: string
   stripePriceId?: string
 }
 
@@ -24,8 +25,7 @@ export const PRICING: Record<
     yearly: {
       priceLabel: "$99",
       period: "/yr",
-      equivalent: "equiv. $8.25/mo",
-      badge: "Save $10/year",
+      originalPriceLabel: "$108",
       stripePriceId: env.VITE_STRIPE_STARTER_PRICE_YEARLY_ID,
     },
   },
@@ -38,8 +38,7 @@ export const PRICING: Record<
     yearly: {
       priceLabel: "$178",
       period: "/yr",
-      equivalent: "equiv. $14.83/mo",
-      badge: "Save $50/year",
+      originalPriceLabel: "$228",
       stripePriceId: env.VITE_STRIPE_PRO_PRICE_YEARLY_ID,
     },
   },
