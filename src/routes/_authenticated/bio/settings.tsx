@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "convex/react"
 import type { FunctionReturnType } from "convex/server"
 import { useState } from "react"
 import z from "zod"
+import { PublishBanner } from "@/components/bio/publish-banner"
 import { FileUpload } from "@/components/file-upload"
 import { BIO_DOMAIN } from "@/components/share-button"
 import { useSiteHeader } from "@/components/site-header"
@@ -133,139 +134,145 @@ function SettingsForm({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Profile header</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            form.handleSubmit()
-          }}
-        >
-          <FieldGroup>
-            <FileUpload onChange={(_tempUrl, file) => handleAvatarUpload(file)}>
-              <Avatar size="lg" className="group overflow-hidden">
-                {profile.avatarUrl ? (
-                  <AvatarImage src={profile.avatarUrl} />
-                ) : (
-                  <AvatarFallback />
-                )}
-                <div className="absolute inset-0 bg-primary/40 opacity-0 flex items-center justify-center text-primary-foreground group-hover:opacity-100 duration-200">
-                  <HugeiconsIcon icon={PencilEdit01Icon} size={16} />
-                </div>
-              </Avatar>
-            </FileUpload>
+    <div className="space-y-6">
+      <PublishBanner profileId={profileId} />
 
-            <form.Field name="username">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile header</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              form.handleSubmit()
+            }}
+          >
+            <FieldGroup>
+              <FileUpload
+                onChange={(_tempUrl, file) => handleAvatarUpload(file)}
+              >
+                <Avatar size="lg" className="group overflow-hidden">
+                  {profile.avatarUrl ? (
+                    <AvatarImage src={profile.avatarUrl} />
+                  ) : (
+                    <AvatarFallback />
+                  )}
+                  <div className="absolute inset-0 bg-primary/40 opacity-0 flex items-center justify-center text-primary-foreground group-hover:opacity-100 duration-200">
+                    <HugeiconsIcon icon={PencilEdit01Icon} size={16} />
+                  </div>
+                </Avatar>
+              </FileUpload>
 
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel>Username</FieldLabel>
+              <form.Field name="username">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
 
-                    <InputGroup className="[--radius:9999px]">
-                      <InputGroupAddon className="pl-1.5 text-muted-foreground">
-                        {BIO_DOMAIN}/
-                      </InputGroupAddon>
-                      <InputGroupInput
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel>Username</FieldLabel>
+
+                      <InputGroup className="[--radius:9999px]">
+                        <InputGroupAddon className="pl-1.5 text-muted-foreground">
+                          {BIO_DOMAIN}/
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          placeholder="the_real_john"
+                          autoComplete="off"
+                        />
+                      </InputGroup>
+
+                      {isInvalid ? (
+                        <FieldError errors={field.state.meta.errors} />
+                      ) : (
+                        <FieldDescription>
+                          Your public page URL uses this username.
+                        </FieldDescription>
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <form.Field name="title">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel>Title</FieldLabel>
+                      <Input
                         id={field.name}
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="the_real_john"
-                        autoComplete="off"
+                        placeholder="John Labrador"
                       />
-                    </InputGroup>
 
-                    {isInvalid ? (
-                      <FieldError errors={field.state.meta.errors} />
-                    ) : (
-                      <FieldDescription>
-                        Your public page URL uses this username.
-                      </FieldDescription>
-                    )}
-                  </Field>
-                )
-              }}
-            </form.Field>
+                      {isInvalid ? (
+                        <FieldError errors={field.state.meta.errors} />
+                      ) : (
+                        <FieldDescription>
+                          This appears under your avatar on the public page.
+                        </FieldDescription>
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
 
-            <form.Field name="title">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+              <form.Field name="bio">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
 
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel>Title</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="John Labrador"
-                    />
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel>Bio</FieldLabel>
+                      <Textarea
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="Making dreams come true"
+                      />
 
-                    {isInvalid ? (
-                      <FieldError errors={field.state.meta.errors} />
-                    ) : (
-                      <FieldDescription>
-                        This appears under your avatar on the public page.
-                      </FieldDescription>
-                    )}
-                  </Field>
-                )
-              }}
-            </form.Field>
+                      {isInvalid ? (
+                        <FieldError errors={field.state.meta.errors} />
+                      ) : (
+                        <FieldDescription>
+                          A short summary visitors see on your profile.
+                        </FieldDescription>
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
 
-            <form.Field name="bio">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+              {saveError && (
+                <p className="text-sm text-destructive" role="alert">
+                  {saveError}
+                </p>
+              )}
 
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel>Bio</FieldLabel>
-                    <Textarea
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="Making dreams come true"
-                    />
-
-                    {isInvalid ? (
-                      <FieldError errors={field.state.meta.errors} />
-                    ) : (
-                      <FieldDescription>
-                        A short summary visitors see on your profile.
-                      </FieldDescription>
-                    )}
-                  </Field>
-                )
-              }}
-            </form.Field>
-
-            {saveError && (
-              <p className="text-sm text-destructive" role="alert">
-                {saveError}
-              </p>
-            )}
-
-            <Field orientation="horizontal">
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save profile"}
-              </Button>
-            </Field>
-          </FieldGroup>
-        </form>
-      </CardContent>
-    </Card>
+              <Field orientation="horizontal">
+                <Button type="submit" disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save profile"}
+                </Button>
+              </Field>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

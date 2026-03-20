@@ -3,6 +3,7 @@ import { createFileRoute, useLoaderData } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
 import { useState } from "react"
 import { DesignAiButton } from "@/components/bio/design-ai-button"
+import { PublishBanner } from "@/components/bio/publish-banner"
 import { EditTheme } from "@/components/edit-theme"
 import { useSiteHeader } from "@/components/site-header"
 import { ThemePreview } from "@/components/theme-preview"
@@ -66,6 +67,8 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
+      <PublishBanner profileId={profileId} />
+
       <section className="space-y-4 rounded-xl border p-4">
         <div className="flex justify-between">
           <div>

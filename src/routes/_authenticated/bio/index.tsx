@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "convex/react"
 import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
 import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
+import { PublishBanner } from "@/components/bio/publish-banner"
 import { CreateFormPrompt } from "@/components/forms/create-form-prompt"
 import { AddSocialLinkModal } from "@/components/links/add-social-link-modal"
 import { CreateLinkButton } from "@/components/links/create-link-button"
@@ -109,6 +110,8 @@ function RouteComponent() {
 
   return (
     <ScrollableContainer className="p-px md:p-px space-y-5">
+      <PublishBanner profileId={profileId} />
+
       {links === undefined && (
         <Card className="border-border/60 bg-muted/20">
           <CardContent className="py-10 text-sm text-muted-foreground">
