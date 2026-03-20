@@ -1,28 +1,36 @@
 "use client"
 
+import { api } from "@convex/_generated/api"
 import {
+  ArrowRight01Icon,
   Chart03Icon,
   DatabaseLightningIcon,
   LifeBuoy,
   ListViewIcon,
   Send,
+  SparklesIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
+import { useQuery } from "convex/react"
 import type * as React from "react"
 import { useState } from "react"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { SidebarContactModals } from "@/components/sidebar-contact-modals"
+import { Button } from "@/components/ui/button"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import logo from "../assets/logo.svg"
 
@@ -67,6 +75,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [openModal, setOpenModal] = useState<"support" | "feedback" | null>(
     null,
   )
+  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const { isMobile, state } = useSidebar()
 
   const secondaryItems = [
     {
@@ -80,6 +90,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       onClick: () => setOpenModal("feedback"),
     },
   ]
+
+  const shouldShowUpgradeCta = subscription === "free"
+  const showCompactUpgradeCta =
+    shouldShowUpgradeCta && !isMobile && state === "collapsed"
+  const showFullUpgradeCta = shouldShowUpgradeCta && !showCompactUpgradeCta
 
   return (
     <>
@@ -101,7 +116,69 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarContent>
           <NavMain items={data.navMain} />
 
-          <NavSecondary items={secondaryItems} className="mt-auto" />
+          <div className="mt-auto space-y-2">
+            {showFullUpgradeCta && (
+              <SidebarGroup className="pt-0 pb-0">
+                <SidebarGroupContent>
+                  <div className="rounded-3xl border border-sidebar-border/80 bg-linear-to-br from-sidebar-accent/90 via-sidebar to-sidebar-accent/60 p-3 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="inline-flex size-8 shrink-0 items-center justify-center rounded-2xl bg-sidebar-primary/12 text-sidebar-primary">
+                        <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold tracking-tight text-sidebar-foreground">
+                          Publish your profile
+                        </p>
+                        <p className="mt-1 text-xs leading-4.5 text-sidebar-foreground/75">
+                          Pick a plan to go live and start collecting leads.
+                        </p>
+                      </div>
+                    </div>
+
+                    <Button
+                      asChild
+                      size="sm"
+                      className="mt-3 w-full rounded-2xl"
+                    >
+                      <Link to="/upgrade">
+                        See plans
+                        <HugeiconsIcon
+                          icon={ArrowRight01Icon}
+                          strokeWidth={2}
+                        />
+                      </Link>
+                    </Button>
+                  </div>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
+
+            {showCompactUpgradeCta && (
+              <SidebarGroup className="pt-0 pb-0">
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip="Choose a plan to publish your profile"
+                      >
+                        <Link
+                          to="/upgrade"
+                          aria-label="Choose a plan to publish your profile"
+                        >
+                          <HugeiconsIcon icon={SparklesIcon} strokeWidth={2} />
+                          <span>Publish your profile</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
+
+            <NavSecondary items={secondaryItems} />
+          </div>
         </SidebarContent>
         <SidebarFooter>
           <NavUser />

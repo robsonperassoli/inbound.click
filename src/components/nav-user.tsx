@@ -36,7 +36,7 @@ export function NavUser() {
   const navigate = useNavigate()
   const user = useQuery(api.auth.getCurrentUser, {})
   const subscription = useQuery(api.stripe.getUserSubscription, {})
-  const getCustomerPortalUrl = useAction(api.stripe.getCustomerPortalUrl, {})
+  const getCustomerPortalUrl = useAction(api.stripe.getCustomerPortalUrl)
 
   const signOut = async () => {
     posthog.reset()
