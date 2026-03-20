@@ -40,7 +40,6 @@ const data = {
       title: "Bio",
       url: "/bio",
       icon: <HugeiconsIcon icon={ListViewIcon} strokeWidth={2} />,
-      isActive: true,
       items: [
         {
           title: "Links",
