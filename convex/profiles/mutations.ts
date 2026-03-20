@@ -2,10 +2,11 @@ import { v } from "convex/values"
 import { internal } from "../_generated/api"
 import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
-import { userMutation } from "../custom"
+import { userAction, userMutation } from "../custom"
 import * as forms from "../forms/domain"
 import { themeFields } from "../schema"
 import * as stripe from "../stripe/domain"
+import * as agents from "../threads/agents"
 import { getFirstName } from "../utils/names"
 import * as domain from "./domain"
 
@@ -130,6 +131,36 @@ export const updateTheme = userMutation({
     await domain.patchProfileTheme(ctx, profile._id, {
       ...theme,
       backgroundImage: theme.backgroundImage ?? undefined,
+    })
+  },
+})
+
+export const generateTheme = userAction({
+  args: {
+    profileId: v.id("profiles"),
+  },
+  handler: async (ctx, { profileId }) => {
+    const profile = await ctx.runQuery(
+      internal.profiles.queries.getProfileByIdInternal,
+      {
+        profileId,
+      },
+    )
+
+    if (profile.userId !== ctx.user._id) {
+      throw new Error("Profile not found")
+    }
+
+    const theme = await agents.generateTheme(
+      profile.username,
+      profile.title,
+      profile.bio,
+    )
+
+    await ctx.runMutation(internal.profiles.mutations.updateThemeInternal, {
+      profileId,
+      ...theme,
+      backgroundImage: undefined,
     })
   },
 })

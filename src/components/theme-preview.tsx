@@ -1,6 +1,25 @@
 import type { Theme } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 
+function adjustColor(hex: string, factor: number): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+
+  // Calculate luminance to determine if color is light or dark
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+
+  // For dark backgrounds, lighten; for light backgrounds, darken
+  const isDark = luminance < 0.5
+  const adjustment = isDark ? 1 + factor : 1 - factor
+
+  const newR = Math.min(255, Math.max(0, Math.floor(r * adjustment)))
+  const newG = Math.min(255, Math.max(0, Math.floor(g * adjustment)))
+  const newB = Math.min(255, Math.max(0, Math.floor(b * adjustment)))
+
+  return `#${newR.toString(16).padStart(2, "0")}${newG.toString(16).padStart(2, "0")}${newB.toString(16).padStart(2, "0")}`
+}
+
 export function ThemePreview({
   theme,
   selected,
@@ -27,16 +46,17 @@ export function ThemePreview({
       type="button"
       key={theme.name}
       className={cn(
-        "overflow-hidden rounded-lg border text-left transition",
+        "overflow-hidden rounded-lg border-2 text-left transition",
         size === "compact" ? "max-w-48" : "max-w-56",
-        "hover:border-primary/70 hover:shadow-sm",
+        "hover:shadow-lg hover:scale-[1.02]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-        selected
-          ? "border-primary border-2 ring-4 ring-primary/35 shadow-md"
-          : "border-border",
+        selected ? "ring-2 ring-primary shadow-xl scale-[1.02]" : "shadow-md",
         className,
       )}
-      style={{ backgroundColor: theme.backgroundColor }}
+      style={{
+        backgroundColor: theme.backgroundColor,
+        borderColor: adjustColor(theme.backgroundColor, 0.15),
+      }}
       onClick={onClick}
     >
       <div
@@ -69,44 +89,37 @@ export function ThemePreview({
             size === "compact" ? "mt-3 space-y-2" : "mt-5 space-y-2.5",
           )}
         >
-          {previewButtonIds.map((buttonId) => (
-            <div
-              key={buttonId}
-              className={cn(
-                "w-full border",
-                size === "compact" ? "h-8" : "h-10",
-                theme.buttonShape === "pill"
-                  ? "rounded-full"
-                  : theme.buttonShape === "rounded"
-                    ? "rounded-lg"
-                    : "rounded-none",
-              )}
-              style={{
-                backgroundColor:
-                  theme.buttonStyle === "outline" ||
-                  theme.buttonStyle === "ghost"
-                    ? "transparent"
-                    : theme.buttonColor,
-                borderColor:
-                  theme.buttonStyle === "ghost"
-                    ? "transparent"
-                    : theme.buttonColor,
-                color:
-                  theme.buttonStyle === "outline" ||
-                  theme.buttonStyle === "ghost"
-                    ? theme.buttonColor
-                    : theme.buttonTextColor,
-                boxShadow:
-                  theme.buttonStyle === "shadow"
-                    ? "0 6px 12px rgb(0 0 0 / 0.25)"
-                    : theme.buttonStyle === "3d"
-                      ? "6px 6px 0px 0px black"
-                      : "none",
-                transform:
-                  theme.buttonStyle === "3d" ? "translateY(-2px)" : "none",
-              }}
-            />
-          ))}
+          {previewButtonIds.map((buttonId) => {
+            const isOutline = theme.buttonStyle === "outline"
+            const isGhost = theme.buttonStyle === "ghost"
+            const isFilled = !isOutline && !isGhost
+
+            return (
+              <div
+                key={buttonId}
+                className={cn(
+                  "w-full",
+                  isOutline && "border-2",
+                  size === "compact" ? "h-8" : "h-10",
+                  theme.buttonShape === "pill"
+                    ? "rounded-full"
+                    : theme.buttonShape === "rounded"
+                      ? "rounded-lg"
+                      : "rounded-md",
+                )}
+                style={{
+                  backgroundColor: isFilled ? theme.buttonColor : "transparent",
+                  borderColor: isOutline ? theme.buttonColor : "transparent",
+                  boxShadow:
+                    theme.buttonStyle === "shadow"
+                      ? `0 4px 12px ${theme.buttonColor}50`
+                      : theme.buttonStyle === "3d"
+                        ? `4px 4px 0px 0px ${theme.textColor}30`
+                        : "none",
+                }}
+              />
+            )
+          })}
         </div>
       </div>
     </button>

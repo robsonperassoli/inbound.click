@@ -3,13 +3,20 @@ import {
   type OpenAILanguageModelResponsesOptions,
   openai,
 } from "@ai-sdk/openai"
-import { stepCountIs, ToolLoopAgent, type ToolSet } from "ai"
+import {
+  generateText,
+  Output,
+  stepCountIs,
+  ToolLoopAgent,
+  type ToolSet,
+} from "ai"
 import { internal } from "../_generated/api"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { ActionCtx } from "../_generated/server"
+import { oneShootSystemPrompt } from "./agents/designer"
 import * as agentTools from "./agents/tools"
 
-const model = openai("gpt-5-nano")
+const model = openai("gpt-5.4-nano")
 // const model = fireworks("accounts/fireworks/models/kimi-k2-instruct-0905")
 
 type CreateAgentArgs =
@@ -66,6 +73,7 @@ export function createAgent(
       throw new Error(`Unknown agent type`)
   }
 
+  // TODO: move the state to a user message
   const instructions = `${thread.systemPrompt}\n\n${args.state}`
 
   return new ToolLoopAgent({
@@ -124,4 +132,34 @@ export async function executeAgentLoopForThread(
     console.error(err)
     return null
   }
+}
+
+export async function generateTheme(
+  username: string,
+  title: string,
+  subtitle: string,
+) {
+  const vibeResult = await generateText({
+    model: openai("gpt-5.4-nano"),
+    prompt: `Give me one strong visual vibe for a link in bio page based on this profile. Keep it short, specific, and creative. Describe the overall feel, the color direction, the typography vibe, and the button style in plain English. Do not give me multiple options. Avoid generic blue startup-style themes unless it clearly fits.
+    Username: ${username}
+    Title: ${title}
+    Subtitle: ${subtitle}
+    `,
+  })
+
+  const result = await generateText({
+    model: openai("gpt-5.4-mini"),
+    system: oneShootSystemPrompt,
+    prompt: `Please generate a theme with this vibe: ${vibeResult.text}`,
+    output: Output.object({ schema: agentTools.themeSchema }),
+    providerOptions: {
+      openai: {
+        reasoningEffort: "medium",
+        textVerbosity: "low",
+      } satisfies OpenAILanguageModelResponsesOptions,
+    },
+  })
+
+  return result.output
 }

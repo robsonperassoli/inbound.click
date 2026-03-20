@@ -1,11 +1,23 @@
 import { v } from "convex/values"
+import { internalQuery } from "../_generated/server"
 import { userQuery } from "../custom"
 import * as links from "../links/domain"
-import { getProfileForUserId, isProfileUsernameAvailable } from "./domain"
+import {
+  getProfileById,
+  getProfileForUserId,
+  isProfileUsernameAvailable,
+} from "./domain"
 
 export const getProfile = userQuery({
   handler: async (ctx, _args) => {
     return await getProfileForUserId(ctx, ctx.user._id)
+  },
+})
+
+export const getProfileByIdInternal = internalQuery({
+  args: { profileId: v.id("profiles") },
+  handler: async (ctx, { profileId }) => {
+    return await getProfileById(ctx, profileId)
   },
 })
 

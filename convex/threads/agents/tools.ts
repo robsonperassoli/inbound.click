@@ -4,6 +4,18 @@ import { internal } from "../../_generated/api"
 import type { Id } from "../../_generated/dataModel"
 import type { ActionCtx } from "../../_generated/server"
 
+export const themeSchema = z.object({
+  theme: z.string().describe("The name of the theme"),
+  backgroundColor: z.string(),
+  backgroundImage: z.string(),
+  fontFamily: z.string(),
+  textColor: z.string(),
+  buttonShape: z.enum(["square", "rounded", "pill"]),
+  buttonStyle: z.enum(["solid", "outline", "paper", "shadow", "3d", "ghost"]),
+  buttonColor: z.string(),
+  buttonTextColor: z.string(),
+})
+
 export function createFillFormTool(ctx: ActionCtx, threadId: Id<"threads">) {
   return tool({
     description: "Fill form fields with data",
@@ -133,24 +145,7 @@ export function createUpdateThemeTool(
   return tool({
     description:
       "Update the users page design using with the provided theme settings",
-    inputSchema: z.object({
-      theme: z.string().describe("The name of the theme"),
-      backgroundColor: z.string(),
-      backgroundImage: z.string(),
-      fontFamily: z.string(),
-      textColor: z.string(),
-      buttonShape: z.enum(["square", "rounded", "pill"]),
-      buttonStyle: z.enum([
-        "solid",
-        "outline",
-        "paper",
-        "shadow",
-        "3d",
-        "ghost",
-      ]),
-      buttonColor: z.string(),
-      buttonTextColor: z.string(),
-    }),
+    inputSchema: themeSchema,
     execute: async (args) => {
       await ctx.runMutation(internal.profiles.mutations.updateThemeInternal, {
         profileId,

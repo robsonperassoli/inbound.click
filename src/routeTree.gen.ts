@@ -27,11 +27,14 @@ import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
 import { Route as AuthenticatedFormsIdIndexRouteImport } from './routes/_authenticated/forms/$id.index'
+import { Route as AuthenticatedBioAppearanceIndexRouteImport } from './routes/_authenticated/bio/appearance/index'
 import { Route as UsernameLinkLinkIdIndexRouteImport } from './routes/$username.link.$linkId.index'
 import { Route as AuthenticatedFormsBuilderThreadIdRouteImport } from './routes/_authenticated/forms.builder.$threadId'
 import { Route as AuthenticatedFormsIdSubmissionsRouteImport } from './routes/_authenticated/forms/$id.submissions'
 import { Route as AuthenticatedFormsIdSettingsRouteImport } from './routes/_authenticated/forms/$id.settings'
 import { Route as AuthenticatedDesignThemeThreadIdRouteImport } from './routes/_authenticated/design.theme.$threadId'
+import { Route as AuthenticatedBioAppearanceThemesRouteImport } from './routes/_authenticated/bio/appearance/themes'
+import { Route as AuthenticatedBioAppearanceCustomizeRouteImport } from './routes/_authenticated/bio/appearance/customize'
 import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
 const SigninRoute = SigninRouteImport.update({
@@ -126,6 +129,12 @@ const AuthenticatedFormsIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedFormsIdRoute,
   } as any)
+const AuthenticatedBioAppearanceIndexRoute =
+  AuthenticatedBioAppearanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedBioAppearanceRoute,
+  } as any)
 const UsernameLinkLinkIdIndexRoute = UsernameLinkLinkIdIndexRouteImport.update({
   id: '/$username/link/$linkId/',
   path: '/$username/link/$linkId/',
@@ -155,6 +164,18 @@ const AuthenticatedDesignThemeThreadIdRoute =
     path: '/design/theme/$threadId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedBioAppearanceThemesRoute =
+  AuthenticatedBioAppearanceThemesRouteImport.update({
+    id: '/themes',
+    path: '/themes',
+    getParentRoute: () => AuthenticatedBioAppearanceRoute,
+  } as any)
+const AuthenticatedBioAppearanceCustomizeRoute =
+  AuthenticatedBioAppearanceCustomizeRouteImport.update({
+    id: '/customize',
+    path: '/customize',
+    getParentRoute: () => AuthenticatedBioAppearanceRoute,
+  } as any)
 const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
   AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport.update({
     id: '/$submissionId/transcript',
@@ -173,17 +194,20 @@ export interface FileRoutesByFullPath {
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
-  '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
+  '/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
+  '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
+  '/bio/appearance/themes': typeof AuthenticatedBioAppearanceThemesRoute
   '/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
+  '/bio/appearance/': typeof AuthenticatedBioAppearanceIndexRoute
   '/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
@@ -197,16 +221,18 @@ export interface FileRoutesByTo {
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username': typeof UsernameIndexRoute
-  '/bio/appearance': typeof AuthenticatedBioAppearanceRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
+  '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
+  '/bio/appearance/themes': typeof AuthenticatedBioAppearanceThemesRoute
   '/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId': typeof UsernameLinkLinkIdIndexRoute
+  '/bio/appearance': typeof AuthenticatedBioAppearanceIndexRoute
   '/forms/$id': typeof AuthenticatedFormsIdIndexRoute
   '/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
@@ -223,17 +249,20 @@ export interface FileRoutesById {
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
-  '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRoute
+  '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
+  '/_authenticated/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
+  '/_authenticated/bio/appearance/themes': typeof AuthenticatedBioAppearanceThemesRoute
   '/_authenticated/design/theme/$threadId': typeof AuthenticatedDesignThemeThreadIdRoute
   '/_authenticated/forms/$id/settings': typeof AuthenticatedFormsIdSettingsRoute
   '/_authenticated/forms/$id/submissions': typeof AuthenticatedFormsIdSubmissionsRouteWithChildren
   '/_authenticated/forms/builder/$threadId': typeof AuthenticatedFormsBuilderThreadIdRoute
   '/$username/link/$linkId/': typeof UsernameLinkLinkIdIndexRoute
+  '/_authenticated/bio/appearance/': typeof AuthenticatedBioAppearanceIndexRoute
   '/_authenticated/forms/$id/': typeof AuthenticatedFormsIdIndexRoute
   '/_authenticated/forms/$id/submissions/$submissionId/transcript': typeof AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute
 }
@@ -256,11 +285,14 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/bio/'
     | '/forms/'
+    | '/bio/appearance/customize'
+    | '/bio/appearance/themes'
     | '/design/theme/$threadId'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
     | '/$username/link/$linkId/'
+    | '/bio/appearance/'
     | '/forms/$id/'
     | '/forms/$id/submissions/$submissionId/transcript'
   fileRoutesByTo: FileRoutesByTo
@@ -274,16 +306,18 @@ export interface FileRouteTypes {
     | '/upgrade'
     | '/signin/complete'
     | '/$username'
-    | '/bio/appearance'
     | '/bio/settings'
     | '/api/auth/$'
     | '/bio'
     | '/forms'
+    | '/bio/appearance/customize'
+    | '/bio/appearance/themes'
     | '/design/theme/$threadId'
     | '/forms/$id/settings'
     | '/forms/$id/submissions'
     | '/forms/builder/$threadId'
     | '/$username/link/$linkId'
+    | '/bio/appearance'
     | '/forms/$id'
     | '/forms/$id/submissions/$submissionId/transcript'
   id:
@@ -305,11 +339,14 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
+    | '/_authenticated/bio/appearance/customize'
+    | '/_authenticated/bio/appearance/themes'
     | '/_authenticated/design/theme/$threadId'
     | '/_authenticated/forms/$id/settings'
     | '/_authenticated/forms/$id/submissions'
     | '/_authenticated/forms/builder/$threadId'
     | '/$username/link/$linkId/'
+    | '/_authenticated/bio/appearance/'
     | '/_authenticated/forms/$id/'
     | '/_authenticated/forms/$id/submissions/$submissionId/transcript'
   fileRoutesById: FileRoutesById
@@ -453,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsIdIndexRouteImport
       parentRoute: typeof AuthenticatedFormsIdRoute
     }
+    '/_authenticated/bio/appearance/': {
+      id: '/_authenticated/bio/appearance/'
+      path: '/'
+      fullPath: '/bio/appearance/'
+      preLoaderRoute: typeof AuthenticatedBioAppearanceIndexRouteImport
+      parentRoute: typeof AuthenticatedBioAppearanceRoute
+    }
     '/$username/link/$linkId/': {
       id: '/$username/link/$linkId/'
       path: '/$username/link/$linkId'
@@ -488,6 +532,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDesignThemeThreadIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/bio/appearance/themes': {
+      id: '/_authenticated/bio/appearance/themes'
+      path: '/themes'
+      fullPath: '/bio/appearance/themes'
+      preLoaderRoute: typeof AuthenticatedBioAppearanceThemesRouteImport
+      parentRoute: typeof AuthenticatedBioAppearanceRoute
+    }
+    '/_authenticated/bio/appearance/customize': {
+      id: '/_authenticated/bio/appearance/customize'
+      path: '/customize'
+      fullPath: '/bio/appearance/customize'
+      preLoaderRoute: typeof AuthenticatedBioAppearanceCustomizeRouteImport
+      parentRoute: typeof AuthenticatedBioAppearanceRoute
+    }
     '/_authenticated/forms/$id/submissions/$submissionId/transcript': {
       id: '/_authenticated/forms/$id/submissions/$submissionId/transcript'
       path: '/$submissionId/transcript'
@@ -498,14 +556,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedBioAppearanceRouteChildren {
+  AuthenticatedBioAppearanceCustomizeRoute: typeof AuthenticatedBioAppearanceCustomizeRoute
+  AuthenticatedBioAppearanceThemesRoute: typeof AuthenticatedBioAppearanceThemesRoute
+  AuthenticatedBioAppearanceIndexRoute: typeof AuthenticatedBioAppearanceIndexRoute
+}
+
+const AuthenticatedBioAppearanceRouteChildren: AuthenticatedBioAppearanceRouteChildren =
+  {
+    AuthenticatedBioAppearanceCustomizeRoute:
+      AuthenticatedBioAppearanceCustomizeRoute,
+    AuthenticatedBioAppearanceThemesRoute:
+      AuthenticatedBioAppearanceThemesRoute,
+    AuthenticatedBioAppearanceIndexRoute: AuthenticatedBioAppearanceIndexRoute,
+  }
+
+const AuthenticatedBioAppearanceRouteWithChildren =
+  AuthenticatedBioAppearanceRoute._addFileChildren(
+    AuthenticatedBioAppearanceRouteChildren,
+  )
+
 interface AuthenticatedBioRouteChildren {
-  AuthenticatedBioAppearanceRoute: typeof AuthenticatedBioAppearanceRoute
+  AuthenticatedBioAppearanceRoute: typeof AuthenticatedBioAppearanceRouteWithChildren
   AuthenticatedBioSettingsRoute: typeof AuthenticatedBioSettingsRoute
   AuthenticatedBioIndexRoute: typeof AuthenticatedBioIndexRoute
 }
 
 const AuthenticatedBioRouteChildren: AuthenticatedBioRouteChildren = {
-  AuthenticatedBioAppearanceRoute: AuthenticatedBioAppearanceRoute,
+  AuthenticatedBioAppearanceRoute: AuthenticatedBioAppearanceRouteWithChildren,
   AuthenticatedBioSettingsRoute: AuthenticatedBioSettingsRoute,
   AuthenticatedBioIndexRoute: AuthenticatedBioIndexRoute,
 }
