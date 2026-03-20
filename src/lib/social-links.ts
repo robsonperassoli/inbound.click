@@ -1,12 +1,12 @@
-import {
-  Facebook01Icon,
-  InstagramIcon,
-  Linkedin01Icon,
-  NewTwitterIcon,
-  TiktokIcon,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons"
 import type { HugeiconsIconProps } from "@hugeicons/react"
+import {
+  CustomFacebookIcon,
+  CustomInstagramIcon,
+  CustomLinkedinIcon,
+  CustomTiktokIcon,
+  CustomXIcon,
+  CustomYoutubeIcon,
+} from "./social-icons"
 
 export type SocialPlatform =
   | "instagram"
@@ -30,42 +30,42 @@ export const socialConfig: Record<SocialPlatform, SocialConfig> = {
   instagram: {
     title: "Instagram",
     prefix: "instagram.com/",
-    icon: InstagramIcon,
+    icon: CustomInstagramIcon,
     fieldLabel: "username",
     placeholder: "@creator",
   },
   tiktok: {
     title: "TikTok",
     prefix: "tiktok.com/@",
-    icon: TiktokIcon,
+    icon: CustomTiktokIcon,
     fieldLabel: "username",
     placeholder: "@creator",
   },
   facebook: {
     title: "Facebook",
     prefix: "facebook.com/",
-    icon: Facebook01Icon,
+    icon: CustomFacebookIcon,
     fieldLabel: "username",
     placeholder: "yourpage",
   },
   linkedin: {
     title: "LinkedIn",
     prefix: "linkedin.com/in/",
-    icon: Linkedin01Icon,
+    icon: CustomLinkedinIcon,
     fieldLabel: "username",
     placeholder: "jane-doe",
   },
   youtube: {
     title: "YouTube",
     prefix: "youtube.com/",
-    icon: YoutubeIcon,
+    icon: CustomYoutubeIcon,
     fieldLabel: "handle",
     placeholder: "@channelname or channelname",
   },
   x: {
     title: "X",
     prefix: "x.com/",
-    icon: NewTwitterIcon,
+    icon: CustomXIcon,
     fieldLabel: "handle",
     placeholder: "@creator",
   },
