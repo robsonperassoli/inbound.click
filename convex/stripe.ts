@@ -1,8 +1,11 @@
 import { StripeSubscriptions } from "@convex-dev/stripe"
+import type { FunctionReturnType } from "convex/server"
 import { v } from "convex/values"
-import { components } from "./_generated/api"
+import { components, internal } from "./_generated/api"
+import { internalQuery } from "./_generated/server"
 import { userAction, userQuery } from "./custom"
 import { SITE_URL } from "./frontend"
+import { getUserActiveSubscription } from "./stripe/domain"
 
 const stripeClient = new StripeSubscriptions(components.stripe, {})
 
@@ -39,21 +42,18 @@ export const createSubscriptionCheckout = userAction({
 })
 
 export const getUserSubscription = userQuery({
-  args: {},
   returns: v.union(v.string(), v.literal("free")),
   handler: async (ctx, _args) => {
-    const subscriptions = await ctx.runQuery(
-      components.stripe.public.listSubscriptionsByUserId,
-      { userId: ctx.user._id },
+    const activeSubscription = await getUserActiveSubscription(
+      ctx,
+      ctx.user._id,
     )
 
-    const active = subscriptions.find((s) => s.status === "active")
-
-    if (!active) {
+    if (!activeSubscription) {
       return "free"
     }
 
-    return active.priceId
+    return activeSubscription.priceId
   },
 })
 

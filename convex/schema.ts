@@ -62,6 +62,7 @@ export default defineSchema({
     title: v.string(),
     bio: v.string(),
     avatarId: v.optional(v.id("_storage")),
+    publishedAt: v.optional(v.number()),
     ...themeFields,
   })
     .index("by_user", ["userId"])

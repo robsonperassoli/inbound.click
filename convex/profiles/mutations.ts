@@ -5,6 +5,7 @@ import * as auth from "../auth"
 import { userMutation } from "../custom"
 import * as forms from "../forms/domain"
 import { themeFields } from "../schema"
+import * as stripe from "../stripe/domain"
 import { getFirstName } from "../utils/names"
 import * as domain from "./domain"
 
@@ -95,6 +96,26 @@ export const createProfile = userMutation({
     }
 
     return profileId
+  },
+})
+
+export const publishProfile = userMutation({
+  args: {
+    profileId: v.id("profiles"),
+  },
+  handler: async (ctx, { profileId }) => {
+    const activeSubscription = await stripe.getUserActiveSubscription(
+      ctx,
+      ctx.user._id,
+    )
+
+    if (!activeSubscription) {
+      throw new Error("Cannot publish profile without an active subscription")
+    }
+
+    const profile = await domain.getUserProfile(ctx, ctx.user._id, profileId)
+
+    await domain.publishProfile(ctx, profile._id)
   },
 })
 

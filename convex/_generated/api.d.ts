@@ -28,6 +28,7 @@ import type * as profiles_mutations from "../profiles/mutations.js";
 import type * as profiles_queries from "../profiles/queries.js";
 import type * as public_ from "../public.js";
 import type * as stripe from "../stripe.js";
+import type * as stripe_domain from "../stripe/domain.js";
 import type * as support from "../support.js";
 import type * as threads_actions from "../threads/actions.js";
 import type * as threads_agents from "../threads/agents.js";
@@ -69,6 +70,7 @@ declare const fullApi: ApiFromModules<{
   "profiles/queries": typeof profiles_queries;
   public: typeof public_;
   stripe: typeof stripe;
+  "stripe/domain": typeof stripe_domain;
   support: typeof support;
   "threads/actions": typeof threads_actions;
   "threads/agents": typeof threads_agents;

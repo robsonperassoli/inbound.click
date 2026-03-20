@@ -147,3 +147,10 @@ export async function patchProfileTheme(
 ) {
   return await ctx.db.patch(profileId, theme)
 }
+
+export async function publishProfile(
+  ctx: MutationCtx,
+  profileId: Id<"profiles">,
+) {
+  return await ctx.db.patch(profileId, { publishedAt: Date.now() })
+}
