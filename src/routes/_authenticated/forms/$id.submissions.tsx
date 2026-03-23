@@ -9,6 +9,7 @@ import { DataTable } from "@/components/data-table"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { useFormSubmissions } from "@/hooks/use-form-submissions"
+import { formatToLocalDateTime } from "@/lib/dates"
 
 export const Route = createFileRoute("/_authenticated/forms/$id/submissions")({
   component: RouteComponent,
@@ -48,6 +49,24 @@ function RouteComponent() {
       },
     }
 
+    const startedAt: ColumnDef<(typeof submissions)[number]> = {
+      accessorKey: "startedAt",
+      header: "Started",
+      cell: ({ row }) => {
+        return formatToLocalDateTime(row.original.createdAt)
+      },
+    }
+
+    const completedAt: ColumnDef<(typeof submissions)[number]> = {
+      accessorKey: "completedAt",
+      header: "Completed",
+      cell: ({ row }) => {
+        return row.original.completedAt
+          ? formatToLocalDateTime(row.original.completedAt)
+          : "N/A"
+      },
+    }
+
     const dataColumns: ColumnDef<(typeof submissions)[number]>[] =
       form.fields.map((f) => ({
         accessorKey: f.id,
@@ -57,7 +76,7 @@ function RouteComponent() {
         },
       }))
 
-    return [...dataColumns, actionColumn]
+    return [startedAt, completedAt, ...dataColumns, actionColumn]
   }, [form])
 
   return (

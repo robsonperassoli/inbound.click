@@ -31,7 +31,12 @@ export const getUserFormSubmissions = userQuery({
     formId: v.optional(v.id("forms")),
   },
   handler: async (ctx, { formId }) => {
-    return await forms.getFormSubmissions(ctx, ctx.user._id, formId)
+    const submissions = await forms.getFormSubmissions(
+      ctx,
+      ctx.user._id,
+      formId,
+    )
+    return submissions.sort((a, b) => b.createdAt - a.createdAt)
   },
 })
 

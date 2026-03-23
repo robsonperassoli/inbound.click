@@ -22,15 +22,12 @@ const model = openai("gpt-5.4-nano")
 type CreateAgentArgs =
   | {
       type: "formSubmission"
-      state: string
     }
   | {
       type: "formBuilder"
-      state: string
     }
   | {
       type: "themeDesigner"
-      state: string
     }
 
 export function createAgent(
@@ -73,12 +70,9 @@ export function createAgent(
       throw new Error(`Unknown agent type`)
   }
 
-  // TODO: move the state to a user message
-  const instructions = `${thread.systemPrompt}\n\n${args.state}`
-
   return new ToolLoopAgent({
     model,
-    instructions,
+    instructions: thread.systemPrompt,
     tools,
     stopWhen: [stepCountIs(20)],
     providerOptions: {
@@ -105,7 +99,6 @@ export async function executeAgentLoopForThread(
 
     const agent = createAgent(ctx, result, {
       type: result.type,
-      state,
     })
 
     const lastMessage = result.messages[result.messages.length - 1]
@@ -118,8 +111,21 @@ export async function executeAgentLoopForThread(
       content: m.content,
     }))
 
+    const stateMessage = {
+      role: "user" as const,
+      content: state,
+    }
+
+    // Insert the state message before the user message
+    const index = completionMsgs.length - 1
+    const messagesWithState = [
+      ...completionMsgs.slice(0, index),
+      stateMessage,
+      ...completionMsgs.slice(index),
+    ]
+
     const execResult = await agent.generate({
-      messages: completionMsgs,
+      messages: messagesWithState,
     })
 
     await ctx.runMutation(internal.threads.mutations.updateMessageContent, {
