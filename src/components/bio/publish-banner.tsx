@@ -55,8 +55,8 @@ export function PublishBanner({ profileId }: { profileId: Id<"profiles"> }) {
           Draft
         </Badge>
         <p className="min-w-0 text-sm text-foreground">
-          <span className="font-semibold">Your profile is ready.</span>{" "}
-          Publish to make it live for visitors.
+          <span className="font-semibold">Your profile is ready.</span> Publish
+          to make it live for visitors.
         </p>
       </div>
 
@@ -67,12 +67,12 @@ export function PublishBanner({ profileId }: { profileId: Id<"profiles"> }) {
           </Button>
         ) : hasActiveSubscription ? (
           <Button size="sm" onClick={handlePublish} disabled={isPublishing}>
-            {isPublishing ? "Publishing…" : "Publish Profile"}
+            {isPublishing ? "Publishing…" : "Publish"}
           </Button>
         ) : (
           <Button size="sm" asChild>
             <Link to="/upgrade">
-              Unlock Publishing
+              Publish
               <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
             </Link>
           </Button>
