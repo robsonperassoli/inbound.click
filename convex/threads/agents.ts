@@ -77,7 +77,7 @@ export function createAgent(
     stopWhen: [stepCountIs(20)],
     providerOptions: {
       openai: {
-        reasoningEffort: "low",
+        reasoningEffort: "medium",
         textVerbosity: "low",
       } satisfies OpenAILanguageModelResponsesOptions,
     },
@@ -161,7 +161,7 @@ export async function generateTheme(
     output: Output.object({ schema: agentTools.themeSchema }),
     providerOptions: {
       openai: {
-        reasoningEffort: "medium",
+        reasoningEffort: "high",
         textVerbosity: "low",
       } satisfies OpenAILanguageModelResponsesOptions,
     },
