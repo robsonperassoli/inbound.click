@@ -171,7 +171,10 @@ export const updateThemeInternal = internalMutation({
     ...themeFields,
   },
   handler: async (ctx, { profileId, ...theme }) => {
-    return await domain.patchProfileTheme(ctx, profileId, theme)
+    return await domain.patchProfileTheme(ctx, profileId, {
+      ...theme,
+      backgroundImage: theme.backgroundImage ?? undefined,
+    })
   },
 })
 
