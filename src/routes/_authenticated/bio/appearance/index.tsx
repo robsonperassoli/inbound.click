@@ -4,7 +4,7 @@ import {
   ArrowRight01Icon,
   Image,
   MessageSquare,
-  PaintBoardIcon,
+  type PaintBoardIcon,
   SlidersHorizontal,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -13,11 +13,11 @@ import {
   useLoaderData,
   useNavigate,
 } from "@tanstack/react-router"
-import { useAction, useMutation, useQuery } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { GenerateThemeButton } from "@/components/bio/generate-theme-button"
 import { useSiteHeader } from "@/components/site-header"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
@@ -51,13 +51,13 @@ function ColorSwatches({
 }: {
   colors: string[]
   fontFamily: string
-}) {
+  }) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
         {colors.map((color, index) => (
           <div
-            key={color}
+            key={colorLabels[index]}
             className="group relative"
             title={colorLabels[index]}
           >
@@ -114,7 +114,7 @@ function NavigationCard({
         </div>
         <HugeiconsIcon
           icon={ArrowRight01Icon}
-          className="size-4 text-muted-foreground flex-shrink-0"
+          className="size-4 text-muted-foreground shrink-0"
           strokeWidth={2}
         />
       </CardContent>
@@ -131,9 +131,7 @@ function RouteComponent() {
   const createDesignThread = useMutation(
     api.threads.mutations.createThemeDesignerThread,
   )
-  const generateTheme = useAction(api.profiles.mutations.generateTheme)
   const [aiLoading, setAiLoading] = useState(false)
-  const [generateLoading, setGenerateLoading] = useState(false)
 
   const startChatWithAI = async () => {
     try {
@@ -145,19 +143,6 @@ function RouteComponent() {
       toast.error("Could not start a conversation with the AI")
     } finally {
       setAiLoading(false)
-    }
-  }
-
-  const handleGenerateTheme = async () => {
-    try {
-      setGenerateLoading(true)
-      await generateTheme({ profileId })
-      toast.success("Magic theme generated!")
-    } catch (error) {
-      console.error(error)
-      toast.error("Could not generate theme")
-    } finally {
-      setGenerateLoading(false)
     }
   }
 
@@ -176,15 +161,6 @@ function RouteComponent() {
 
   return (
     <div className="max-w-md space-y-6">
-      {/* Header Area */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold">Appearance</h1>
-        <p className="text-sm text-muted-foreground">
-          Design your perfect profile.
-        </p>
-      </div>
-
-      {/* Section: Current Vibe */}
       <div className="space-y-3">
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
           Current Style
@@ -221,28 +197,7 @@ function RouteComponent() {
         </h2>
 
         {/* Magic Button */}
-        <Button
-          variant="outline"
-          className="w-full h-12 text-sm font-normal border-border bg-background hover:border-primary/50 hover:bg-muted/50 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] relative overflow-hidden group"
-          onClick={handleGenerateTheme}
-          disabled={generateLoading}
-        >
-          {/* Wave animation background on hover */}
-          <span className="absolute inset-0 bg-linear-to-r from-purple-500 via-pink-500 via-orange-400 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[gradient-x_2s_ease_infinite] bg-[length:300%_100%]" />
-
-          {/* Button content */}
-          <span className="relative flex items-center group-hover:text-white transition-colors duration-300">
-            {generateLoading ? (
-              <Spinner className="size-5 mr-2" />
-            ) : (
-              <HugeiconsIcon
-                icon={PaintBoardIcon}
-                className="size-5 mr-2 text-primary group-hover:text-white transition-colors duration-300"
-              />
-            )}
-            {generateLoading ? "Generating..." : "One-Click AI Design"}
-          </span>
-        </Button>
+        <GenerateThemeButton profileId={profileId} />
 
         {/* Chat Entry */}
         <Card
