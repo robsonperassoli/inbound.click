@@ -1,6 +1,6 @@
 import { api } from "@convex/_generated/api"
 import type { Doc } from "@convex/_generated/dataModel"
-import { Image03Icon } from "@hugeicons/core-free-icons"
+import { Delete01Icon, Image03Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQuery } from "convex/react"
 import { useFileUpload } from "@/hooks/use-file-upload"
@@ -101,6 +101,16 @@ export function EditTheme({
               )}
             </Button>
           </FileUpload>
+          {profile.backgroundImage && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleUpdate({ backgroundImage: undefined })}
+              title="Remove background image"
+            >
+              <HugeiconsIcon icon={Delete01Icon} />
+            </Button>
+          )}
         </div>
       </Field>
 
