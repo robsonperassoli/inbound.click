@@ -51,6 +51,7 @@ export function UserPage({
 
   const socialLinks = links.filter((link) => link.type === "social")
   const buttonLinks = links.filter((link) => link.type !== "social")
+
   const luminance = getRelativeLuminance(profile.backgroundColor)
   const isDarkCard = luminance < 0.2
   const isLightCard = luminance > 0.75
@@ -148,13 +149,16 @@ export function UserPage({
                 shape={profile.buttonShape}
                 buttonStyle={profile.buttonStyle}
                 className="truncate text-ellipsis"
-                labelClassName={cn("block truncate text-ellipsis", fontTracking.body)}
+                labelClassName={cn(
+                  "block truncate text-ellipsis",
+                  fontTracking.body,
+                )}
               >
                 {link.title}
               </Button>
             </li>
-        ))}
-      </ul>
+          ))}
+        </ul>
 
         {socialLinks.length > 0 && (
           <ul className="mt-8 flex justify-center @md/user-page:mt-9">

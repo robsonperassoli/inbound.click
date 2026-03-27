@@ -2,6 +2,7 @@ import { v } from "convex/values"
 import { internal } from "./_generated/api"
 import type { Doc } from "./_generated/dataModel"
 import { mutation, query } from "./_generated/server"
+import * as links from "./links/domain"
 import * as profiles from "./profiles/domain"
 import { greetingMessage, systemPrompt } from "./threads/agents/formSubmission"
 import * as threads from "./threads/domain"
@@ -16,18 +17,11 @@ export const getProfile = query({
       args.username,
     )
 
-    const unsortedLinks = await ctx.db
-      .query("links")
-      .withIndex("by_profile", (q) => q.eq("profileId", profile._id))
-      .collect()
-
-    const links = unsortedLinks
-      .sort((a, b) => b.order - a.order)
-      .filter((link) => link.active)
+    const profileLinks = await links.getProfileLinks(ctx, profile._id)
 
     return {
       profile,
-      links: links.map(removeUnsafeData),
+      links: profileLinks.filter((link) => link.active).map(removeUnsafeData),
     }
   },
 })
