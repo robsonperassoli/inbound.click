@@ -1,55 +1,9 @@
 import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
+import { formField, formSubmissionValue } from "./forms/validators"
 import { platformField, typeField } from "./links/validators"
+import { themeFields } from "./profiles/validators"
 import { threadsFields } from "./threads/validators"
-
-export const themeFields = {
-  theme: v.string(),
-  backgroundColor: v.string(),
-  backgroundImage: v.optional(v.id("_storage")),
-  fontFamily: v.string(),
-  textColor: v.string(),
-  buttonShape: v.union(
-    v.literal("square"),
-    v.literal("rounded"),
-    v.literal("pill"),
-  ),
-  buttonStyle: v.union(
-    v.literal("solid"),
-    v.literal("outline"),
-    v.literal("paper"),
-    v.literal("shadow"),
-    v.literal("3d"),
-    v.literal("ghost"),
-  ),
-  buttonColor: v.string(),
-  buttonTextColor: v.string(),
-}
-
-export const formField = v.object({
-  id: v.string(),
-  type: v.union(
-    v.literal("shortText"),
-    v.literal("longText"),
-    v.literal("email"),
-    v.literal("phoneNumber"),
-    v.literal("number"),
-    v.literal("select"),
-    v.literal("checkbox"),
-    v.literal("date"),
-    v.literal("dateTime"),
-  ),
-  label: v.string(),
-  required: v.boolean(),
-  options: v.optional(v.array(v.string())),
-})
-
-export const formSubmissionValue = v.union(
-  v.string(),
-  v.number(),
-  v.array(v.string()),
-  v.boolean(),
-)
 
 export default defineSchema({
   users: defineTable({

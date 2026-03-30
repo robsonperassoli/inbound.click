@@ -1,7 +1,7 @@
 import { type Infer, v } from "convex/values"
 import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
-import { themeFields } from "../schema"
+import { themeFields } from "./validators"
 
 const profileUsernameRegex = /^[a-zA-Z0-9_-]+$/
 

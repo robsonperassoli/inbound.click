@@ -1,7 +1,7 @@
 import type { Infer } from "convex/values"
 import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
-import type { formField } from "../schema"
+import type { formField } from "./validators"
 
 export async function getForm(
   ctx: MutationCtx | QueryCtx,

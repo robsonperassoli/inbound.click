@@ -4,10 +4,10 @@ import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userMutation } from "../custom"
 import { formSubmissionTranscriptUrl } from "../frontend"
-import { formField, formSubmissionValue } from "../schema"
 import * as threads from "../threads/domain"
 import { getFirstName } from "../utils/names"
 import * as forms from "./domain"
+import { formField, formSubmissionValue } from "./validators"
 
 export const createForm = userMutation({
   args: {
