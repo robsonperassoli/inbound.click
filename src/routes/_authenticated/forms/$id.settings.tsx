@@ -1,5 +1,11 @@
 import { api } from "@convex/_generated/api"
 import type { Doc } from "@convex/_generated/dataModel"
+import {
+  Delete02Icon,
+  Edit02Icon,
+  MoreHorizontal,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useForm } from "@tanstack/react-form"
 import { createFileRoute } from "@tanstack/react-router"
 import { useMutation, useQuery } from "convex/react"
@@ -8,6 +14,7 @@ import z from "zod"
 import { useSiteHeader } from "@/components/site-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import {
   Card,
   CardAction,
@@ -15,6 +22,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Field,
   FieldDescription,
@@ -269,7 +282,7 @@ function SettingsEditor({
           {formData.fields.map((field) => (
             <div
               key={field.id}
-              className="group flex items-center justify-between gap-3 py-3 transition-colors duration-200 ease-out hover:bg-muted/30 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1"
+              className="flex items-center justify-between gap-3 py-3 transition-colors duration-200 ease-out hover:bg-muted/30 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1"
             >
               <div className="min-w-0">
                 <p className="truncate font-medium">{field.label}</p>
@@ -283,7 +296,7 @@ function SettingsEditor({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 transition-all duration-200 ease-out md:translate-x-1 md:opacity-0 md:group-hover:translate-x-0 md:group-hover:opacity-100 md:group-focus-within:translate-x-0 md:group-focus-within:opacity-100">
+              <ButtonGroup>
                 <Button
                   type="button"
                   size="sm"
@@ -293,25 +306,48 @@ function SettingsEditor({
                     setIsFieldSheetOpen(true)
                   }}
                 >
+                  <HugeiconsIcon icon={Edit02Icon} size={16} className="mr-2" />
                   Edit
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  disabled={isDeletingFieldId === field.id}
-                  onClick={async () => {
-                    setIsDeletingFieldId(field.id)
-                    try {
-                      await removeFormField({ id: formId, fieldId: field.id })
-                    } finally {
-                      setIsDeletingFieldId(null)
-                    }
-                  }}
-                >
-                  {isDeletingFieldId === field.id ? "Removing..." : "Remove"}
-                </Button>
-              </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="pl-2!"
+                    >
+                      <HugeiconsIcon icon={MoreHorizontal} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      disabled={isDeletingFieldId === field.id}
+                      onClick={async () => {
+                        setIsDeletingFieldId(field.id)
+                        try {
+                          await removeFormField({
+                            id: formId,
+                            fieldId: field.id,
+                          })
+                        } finally {
+                          setIsDeletingFieldId(null)
+                        }
+                      }}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <HugeiconsIcon
+                        icon={Delete02Icon}
+                        size={16}
+                        className="mr-2"
+                      />
+                      {isDeletingFieldId === field.id
+                        ? "Removing..."
+                        : "Remove"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </ButtonGroup>
             </div>
           ))}
         </CardContent>
