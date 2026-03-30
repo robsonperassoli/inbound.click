@@ -4,11 +4,12 @@ import { internalMutation, mutation } from "../_generated/server"
 import * as auth from "../auth"
 import { userAction, userMutation } from "../custom"
 import * as forms from "../forms/domain"
-import { themeFields } from "../schema"
+
 import * as stripe from "../stripe/domain"
 import * as agents from "../threads/agents"
 import { getFirstName } from "../utils/names"
 import * as domain from "./domain"
+import { themeFields } from "./validators"
 
 export const createProfile = userMutation({
   args: {
