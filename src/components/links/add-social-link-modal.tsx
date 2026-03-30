@@ -1,9 +1,10 @@
 import { api } from "@convex/_generated/api"
 import type { Doc } from "@convex/_generated/dataModel"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "convex/react"
+import { useEffect } from "react"
 import z from "zod"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -34,9 +35,9 @@ import {
 import {
   buildSocialUrl,
   normalizeSocialHandle,
+  type SocialPlatform,
   socialConfig,
   socialPlatforms,
-  type SocialPlatform,
 } from "@/lib/social-links"
 
 export const addSocialLinkSchema = z
@@ -89,6 +90,12 @@ export function AddSocialLinkModal({
       })
     },
   })
+
+  useEffect(() => {
+    if (open) {
+      form.reset()
+    }
+  }, [open, form])
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

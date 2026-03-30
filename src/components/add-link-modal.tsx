@@ -2,6 +2,7 @@ import { api } from "@convex/_generated/api"
 import type { Doc } from "@convex/_generated/dataModel"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "convex/react"
+import { useEffect } from "react"
 import z from "zod"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
@@ -53,6 +54,13 @@ export function AddLinkModal({
       onClose()
     },
   })
+
+  useEffect(() => {
+    if (open) {
+      form.reset()
+    }
+  }, [open, form])
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
