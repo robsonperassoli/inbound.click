@@ -4,19 +4,19 @@ import { api } from "@convex/_generated/api"
 import { useLocation } from "@tanstack/react-router"
 import { useAction, useQuery } from "convex/react"
 import { type FormEvent, useEffect, useState } from "react"
-import z from "zod"
+import type z from "zod"
 import {
+  type BugFeedbackValues,
   bugAreaOptions,
   bugFeedbackSchema,
+  type FeatureFeedbackValues,
+  type FeedbackType,
   featureAreaOptions,
   featureFeedbackSchema,
   getFieldErrors,
+  type SupportFormValues,
   supportCategoryOptions,
   supportSchema,
-  type BugFeedbackValues,
-  type FeatureFeedbackValues,
-  type FeedbackType,
-  type SupportFormValues,
 } from "@/components/contact-schemas"
 import { Button } from "@/components/ui/button"
 import {
@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 
 type ModalType = "support" | "feedback" | null
 type Errors<T> = Partial<Record<keyof T, string>>
@@ -141,12 +142,12 @@ export function SidebarContactModals({
   const feedback = openModal === "feedback"
   const { pathname } = useLocation()
   const user = useQuery(api.auth.getCurrentUser, {})
-  const profile = useQuery(api.profiles.queries.getProfile, {})
+  const profileData = useSelectedProfile()
   const submitSupport = useAction(api.support.submit)
   const submitFeedback = useAction(api.feedback.submit)
 
   const defaultEmail = user?.email ?? ""
-  const requesterName = user?.name ?? profile?.title ?? "there"
+  const requesterName = user?.name ?? profileData?.profile.title ?? "there"
 
   const [supportValues, setSupportValues] = useState<SupportFormValues>(
     emptySupportValues(defaultEmail),

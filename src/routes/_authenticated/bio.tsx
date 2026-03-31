@@ -1,9 +1,7 @@
-import { api } from "@convex/_generated/api"
 import { ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
-import { useQuery } from "convex/react"
-import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
+
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,28 +10,31 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { UserPage } from "@/components/user-page"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 
 export const Route = createFileRoute("/_authenticated/bio")({
   component: RouteComponent,
   ssr: false,
-  loader: async ({ context }) => {
-    const profile = await context.convex.query(
-      api.profiles.queries.getProfile,
-      {},
-    )
+  // loader: async ({ context }) => {
+  //   const profiles = await context.convex.query(
+  //     api.profiles.queries.getAvailableProfiles,
+  //     {},
+  //   )
 
-    if (!profile) {
-      throw redirect({ to: "/onboarding" })
-    }
+  //   if (profiles.length === 0) {
+  //     throw redirect({ to: "/onboarding" })
+  //   }
 
-    return { profileId: profile._id }
-  },
+  //   return { profileId: profiles[0]._id }
+  // },
 })
 
 function RouteComponent() {
+  // const { profileId } = Route.useLoaderData()
+
   useSiteHeader({ title: "Bio" })
 
-  const profileData = useQuery(api.profiles.queries.getProfileWithLinks, {})
+  const profileData = useSelectedProfile()
 
   if (!profileData) {
     return null

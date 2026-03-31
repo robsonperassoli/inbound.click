@@ -1,16 +1,50 @@
 import { defineSchema, defineTable } from "convex/server"
 import { v } from "convex/values"
+import { memberRole } from "./accounts/validators"
 import { formField, formSubmissionValue } from "./forms/validators"
 import { platformField, typeField } from "./links/validators"
 import { themeFields } from "./profiles/validators"
 import { threadsFields } from "./threads/validators"
 
 export default defineSchema({
+  accounts: defineTable({
+    type: v.union(v.literal("team"), v.literal("individual")),
+  }),
+
+  accountMembers: defineTable({
+    accountId: v.id("accounts"),
+    userId: v.id("users"),
+    role: memberRole,
+    profiles: v.array(v.union(v.literal("all"), v.id("profiles"))),
+    joinedAt: v.number(),
+  })
+    .index("by_account", ["accountId"])
+    .index("by_user", ["userId"]),
+
+  invitations: defineTable({
+    accountId: v.id("accounts"),
+    token: v.string(),
+    email: v.string(),
+    role: memberRole,
+    profiles: v.array(v.union(v.literal("all"), v.id("profiles"))),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("accepted"),
+      v.literal("revoked"),
+    ),
+    expiresAt: v.number(),
+    acceptedByUserId: v.optional(v.id("users")),
+    acceptedAt: v.optional(v.number()),
+    invitedByUserId: v.id("users"),
+    revokedAt: v.optional(v.number()),
+  }).index("by_account", ["accountId"]),
+
   users: defineTable({
     authId: v.optional(v.string()),
   }).index("by_auth", ["authId"]),
 
   profiles: defineTable({
+    accountId: v.optional(v.id("accounts")),
     userId: v.id("users"),
     username: v.string(),
     title: v.string(),
@@ -20,7 +54,8 @@ export default defineSchema({
     ...themeFields,
   })
     .index("by_user", ["userId"])
-    .index("by_username", ["username"]),
+    .index("by_username", ["username"])
+    .index("by_account", ["accountId"]),
 
   links: defineTable({
     userId: v.id("users"),

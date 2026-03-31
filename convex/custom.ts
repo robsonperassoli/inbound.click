@@ -4,36 +4,37 @@ import {
   customQuery,
 } from "convex-helpers/server/customFunctions"
 import { internal } from "./_generated/api"
-import type { Doc } from "./_generated/dataModel"
 import { action, mutation, query } from "./_generated/server"
-import { getAuthUser } from "./users/domain"
+import { getUserScope } from "./users/domain"
+
+type UserScope = Awaited<ReturnType<typeof getUserScope>>
 
 export const userMutation = customMutation(mutation, {
   args: {},
   input: async (ctx, args) => {
-    const user = await getAuthUser(ctx)
+    const scope = await getUserScope(ctx)
 
-    return { ctx: { user }, args }
+    return { ctx: scope, args }
   },
 })
 
 export const userQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
-    const user = await getAuthUser(ctx)
+    const scope = await getUserScope(ctx)
 
-    return { ctx: { user }, args }
+    return { ctx: scope, args }
   },
 })
 
 export const userAction = customAction(action, {
   args: {},
   input: async (ctx, args) => {
-    const user: Doc<"users"> = await ctx.runQuery(
-      internal.auth.getCurrentUserInternal,
+    const scope: UserScope = await ctx.runQuery(
+      internal.auth.getCurrentScopeInternal,
       {},
     )
 
-    return { ctx: { user }, args }
+    return { ctx: scope, args }
   },
 })

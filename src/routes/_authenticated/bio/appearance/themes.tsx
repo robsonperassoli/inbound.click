@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { useSiteHeader } from "@/components/site-header"
 import { ThemePreview } from "@/components/theme-preview"
 import { Button } from "@/components/ui/button"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 import { type Theme, themes } from "@/lib/themes"
 
 export const Route = createFileRoute("/_authenticated/bio/appearance/themes")({
@@ -22,8 +23,8 @@ function RouteComponent() {
   useSiteHeader({ title: "Theme Gallery", titleMode: "append" })
 
   const navigate = useNavigate()
-  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const profile = useQuery(api.profiles.queries.getProfile, { profileId })
+  const profileData = useSelectedProfile()
+  const profile = profileData?.profile
   const updateTheme = useMutation(api.profiles.mutations.updateTheme)
   const [isApplying, setIsApplying] = useState<string | null>(null)
 

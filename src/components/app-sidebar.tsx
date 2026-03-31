@@ -33,6 +33,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import logo from "../assets/logo.svg"
+import { ProfileSwitcher } from "./app-layout/profile-switcher"
 
 const data = {
   navMain: [
@@ -98,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <>
       <Sidebar variant="inset" {...props}>
-        <SidebarHeader>
+        {/*<SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
@@ -111,7 +112,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarHeader>
+
+        </SidebarHeader>*/}
+        <ProfileSwitcher />
         <SidebarContent>
           <NavMain items={data.navMain} />
 

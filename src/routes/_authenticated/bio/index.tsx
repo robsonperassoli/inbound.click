@@ -4,12 +4,8 @@ import { move } from "@dnd-kit/helpers"
 import { DragDropProvider } from "@dnd-kit/react"
 import { Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  createFileRoute,
-  useLoaderData,
-  useNavigate,
-} from "@tanstack/react-router"
-import { useMutation, useQuery } from "convex/react"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useMutation } from "convex/react"
 import { useMemo, useState } from "react"
 import { AddLinkModal } from "@/components/add-link-modal"
 import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
@@ -31,6 +27,7 @@ import {
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 
 export const Route = createFileRoute("/_authenticated/bio/")({
   component: RouteComponent,
@@ -38,9 +35,10 @@ export const Route = createFileRoute("/_authenticated/bio/")({
 })
 
 function RouteComponent() {
-  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
+  const profileData = useSelectedProfile()
   const navigate = useNavigate()
-  const links = useQuery(api.links.queries.getProfileLinks, { profileId })
+  const links = profileData?.links
+  const profile = profileData?.profile
   const toggleActive = useMutation(api.links.mutations.toggleActive)
   const removeLink = useMutation(api.links.mutations.removeLink)
   const reorderLinks = useMutation(api.links.mutations.reorderLinks)
@@ -83,6 +81,10 @@ function RouteComponent() {
     [buttonLinks],
   )
 
+  if (!profile) {
+    return null
+  }
+
   const handleRemoveLink = async (link: {
     _id: Id<"links">
     title: string
@@ -110,7 +112,7 @@ function RouteComponent() {
 
   return (
     <ScrollableContainer className="p-px md:p-px space-y-5">
-      <PublishBanner profileId={profileId} />
+      <PublishBanner />
 
       {links === undefined && (
         <Card className="border-border/60 bg-muted/20">
@@ -267,14 +269,14 @@ function RouteComponent() {
         open={openModal === "add-link"}
         onClose={() => setOpenModal(null)}
         order={nextButtonOrder}
-        profileId={profileId}
+        profileId={profile._id}
       />
 
       <AddSocialLinkModal
         open={openModal === "add-social"}
         onClose={() => setOpenModal(null)}
         order={nextButtonOrder}
-        profileId={profileId}
+        profileId={profile._id}
       />
 
       <CreateFormPrompt

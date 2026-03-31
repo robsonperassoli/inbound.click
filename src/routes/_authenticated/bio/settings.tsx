@@ -1,10 +1,9 @@
 import { api } from "@convex/_generated/api"
-import type { Id } from "@convex/_generated/dataModel"
 import { PencilEdit01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useForm } from "@tanstack/react-form"
-import { createFileRoute, useLoaderData } from "@tanstack/react-router"
-import { useMutation, useQuery } from "convex/react"
+import { createFileRoute } from "@tanstack/react-router"
+import { useMutation } from "convex/react"
 import type { FunctionReturnType } from "convex/server"
 import { useState } from "react"
 import z from "zod"
@@ -30,6 +29,7 @@ import {
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
 import { useFileUpload } from "@/hooks/use-file-upload"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 
 export const Route = createFileRoute("/_authenticated/bio/settings")({
   component: RouteComponent,
@@ -55,27 +55,20 @@ type ProfileHeaderValues = z.infer<typeof profileHeaderSchema>
 function RouteComponent() {
   useSiteHeader({ title: "Settings", titleMode: "append" })
 
-  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const profile = useQuery(api.profiles.queries.getProfile, {})
+  const profileData = useSelectedProfile()
 
-  if (!profile) {
+  if (!profileData) {
     return (
       <div className="text-sm text-muted-foreground">Loading profile...</div>
     )
   }
 
-  return <SettingsForm profileId={profileId} profile={profile} />
+  return <SettingsForm profile={profileData.profile} />
 }
 
 export type Profile = FunctionReturnType<typeof api.profiles.queries.getProfile>
 
-function SettingsForm({
-  profileId,
-  profile,
-}: {
-  profileId: Id<"profiles">
-  profile: Profile
-}) {
+function SettingsForm({ profile }: { profile: Profile }) {
   const { uploadFile } = useFileUpload()
   const updateProfileHeader = useMutation(
     api.profiles.mutations.updateProfileHeader,
@@ -111,7 +104,7 @@ function SettingsForm({
 
       try {
         await updateProfileHeader({
-          profileId,
+          profileId: profile._id,
           username: normalizedValue.username,
           title: normalizedValue.title,
           bio: normalizedValue.bio,
@@ -130,12 +123,12 @@ function SettingsForm({
   const handleAvatarUpload = async (file: File) => {
     const { storageId } = await uploadFile(file)
 
-    await updateProfileAvatar({ avatarId: storageId, profileId })
+    await updateProfileAvatar({ avatarId: storageId, profileId: profile._id })
   }
 
   return (
     <div className="space-y-6">
-      <PublishBanner profileId={profileId} />
+      <PublishBanner />
 
       <Card>
         <CardHeader>
