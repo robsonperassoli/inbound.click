@@ -9,6 +9,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Temporal } from "@js-temporal/polyfill"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 import z from "zod"
@@ -37,6 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 import { formatToTinybirdDateTime } from "@/lib/dates"
 import { getOverview } from "@/lib/server/analytics.functions"
 
@@ -124,33 +126,7 @@ export const Route = createFileRoute("/_authenticated/analytics")({
       period: periodSchema.default("7days"),
     }).parse,
   },
-  loaderDeps: ({ search }) => search,
-  loader: async ({ context, deps }) => {
-    const profile = await context.convex.query(
-      api.profiles.queries.getProfile,
-      {},
-    )
-
-    const links = await context.convex.query(
-      api.links.queries.getProfileLinks,
-      { profileId: profile._id },
-    )
-
-    const dateRange = getPeriodDates(deps.period)
-
-    const stats = await getOverview({
-      data: {
-        profileId: profile._id,
-        start: formatToTinybirdDateTime(dateRange.start.toInstant()),
-        end: formatToTinybirdDateTime(dateRange.end.toInstant()),
-      },
-    })
-
-    return {
-      stats,
-      links,
-    }
-  },
+  // loaderDeps: ({ search }) => search,
 })
 
 // ============================================================================
@@ -203,7 +179,7 @@ function KpiCard({
   formatter?: Intl.NumberFormat
 }) {
   return (
-    <Card className="min-h-[88px]">
+    <Card className="min-h-22">
       <CardHeader className="pb-2">
         <CardDescription className="text-xs">{title}</CardDescription>
         <CardTitle className="text-3xl font-semibold tabular-nums">
@@ -365,7 +341,7 @@ function LinkPerformanceCard({
                 <TableRow>
                   <TableHead className="text-left">Link</TableHead>
                   <TableHead
-                    className="w-[100px] cursor-pointer text-right"
+                    className="w-25 cursor-pointer text-right"
                     onClick={() => toggleSort("clicks")}
                   >
                     <div className="flex items-center justify-end">
@@ -374,7 +350,7 @@ function LinkPerformanceCard({
                     </div>
                   </TableHead>
                   <TableHead
-                    className="w-[100px] cursor-pointer text-right"
+                    className="w-25 cursor-pointer text-right"
                     onClick={() => toggleSort("ctr")}
                   >
                     <div className="flex items-center justify-end">
@@ -382,7 +358,7 @@ function LinkPerformanceCard({
                       {getSortIcon("ctr")}
                     </div>
                   </TableHead>
-                  <TableHead className="w-[80px] text-right">Share</TableHead>
+                  <TableHead className="w-20 text-right">Share</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -630,27 +606,55 @@ function ReferrerBreakdownCard({
 function RouteComponent() {
   useSiteHeader({ title: "Analytics" })
   const navigate = useNavigate()
-  const {
-    stats: { linkClicks, overview, deviceBreakdown, referrerBreakdown },
-    links,
-  } = Route.useLoaderData()
   const { period } = Route.useSearch()
+  const profileData = useSelectedProfile()
+  const links = profileData?.links
+  const profile = profileData?.profile
+
+  const { data: stats } = useQuery({
+    queryKey: ["stats", period, profileData?.profile._id],
+    enabled: !!profileData,
+    queryFn: async () => {
+      const profileId = profile?._id
+      if (!profileId) {
+        throw new Error("Profile not selected")
+      }
+
+      const dateRange = getPeriodDates(period)
+      const stats = await getOverview({
+        data: {
+          profileId,
+          start: formatToTinybirdDateTime(dateRange.start.toInstant()),
+          end: formatToTinybirdDateTime(dateRange.end.toInstant()),
+        },
+      })
+
+      return stats
+    },
+  })
 
   const handlePeriodChange = (newPeriod: TimePeriod) => {
     navigate({ to: ".", search: { period: newPeriod } })
   }
 
-  const totalViews = overview?.total_page_views ?? 0
-  const totalClicks = overview?.total_link_clicks ?? 0
+  if (!stats || !links) {
+    return null
+  }
+
+  const totalViews = stats.overview.total_page_views ?? 0
+  const totalClicks = stats.overview.total_link_clicks ?? 0
 
   return (
     <ScrollableContainer className="mx-auto w-full max-w-350 space-y-6">
       <AnalyticsHeader period={period} onPeriodChange={handlePeriodChange} />
 
-      <KpiRow overview={overview} rangeLabel={periodToRangeLabel[period]} />
+      <KpiRow
+        overview={stats.overview}
+        rangeLabel={periodToRangeLabel[period]}
+      />
 
       <LinkPerformanceCard
-        linkClicks={linkClicks}
+        linkClicks={stats.linkClicks}
         totalViews={totalViews}
         totalClicks={totalClicks}
         links={links}
@@ -658,11 +662,11 @@ function RouteComponent() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <DeviceBreakdownCard
-          deviceBreakdown={deviceBreakdown}
+          deviceBreakdown={stats.deviceBreakdown}
           totalViews={totalViews}
         />
         <ReferrerBreakdownCard
-          referrerBreakdown={referrerBreakdown}
+          referrerBreakdown={stats.referrerBreakdown}
           totalViews={totalViews}
         />
       </div>

@@ -1,5 +1,4 @@
 import { api } from "@convex/_generated/api"
-import type { Id } from "@convex/_generated/dataModel"
 import {
   ArrowRight01Icon,
   Rocket01Icon,
@@ -12,9 +11,11 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 
-export function PublishBanner({ profileId }: { profileId: Id<"profiles"> }) {
-  const profile = useQuery(api.profiles.queries.getProfile, {})
+export function PublishBanner() {
+  const profileData = useSelectedProfile()
+  const profile = profileData?.profile
   const subscription = useQuery(api.stripe.getUserSubscription, {})
   const publishProfile = useMutation(api.profiles.mutations.publishProfile)
   const [isPublishing, setIsPublishing] = useState(false)
@@ -30,7 +31,7 @@ export function PublishBanner({ profileId }: { profileId: Id<"profiles"> }) {
     setIsPublishing(true)
 
     try {
-      await publishProfile({ profileId })
+      await publishProfile({ profileId: profile._id })
       toast.success("Your profile is now live.")
     } catch (error) {
       toast.error(

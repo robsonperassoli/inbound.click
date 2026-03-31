@@ -1,13 +1,10 @@
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  createFileRoute,
-  useLoaderData,
-  useNavigate,
-} from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { EditTheme } from "@/components/edit-theme"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { useSelectedProfileId } from "@/stores/profiles"
 
 export const Route = createFileRoute(
   "/_authenticated/bio/appearance/customize",
@@ -19,7 +16,10 @@ function RouteComponent() {
   useSiteHeader({ title: "Customize Theme", titleMode: "append" })
 
   const navigate = useNavigate()
-  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
+  const profileId = useSelectedProfileId()
+  if (!profileId) {
+    return null
+  }
 
   return (
     <div className="max-w-md space-y-4">

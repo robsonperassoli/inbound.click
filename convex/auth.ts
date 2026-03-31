@@ -14,7 +14,7 @@ import {
 } from "./_generated/server"
 import authConfig from "./auth.config"
 import { SITE_URL } from "./frontend"
-import { getAuthUser } from "./users/domain"
+import { getAuthUser, getUserScope } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
 
@@ -78,6 +78,14 @@ export const getCurrentUserInternal = internalQuery({
   handler: async (ctx) => {
     const user = await getAuthUser(ctx)
     return user
+  },
+})
+
+export const getCurrentScopeInternal = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const scope = await getUserScope(ctx)
+    return scope
   },
 })
 

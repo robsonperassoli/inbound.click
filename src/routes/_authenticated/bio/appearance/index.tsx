@@ -20,6 +20,7 @@ import { GenerateThemeButton } from "@/components/bio/generate-theme-button"
 import { useSiteHeader } from "@/components/site-header"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/_authenticated/bio/appearance/")({
@@ -51,7 +52,7 @@ function ColorSwatches({
 }: {
   colors: string[]
   fontFamily: string
-  }) {
+}) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
@@ -124,10 +125,9 @@ function NavigationCard({
 
 function RouteComponent() {
   useSiteHeader({ title: "Appearance", titleMode: "append" })
-
   const navigate = useNavigate()
-  const { profileId } = useLoaderData({ from: "/_authenticated/bio" })
-  const profile = useQuery(api.profiles.queries.getProfile, { profileId })
+  const profileData = useSelectedProfile()
+  const profile = profileData?.profile
   const createDesignThread = useMutation(
     api.threads.mutations.createThemeDesignerThread,
   )
@@ -197,7 +197,7 @@ function RouteComponent() {
         </h2>
 
         {/* Magic Button */}
-        <GenerateThemeButton profileId={profileId} />
+        <GenerateThemeButton profileId={profile._id} />
 
         {/* Chat Entry */}
         <Card

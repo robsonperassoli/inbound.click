@@ -1,5 +1,5 @@
 import { type Infer, v } from "convex/values"
-import type { Id } from "../_generated/dataModel"
+import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 import { themeFields } from "./validators"
 
@@ -32,6 +32,7 @@ export const getUserProfile = async (
   return profile
 }
 
+/** @deprecated Accounts can have multiple profiles, use `getProfileById` instead. */
 export const getProfileForUserId = async (
   ctx: QueryCtx,
   userId: Id<"users">,
@@ -89,6 +90,9 @@ export const getProfileById = async (
     ...profile,
     avatarUrl: profile?.avatarId
       ? await ctx.storage.getUrl(profile.avatarId)
+      : null,
+    backgroundImageUrl: profile?.backgroundImage
+      ? await ctx.storage.getUrl(profile.backgroundImage)
       : null,
   }
 }
@@ -153,4 +157,33 @@ export async function publishProfile(
   profileId: Id<"profiles">,
 ) {
   return await ctx.db.patch(profileId, { publishedAt: Date.now() })
+}
+
+export const checkProfileOwnership = async (
+  profile: Doc<"profiles">,
+  accountId: Id<"accounts">,
+) => {
+  if (profile.accountId !== accountId) {
+    throw new Error("Profile not found")
+  }
+}
+
+export const getAccountProfiles = async (
+  ctx: QueryCtx,
+  accountId: Id<"accounts">,
+) => {
+  return await ctx.db
+    .query("profiles")
+    .withIndex("by_account", (q) => q.eq("accountId", accountId))
+    .collect()
+}
+
+export const getAccountProfilesByIds = async (
+  ctx: QueryCtx,
+  accountId: Id<"accounts">,
+  profileIds: Array<Id<"profiles">>,
+) => {
+  const profiles = await getAccountProfiles(ctx, accountId)
+
+  return profiles.filter((profile) => profileIds.includes(profile._id))
 }

@@ -4,6 +4,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "convex/react"
 import { useMemo } from "react"
 import { useCopyToClipboard } from "@/hooks/copy-to-clipboard"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
 import { Button } from "./ui/button"
 import {
   InputGroup,
@@ -23,8 +24,10 @@ import {
 export const BIO_DOMAIN = "s.uper.bio"
 
 export function ShareButton() {
-  const profile = useQuery(api.profiles.queries.getProfile, {})
+  const profileData = useSelectedProfile()
+  const profile = profileData?.profile
   const { copyToClipboard, copied } = useCopyToClipboard()
+
   const visibleLink = useMemo(
     () => (profile ? `${BIO_DOMAIN}/${profile.username}` : ""),
     [profile],
