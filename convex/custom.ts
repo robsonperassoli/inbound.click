@@ -38,3 +38,22 @@ export const userAction = customAction(action, {
     return { ctx: scope, args }
   },
 })
+
+const TEAM_ADMIN_ROLES = ["owner", "admin"] as const
+
+export const teamAdminMutation = customMutation(mutation, {
+  args: {},
+  input: async (ctx, args) => {
+    const scope = await getUserScope(ctx)
+
+    if (scope.account.type !== "team") {
+      throw new Error("Only team accounts can perform this action")
+    }
+
+    if (!TEAM_ADMIN_ROLES.includes(scope.role as "owner" | "admin")) {
+      throw new Error("Only owners and admins can perform this action")
+    }
+
+    return { ctx: scope, args }
+  },
+})

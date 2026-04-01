@@ -8,3 +8,7 @@ export const formSubmissionTranscriptUrl = (
 ) => {
   return `${SITE_URL}/forms/${formId}/submissions/${submissionId}/transcript`
 }
+
+export const invitationUrl = (token: string) => {
+  return `${SITE_URL}/login?invite=${token}`
+}
