@@ -1,8 +1,14 @@
+import type { GenericCtx } from "@convex-dev/better-auth"
+import type { DataModel } from "../_generated/dataModel"
 import type { QueryCtx } from "../_generated/server"
 import { authComponent } from "../auth"
 
+export async function getAuthenticatedUser(ctx: GenericCtx<DataModel>) {
+  return await authComponent.getAuthUser(ctx)
+}
+
 export async function getAuthUser(ctx: QueryCtx) {
-  const { _id: authId } = await authComponent.getAuthUser(ctx)
+  const { _id: authId } = await getAuthenticatedUser(ctx)
 
   const user = await ctx.db
     .query("users")

@@ -14,7 +14,7 @@ import {
 } from "./_generated/server"
 import authConfig from "./auth.config"
 import { SITE_URL } from "./frontend"
-import { getAuthUser, getUserScope } from "./users/domain"
+import { getAuthenticatedUser, getAuthUser, getUserScope } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
 
@@ -28,6 +28,7 @@ export const authComponent = createClient<DataModel>(components.betterAuth, {
         await ctx.db.insert("users", {
           authId: doc._id,
         })
+        // is there an invite for this email? If so link user to the account
       },
       onUpdate: async (ctx, newDoc, oldDoc) => {
         // Both old and new documents are available so you can compare and detect
@@ -65,11 +66,10 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
 
 export const { onCreate, onUpdate, onDelete } = authComponent.triggersApi()
 
-// TODO: move this to my own internal user
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return await authComponent.getAuthUser(ctx)
+    return await getAuthenticatedUser(ctx)
   },
 })
 
