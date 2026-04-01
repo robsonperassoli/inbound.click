@@ -246,10 +246,15 @@ export function SidebarContactModals({
     setSupportSending(true)
 
     try {
+      if (!profileData?.profile._id) {
+        throw new Error("Profile not selected")
+      }
+
       await submitSupport({
         ...validation.data,
         routeContext: validation.data.routeContext?.trim() || undefined,
         ...buildCurrentMeta(),
+        profileId: profileData.profile._id,
       })
       setSupportSuccessEmail(validation.data.email)
     } catch {
@@ -274,11 +279,16 @@ export function SidebarContactModals({
       setFeedbackSending(true)
 
       try {
+        if (!profileData?.profile._id) {
+          throw new Error("Profile not selected")
+        }
+
         await submitFeedback({
           ...validation.data,
           type: "feature",
           impact: validation.data.impact?.trim() || undefined,
           ...buildCurrentMeta(),
+          profileId: profileData.profile._id,
         })
         setFeedbackSuccessEmail(validation.data.email)
       } catch {
@@ -301,11 +311,16 @@ export function SidebarContactModals({
     setFeedbackSending(true)
 
     try {
+      if (!profileData?.profile._id) {
+        throw new Error("Profile not selected")
+      }
+
       await submitFeedback({
         ...validation.data,
         type: "bug",
         reproSteps: validation.data.reproSteps?.trim() || undefined,
         ...buildCurrentMeta(),
+        profileId: profileData.profile._id,
       })
       setFeedbackSuccessEmail(validation.data.email)
     } catch {

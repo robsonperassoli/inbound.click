@@ -1,8 +1,8 @@
 import { Resend } from "@convex-dev/resend"
 import { v } from "convex/values"
-import { api, components } from "./_generated/api"
-import type { Id } from "./_generated/dataModel"
+import { components, internal } from "./_generated/api"
 import { internalMutation } from "./_generated/server"
+import { authComponent } from "./auth"
 import { userAction } from "./custom"
 
 export const resend: Resend = new Resend(components.resend, {
@@ -221,14 +221,16 @@ export const submitSalesLead = userAction({
     phone: v.string(),
     companyName: v.string(),
     userAgent: v.optional(v.string()),
+    profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
-    const [authUser, profile] = await Promise.all([
-      ctx.runQuery(api.auth.getCurrentUser, {}),
-      ctx.runQuery(api.profiles.queries.getProfile, {
-        profileId: "" as Id<"profiles">, //TODO: change this
-      }),
-    ])
+    const authUser = await authComponent.getAuthUser(ctx)
+    const profile = await ctx.runQuery(
+      internal.profiles.queries.getProfileByIdInternal,
+      {
+        profileId: args.profileId,
+      },
+    )
 
     await resend.sendEmail(ctx, {
       from: DEFAULT_FROM,
