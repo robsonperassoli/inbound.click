@@ -24,6 +24,7 @@ import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AuthenticatedInvitesTokenRouteImport } from './routes/_authenticated/invites.$token'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
 import { Route as AuthenticatedBioAppearanceRouteImport } from './routes/_authenticated/bio/appearance'
@@ -112,6 +113,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedInvitesTokenRoute =
+  AuthenticatedInvitesTokenRouteImport.update({
+    id: '/invites/$token',
+    path: '/invites/$token',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
   id: '/forms/$id',
   path: '/forms/$id',
@@ -204,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/invites/$token': typeof AuthenticatedInvitesTokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
@@ -230,6 +238,7 @@ export interface FileRoutesByTo {
   '/signin/complete': typeof SigninCompleteRoute
   '/$username': typeof UsernameIndexRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
+  '/invites/$token': typeof AuthenticatedInvitesTokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
@@ -261,6 +270,7 @@ export interface FileRoutesById {
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
+  '/_authenticated/invites/$token': typeof AuthenticatedInvitesTokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/bio/appearance'
     | '/bio/settings'
     | '/forms/$id'
+    | '/invites/$token'
     | '/api/auth/$'
     | '/bio/'
     | '/forms/'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/signin/complete'
     | '/$username'
     | '/bio/settings'
+    | '/invites/$token'
     | '/api/auth/$'
     | '/bio'
     | '/forms'
@@ -348,6 +360,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
+    | '/_authenticated/invites/$token'
     | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
@@ -480,6 +493,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/invites/$token': {
+      id: '/_authenticated/invites/$token'
+      path: '/invites/$token'
+      fullPath: '/invites/$token'
+      preLoaderRoute: typeof AuthenticatedInvitesTokenRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/forms/$id': {
       id: '/_authenticated/forms/$id'
@@ -648,6 +668,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
+  AuthenticatedInvitesTokenRoute: typeof AuthenticatedInvitesTokenRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
   AuthenticatedDesignThemeThreadIdRoute: typeof AuthenticatedDesignThemeThreadIdRoute
   AuthenticatedFormsBuilderThreadIdRoute: typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -660,6 +681,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
+  AuthenticatedInvitesTokenRoute: AuthenticatedInvitesTokenRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
   AuthenticatedDesignThemeThreadIdRoute: AuthenticatedDesignThemeThreadIdRoute,
   AuthenticatedFormsBuilderThreadIdRoute:
