@@ -5,7 +5,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute } from "@tanstack/react-router"
-import { useAction, useQuery } from "convex/react"
+import { useAction } from "convex/react"
 import { useEffect, useMemo, useState } from "react"
 import { ScrollableContainer } from "@/components/app-layout/scrollable-container"
 import { Badge } from "@/components/ui/badge"
@@ -30,6 +30,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useSelectedProfile } from "@/hooks/use-selected-profile"
+import { useSession } from "@/hooks/use-session"
 import {
   type BillingCycle,
   getPlanIdForPriceId,
@@ -142,13 +144,12 @@ function RouteComponent() {
     api.stripe.createSubscriptionCheckout,
   )
   const submitSalesLead = useAction(api.emails.submitSalesLead)
-  const user = useQuery(api.auth.getCurrentUser, {})
-  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const session = useSession()
 
   const activePlan =
-    subscription === undefined
+    session?.subscriptionPriceId === undefined
       ? "free"
-      : getPlanIdForPriceId(subscription === "free" ? null : subscription)
+      : getPlanIdForPriceId(session.subscriptionPriceId)
 
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("yearly")
   const [checkoutPlan, setCheckoutPlan] = useState<PlanId | null>(null)
@@ -159,14 +160,15 @@ function RouteComponent() {
   const [contactSubmitting, setContactSubmitting] = useState(false)
   const [contactSubmitted, setContactSubmitted] = useState(false)
   const [contactFormError, setContactFormError] = useState("")
+  const profileData = useSelectedProfile()
 
   useEffect(() => {
     setContactValues((current) => ({
-      email: current.email || user?.email || "",
-      phone: current.phone || user?.phoneNumber || "",
+      email: current.email || session?.email || "",
+      phone: current.phone || session?.phoneNumber || "",
       companyName: current.companyName,
     }))
-  }, [user?.email, user?.phoneNumber])
+  }, [session])
 
   const plans = useMemo(
     () =>
@@ -490,11 +492,16 @@ function RouteComponent() {
                     setContactSubmitting(true)
                     setContactFormError("")
 
+                    if (!profileData?.profile._id) {
+                      throw new Error("Profile not selected")
+                    }
+
                     await submitSalesLead({
                       email: contactValues.email.trim(),
                       phone: contactValues.phone.trim(),
                       companyName: contactValues.companyName.trim(),
                       userAgent: window.navigator.userAgent,
+                      profileId: profileData.profile._id,
                     })
 
                     setContactSubmitted(true)

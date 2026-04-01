@@ -12,11 +12,12 @@ import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useSelectedProfile } from "@/hooks/use-selected-profile"
+import { useSession } from "@/hooks/use-session"
 
 export function PublishBanner() {
   const profileData = useSelectedProfile()
   const profile = profileData?.profile
-  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const session = useSession()
   const publishProfile = useMutation(api.profiles.mutations.publishProfile)
   const [isPublishing, setIsPublishing] = useState(false)
 
@@ -24,8 +25,7 @@ export function PublishBanner() {
     return null
   }
 
-  const hasActiveSubscription =
-    subscription !== undefined && subscription !== "free"
+  const hasActiveSubscription = session?.subscribed === true
 
   const handlePublish = async () => {
     setIsPublishing(true)
@@ -62,9 +62,9 @@ export function PublishBanner() {
       </div>
 
       <div className="flex shrink-0 items-center">
-        {subscription === undefined ? (
+        {session === undefined ? (
           <Button size="sm" disabled>
-            Checking plan…
+            Loading...
           </Button>
         ) : hasActiveSubscription ? (
           <Button size="sm" onClick={handlePublish} disabled={isPublishing}>

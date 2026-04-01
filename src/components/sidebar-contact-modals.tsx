@@ -2,7 +2,7 @@
 
 import { api } from "@convex/_generated/api"
 import { useLocation } from "@tanstack/react-router"
-import { useAction, useQuery } from "convex/react"
+import { useAction } from "convex/react"
 import { type FormEvent, useEffect, useState } from "react"
 import type z from "zod"
 import {
@@ -44,6 +44,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { useSelectedProfile } from "@/hooks/use-selected-profile"
+import { useSession } from "@/hooks/use-session"
 
 type ModalType = "support" | "feedback" | null
 type Errors<T> = Partial<Record<keyof T, string>>
@@ -141,13 +142,13 @@ export function SidebarContactModals({
   const support = openModal === "support"
   const feedback = openModal === "feedback"
   const { pathname } = useLocation()
-  const user = useQuery(api.auth.getCurrentUser, {})
+  const session = useSession()
   const profileData = useSelectedProfile()
   const submitSupport = useAction(api.support.submit)
   const submitFeedback = useAction(api.feedback.submit)
 
-  const defaultEmail = user?.email ?? ""
-  const requesterName = user?.name ?? profileData?.profile.title ?? "there"
+  const defaultEmail = session?.email ?? ""
+  const requesterName = session?.name ?? profileData?.profile.title ?? "there"
 
   const [supportValues, setSupportValues] = useState<SupportFormValues>(
     emptySupportValues(defaultEmail),
