@@ -32,7 +32,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/hooks/use-session"
-import { ProfileSwitcher } from "./app-layout/profile-switcher"
+import { ProfileSwitcher, useProfileSwitcher } from "./app-layout/profile-switcher"
 import { Skeleton } from "./ui/skeleton"
 
 const data = {
@@ -77,6 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   )
   const session = useSession()
   const { isMobile, state } = useSidebar()
+  const { profile, profiles } = useProfileSwitcher()
 
   const secondaryItems = [
     {
@@ -101,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <Sidebar variant="inset" {...props}>
         {session ? (
           session.accountType === "team" ? (
-            <ProfileSwitcher />
+            <ProfileSwitcher profiles={profiles} profile={profile} />
           ) : (
             <SidebarMenu>
               <SidebarMenuItem>

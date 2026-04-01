@@ -21,9 +21,9 @@ import {
 import { getInitials } from "@/lib/names"
 import { setSelectedProfile, useSelectedProfileId } from "@/stores/profiles"
 import { Avatar, AvatarFallback } from "../ui/avatar"
+import type { Doc } from "@convex/_generated/dataModel"
 
-export function ProfileSwitcher() {
-  const { isMobile } = useSidebar()
+export function useProfileSwitcher() {
   const profiles = useQuery(api.profiles.queries.getAvailableProfiles)
   const profileId = useSelectedProfileId()
 
@@ -37,6 +37,14 @@ export function ProfileSwitcher() {
       setSelectedProfile(profiles[0]._id)
     }
   }, [profiles, profileId])
+
+  return { profile, profiles: profiles ?? [] }
+}
+
+
+
+export function ProfileSwitcher({ profiles, profile }: { profiles: Array<Doc<"profiles">> ; profile: Doc<"profiles"> | null }) {
+  const { isMobile } = useSidebar()
 
   if (!profile) {
     return null

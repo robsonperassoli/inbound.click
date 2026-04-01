@@ -81,7 +81,7 @@ export const resendInvitation = teamAdminMutation({
       revokedAt: Date.now(),
     })
 
-    const token = await generateInvitationToken()
+    const token = generateInvitationToken()
     const expiresAt = Date.now() + INVITATION_EXPIRY_MS
 
     const newInvitationId = await ctx.db.insert("invitations", {
