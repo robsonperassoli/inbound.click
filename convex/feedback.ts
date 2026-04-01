@@ -1,7 +1,8 @@
 import { v } from "convex/values"
-import { api, internal } from "./_generated/api"
-import type { Id } from "./_generated/dataModel"
+import { internal } from "./_generated/api"
+import { authComponent } from "./auth"
 import { userAction } from "./custom"
+import { checkProfileOwnership } from "./profiles/domain"
 
 export const submit = userAction({
   args: {
@@ -25,14 +26,18 @@ export const submit = userAction({
     currentPath: v.optional(v.string()),
     userAgent: v.optional(v.string()),
     submittedAt: v.string(),
+    profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
-    const [authUser, profile] = await Promise.all([
-      ctx.runQuery(api.auth.getCurrentUser, {}),
-      ctx.runQuery(api.profiles.queries.getProfile, {
-        profileId: "" as Id<"profiles">, //TODO: change this
-      }),
-    ])
+    const authUser = await authComponent.getAuthUser(ctx)
+    const profile = await ctx.runQuery(
+      internal.profiles.queries.getProfileByIdInternal,
+      {
+        profileId: args.profileId,
+      },
+    )
+
+    checkProfileOwnership(profile, ctx.account._id)
 
     await ctx.runMutation(internal.emails.sendFeedbackEmail, {
       ...args,
