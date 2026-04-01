@@ -8,10 +8,11 @@ import {
   NotificationIcon,
   SparklesIcon,
   UnfoldMoreIcon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { useAction, useQuery } from "convex/react"
+import { useAction } from "convex/react"
 import posthog from "posthog-js"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -123,10 +124,15 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {/*<DropdownMenuItem>
-                <HugeiconsIcon icon={CheckmarkBadgeIcon} strokeWidth={2} />
-                Account
-              </DropdownMenuItem>*/}
+              {session?.accountType === "team" && (
+                <DropdownMenuItem asChild>
+                  <Link to="/team">
+                    <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
+                    Team
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
               {session?.subscribed === true && (
                 <DropdownMenuItem onClick={goToStripeCustomerPortal}>
                   <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} />
