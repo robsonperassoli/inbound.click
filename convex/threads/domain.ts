@@ -16,6 +16,7 @@ export type Thread = Infer<typeof threadsFields>
 export async function createFormBuilderThread(
   ctx: MutationCtx,
   userId: Id<"users">,
+  profileId: Id<"profiles">,
   firstPrompt: string,
 ) {
   return await createThread(
@@ -25,6 +26,7 @@ export async function createFormBuilderThread(
       model: "gpt-4o-mini",
       title: "Form Builder Session",
       type: "formBuilder",
+      profileId,
       systemPrompt: formBuilderSystemPrompt,
       createdAt: Date.now(),
       updatedAt: Date.now(),
