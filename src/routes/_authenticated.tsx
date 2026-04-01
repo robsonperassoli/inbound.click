@@ -15,7 +15,12 @@ function RouteComponent() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      navigate({ to: "/signin" })
+      navigate({
+        to: "/signin",
+        search: {
+          redirect: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+        },
+      })
     }
   }, [isAuthenticated, isLoading, navigate])
 

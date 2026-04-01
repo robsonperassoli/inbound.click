@@ -1,6 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { useConvexAuth } from "convex/react"
 import { useEffect, useState } from "react"
+import z from "zod"
 import logo from "@/assets/logo.svg"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,32 +13,42 @@ import {
 } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { authClient } from "@/lib/auth-client"
+import { getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 export const Route = createFileRoute("/signin")({
   component: RouteComponent,
   ssr: false,
+  validateSearch: {
+    parse: z.object({ redirect: z.string().optional() }).parse,
+  },
 })
 
 function RouteComponent() {
   const { isAuthenticated, isLoading } = useConvexAuth()
-  const navigate = useNavigate()
+  const { redirect } = Route.useSearch()
 
   const [activeProvider, setActiveProvider] = useState<"google" | null>(null)
+  const safeRedirect = getSafeAuthRedirect(redirect)
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate({ to: "/bio" })
+      window.location.replace(safeRedirect)
     }
-  }, [isAuthenticated, isLoading, navigate])
+  }, [isAuthenticated, isLoading, safeRedirect])
 
   if (isLoading || isAuthenticated) return null
 
   const handleSignIn = async (provider: "google") => {
     setActiveProvider(provider)
+
+    const callbackURL = `/signin/complete?${new URLSearchParams({
+      redirect: safeRedirect,
+    }).toString()}`
+
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: "/signin/complete",
+        callbackURL,
         newUserCallbackURL: "/onboarding",
       })
     } finally {

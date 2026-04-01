@@ -10,5 +10,5 @@ export const formSubmissionTranscriptUrl = (
 }
 
 export const invitationUrl = (token: string) => {
-  return `${SITE_URL}/login?invite=${token}`
+  return `${SITE_URL}/invites/${token}`
 }
