@@ -8,12 +8,8 @@ import {
   SlidersHorizontal,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  createFileRoute,
-  useLoaderData,
-  useNavigate,
-} from "@tanstack/react-router"
-import { useMutation, useQuery } from "convex/react"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useMutation } from "convex/react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { GenerateThemeButton } from "@/components/bio/generate-theme-button"
@@ -135,8 +131,14 @@ function RouteComponent() {
 
   const startChatWithAI = async () => {
     try {
+      if (!profile) {
+        throw new Error("Profile not selected")
+      }
+
       setAiLoading(true)
-      const { threadId } = await createDesignThread({})
+      const { threadId } = await createDesignThread({
+        profileId: profile._id,
+      })
       navigate({ to: "/design/theme/$threadId", params: { threadId } })
     } catch (error) {
       console.error(error)

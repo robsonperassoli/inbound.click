@@ -27,10 +27,19 @@ export const updateMessageContent = internalMutation({
 export const createFormBuilderThread = userMutation({
   args: {
     message: v.string(),
+    profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
+    const profile = await profiles.getProfileById(ctx, args.profileId)
+    profiles.checkProfileOwnership(profile, ctx.account._id)
+
     const { threadId, messageId, assistantMessageId } =
-      await threads.createFormBuilderThread(ctx, ctx.user._id, args.message)
+      await threads.createFormBuilderThread(
+        ctx,
+        ctx.user._id,
+        args.profileId,
+        args.message,
+      )
 
     await ctx.scheduler.runAfter(0, internal.threads.actions.runAgent, {
       threadId,
@@ -41,11 +50,12 @@ export const createFormBuilderThread = userMutation({
 })
 
 export const createThemeDesignerThread = userMutation({
-  handler: async (ctx, _args) => {
-    const profile = await profiles.getProfileForUserId(ctx, ctx.user._id)
-    if (!profile) {
-      throw new Error("Profile not found")
-    }
+  args: {
+    profileId: v.id("profiles"),
+  },
+  handler: async (ctx, args) => {
+    const profile = await profiles.getProfileById(ctx, args.profileId)
+    profiles.checkProfileOwnership(profile, ctx.account._id)
 
     const { threadId, messageId, assistantMessageId } =
       await threads.createThemeDesignerThread(ctx, ctx.user._id, profile._id)
@@ -86,6 +96,7 @@ export const createFormForThread = internalMutation({
     threadId: v.id("threads"),
     title: v.string(),
     description: v.optional(v.string()),
+    profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
     const thread = await threads.getThread(ctx, args.threadId)
@@ -104,14 +115,9 @@ export const createFormForThread = internalMutation({
       args.description,
     )
 
-    const profile = await profiles.getProfileForUserId(ctx, args.userId)
-    if (!profile) {
-      throw new Error("User doesn't have a bio page")
-    }
-
     await links.createFormLink(ctx, {
       userId: args.userId,
-      profileId: profile._id,
+      profileId: args.profileId,
       title: args.title,
       formId,
     })

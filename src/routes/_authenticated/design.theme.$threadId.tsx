@@ -37,7 +37,9 @@ function RouteComponent() {
   return (
     <div className="flex flex-1">
       <div className="hidden sm:block grow overflow-auto">
-        <UserPagePreview />
+        {thread && thread.type === "themeDesigner" && (
+          <UserPagePreview profileId={thread.profileId} />
+        )}
       </div>
 
       <div className="w-full sm:w-96 border-l flex">
@@ -63,7 +65,9 @@ function RouteComponent() {
                   align="start"
                   className="p-0 w-sm max-w-full overflow-hidden max-h-[70vh]"
                 >
-                  <UserPagePreview />
+                  {thread && thread.type === "themeDesigner" && (
+                    <UserPagePreview profileId={thread.profileId} />
+                  )}
                 </PopoverContent>
               </Popover>
               <Button size="sm" onClick={onDoneClicked}>

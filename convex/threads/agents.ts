@@ -44,12 +44,17 @@ export function createAgent(
       }
       break
     case "formBuilder":
+      if (thread.type !== "formBuilder") {
+        throw new Error(`Invalid thread type for formBuilder agent`)
+      }
+
       tools = {
         listForms: agentTools.createListFormsTool(ctx, thread.userId),
         createForm: agentTools.createCreateFormTool(
           ctx,
           thread.userId,
           thread._id,
+          thread.profileId!, //TODO: fix once profile id is not optional
         ),
         updateForm: agentTools.createUpdateFormTool(ctx, thread._id),
       }

@@ -20,6 +20,7 @@ export const threadsFields = v.union(
   }),
   v.object({
     type: v.literal("formBuilder"),
+    profileId: v.optional(v.id("profiles")),
     formId: v.optional(v.id("forms")),
     ...commonThreadFields,
   }),

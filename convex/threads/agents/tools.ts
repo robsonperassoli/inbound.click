@@ -82,6 +82,7 @@ export function createCreateFormTool(
   ctx: ActionCtx,
   userId: Id<"users">,
   threadId: Id<"threads">,
+  profileId: Id<"profiles">,
 ) {
   return tool({
     description: "Create User form",
@@ -93,6 +94,7 @@ export function createCreateFormTool(
       await ctx.runMutation(internal.threads.mutations.createFormForThread, {
         userId,
         threadId,
+        profileId,
         ...args,
       })
 
