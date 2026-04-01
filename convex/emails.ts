@@ -2,8 +2,8 @@ import { Resend } from "@convex-dev/resend"
 import { v } from "convex/values"
 import { components, internal } from "./_generated/api"
 import { internalMutation } from "./_generated/server"
-import { authComponent } from "./auth"
 import { userAction } from "./custom"
+import { getAuthenticatedUser } from "./users/domain"
 
 export const resend: Resend = new Resend(components.resend, {
   testMode: false,
@@ -224,7 +224,7 @@ export const submitSalesLead = userAction({
     profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
-    const authUser = await authComponent.getAuthUser(ctx)
+    const authUser = await getAuthenticatedUser(ctx)
     const profile = await ctx.runQuery(
       internal.profiles.queries.getProfileByIdInternal,
       {

@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import { internal } from "./_generated/api"
-import { authComponent } from "./auth"
 import { userAction } from "./custom"
 import { checkProfileOwnership } from "./profiles/domain"
+import { getAuthenticatedUser } from "./users/domain"
 
 export const submit = userAction({
   args: {
@@ -24,7 +24,7 @@ export const submit = userAction({
     profileId: v.id("profiles"),
   },
   handler: async (ctx, args) => {
-    const authUser = await authComponent.getAuthUser(ctx)
+    const authUser = await getAuthenticatedUser(ctx)
     const profile = await ctx.runQuery(
       internal.profiles.queries.getProfileByIdInternal,
       {
