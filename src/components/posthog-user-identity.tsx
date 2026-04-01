@@ -1,18 +1,17 @@
-import { api } from "@convex/_generated/api"
-import { useQuery } from "convex/react"
 import posthog from "posthog-js"
 import { useEffect } from "react"
+import { useSession } from "@/hooks/use-session"
 
 export function PostHogUserIdentify() {
-  const user = useQuery(api.auth.getCurrentUser, {})
+  const session = useSession()
   useEffect(() => {
-    if (!user) return
+    if (!session) return
 
-    posthog.identify(user._id, {
-      email: user.email,
-      name: user.name,
+    posthog.identify(session._id, {
+      email: session.email,
+      name: session.name,
     })
-  }, [user])
+  }, [session])
 
   return null
 }

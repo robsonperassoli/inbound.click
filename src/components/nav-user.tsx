@@ -29,13 +29,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-
+import { useSession } from "@/hooks/use-session"
 import { getInitials } from "@/lib/names"
 
 export function NavUser() {
   const navigate = useNavigate()
-  const user = useQuery(api.auth.getCurrentUser, {})
-  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const session = useSession()
   const getCustomerPortalUrl = useAction(api.stripe.getCustomerPortalUrl)
 
   const signOut = async () => {
@@ -66,17 +65,17 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                {user?.image && (
-                  <AvatarImage src={user?.image} alt={user?.name} />
+                {session?.image && (
+                  <AvatarImage src={session.image} alt={session.name} />
                 )}
 
                 <AvatarFallback className="rounded-lg">
-                  {user?.name ? getInitials(user.name) : null}
+                  {session?.name ? getInitials(session.name) : null}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user?.name}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate font-medium">{session?.name}</span>
+                <span className="truncate text-xs">{session?.email}</span>
               </div>
               <HugeiconsIcon
                 icon={UnfoldMoreIcon}
@@ -94,21 +93,21 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {user?.image && (
-                    <AvatarImage src={user?.image} alt={user?.name} />
+                  {session?.image && (
+                    <AvatarImage src={session.image} alt={session.name} />
                   )}
                   <AvatarFallback className="rounded-lg">
-                    {user?.name ? getInitials(user.name) : null}
+                    {session?.name ? getInitials(session.name) : null}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.name}</span>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate font-medium">{session?.name}</span>
+                  <span className="truncate text-xs">{session?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
 
-            {subscription === "free" && (
+            {session?.subscribed === false && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -128,7 +127,7 @@ export function NavUser() {
                 <HugeiconsIcon icon={CheckmarkBadgeIcon} strokeWidth={2} />
                 Account
               </DropdownMenuItem>*/}
-              {subscription && subscription !== "free" && (
+              {session?.subscribed === true && (
                 <DropdownMenuItem onClick={goToStripeCustomerPortal}>
                   <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} />
                   Billing

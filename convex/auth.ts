@@ -14,6 +14,7 @@ import {
 } from "./_generated/server"
 import authConfig from "./auth.config"
 import { SITE_URL } from "./frontend"
+import { getUserActiveSubscription } from "./stripe/domain"
 import { getAuthenticatedUser, getAuthUser, getUserScope } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
@@ -70,6 +71,29 @@ export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
     return await getAuthenticatedUser(ctx)
+  },
+})
+
+export const getSession = query({
+  args: {},
+  handler: async (ctx) => {
+    const [authUser, scope] = await Promise.all([
+      getAuthenticatedUser(ctx),
+      getUserScope(ctx),
+    ])
+    const subscription = await getUserActiveSubscription(ctx, scope.user._id)
+
+    return {
+      _id: scope.user._id,
+      name: authUser.name,
+      email: authUser.email,
+      image: authUser.image,
+      username: authUser.username,
+      phoneNumber: authUser.phoneNumber,
+      accountType: scope.account.type,
+      subscribed: Boolean(subscription),
+      subscriptionPriceId: subscription?.priceId,
+    }
   },
 })
 

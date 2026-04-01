@@ -1,6 +1,5 @@
 "use client"
 
-import { api } from "@convex/_generated/api"
 import {
   ArrowRight01Icon,
   Chart03Icon,
@@ -12,7 +11,6 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
-import { useQuery } from "convex/react"
 import type * as React from "react"
 import { useState } from "react"
 import { NavMain } from "@/components/nav-main"
@@ -26,13 +24,12 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import logo from "../assets/logo.svg"
+import { useSession } from "@/hooks/use-session"
 import { ProfileSwitcher } from "./app-layout/profile-switcher"
 
 const data = {
@@ -75,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [openModal, setOpenModal] = useState<"support" | "feedback" | null>(
     null,
   )
-  const subscription = useQuery(api.stripe.getUserSubscription, {})
+  const session = useSession()
   const { isMobile, state } = useSidebar()
 
   const secondaryItems = [
@@ -91,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   ]
 
-  const shouldShowUpgradeCta = subscription === "free"
+  const shouldShowUpgradeCta = session?.subscribed === false
   const showCompactUpgradeCta =
     shouldShowUpgradeCta && !isMobile && state === "collapsed"
   const showFullUpgradeCta = shouldShowUpgradeCta && !showCompactUpgradeCta

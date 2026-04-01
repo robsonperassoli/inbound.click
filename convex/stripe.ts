@@ -1,9 +1,8 @@
 import { StripeSubscriptions } from "@convex-dev/stripe"
 import { v } from "convex/values"
 import { components } from "./_generated/api"
-import { userAction, userQuery } from "./custom"
+import { userAction } from "./custom"
 import { SITE_URL } from "./frontend"
-import { getUserActiveSubscription } from "./stripe/domain"
 
 const stripeClient = new StripeSubscriptions(components.stripe, {})
 
@@ -36,22 +35,6 @@ export const createSubscriptionCheckout = userAction({
       cancelUrl: `${SITE_URL}/bio?canceled=true`,
       subscriptionMetadata: { userId },
     })
-  },
-})
-
-export const getUserSubscription = userQuery({
-  returns: v.union(v.string(), v.literal("free")),
-  handler: async (ctx, _args) => {
-    const activeSubscription = await getUserActiveSubscription(
-      ctx,
-      ctx.user._id,
-    )
-
-    if (!activeSubscription) {
-      return "free"
-    }
-
-    return activeSubscription.priceId
   },
 })
 
