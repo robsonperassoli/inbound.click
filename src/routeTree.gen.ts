@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
 import { Route as SigninCompleteRouteImport } from './routes/signin.complete'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
+import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
@@ -74,6 +75,11 @@ const SigninCompleteRoute = SigninCompleteRouteImport.update({
 const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
   id: '/upgrade',
   path: '/upgrade',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username': typeof UsernameIndexRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/bio'
     | '/onboarding'
+    | '/team'
     | '/upgrade'
     | '/signin/complete'
     | '/$username/'
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/analytics'
     | '/onboarding'
+    | '/team'
     | '/upgrade'
     | '/signin/complete'
     | '/$username'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/onboarding'
+    | '/_authenticated/team'
     | '/_authenticated/upgrade'
     | '/signin/complete'
     | '/$username/'
@@ -418,6 +430,13 @@ declare module '@tanstack/react-router' {
       path: '/upgrade'
       fullPath: '/upgrade'
       preLoaderRoute: typeof AuthenticatedUpgradeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/team': {
+      id: '/_authenticated/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding': {
@@ -626,6 +645,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
@@ -637,6 +657,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,

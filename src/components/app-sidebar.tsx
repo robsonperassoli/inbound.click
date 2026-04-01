@@ -13,6 +13,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
 import type * as React from "react"
 import { useState } from "react"
+import logo from "@/assets/logo.svg"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -24,6 +25,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -31,6 +33,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useSession } from "@/hooks/use-session"
 import { ProfileSwitcher } from "./app-layout/profile-switcher"
+import { Skeleton } from "./ui/skeleton"
 
 const data = {
   navMain: [
@@ -96,22 +99,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <>
       <Sidebar variant="inset" {...props}>
-        {/*<SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link
-                  to="/bio"
-                  className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
-                >
-                  <img src={logo} alt="Inbound.click logo" className="w-32" />
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+        {session ? (
+          session.accountType === "team" ? (
+            <ProfileSwitcher />
+          ) : (
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    to="/bio"
+                    className="shrink-0 text-sm font-semibold tracking-tight whitespace-nowrap"
+                  >
+                    <img src={logo} alt="Inbound logo" className="w-32" />
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          )
+        ) : (
+          <Skeleton className="w-full h-10" />
+        )}
 
-        </SidebarHeader>*/}
-        <ProfileSwitcher />
         <SidebarContent>
           <NavMain items={data.navMain} />
 
