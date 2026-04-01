@@ -1,8 +1,9 @@
 import { Resend } from "@convex-dev/resend"
 import { v } from "convex/values"
 import { components, internal } from "./_generated/api"
-import { internalMutation } from "./_generated/server"
+import { internalMutation, type MutationCtx } from "./_generated/server"
 import { userAction } from "./custom"
+import { invitationUrl } from "./frontend"
 import { getAuthenticatedUser } from "./users/domain"
 
 export const resend: Resend = new Resend(components.resend, {
@@ -362,3 +363,34 @@ const createProfileChatHeaders = (formSubmissionId: string) => [
   { name: "In-Reply-To", value: `<${formSubmissionId}@inbound.click>` },
   { name: "References", value: `<${formSubmissionId}@inbound.click>` },
 ]
+
+export async function sendInvitationEmail(
+  ctx: MutationCtx,
+  {
+    to,
+    inviterName,
+    role,
+    token,
+  }: {
+    to: string
+    inviterName: string
+    role: "owner" | "admin" | "member"
+    token: string
+  },
+) {
+  await resend.sendEmail(ctx, {
+    from: DEFAULT_FROM,
+    to,
+    subject: "You've been invited to join Inbound.click",
+    text: [
+      `${inviterName} has invited you to join their team on Inbound.click.`,
+      "",
+      `Role: ${role}`,
+      "",
+      "Accept your invitation:",
+      invitationUrl(token),
+      "",
+      "This invitation expires in 7 days.",
+    ].join("\n"),
+  })
+}

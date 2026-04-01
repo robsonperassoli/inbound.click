@@ -8,7 +8,9 @@
  * @module
  */
 
+import type * as accounts_domain from "../accounts/domain.js";
 import type * as accounts_mutations from "../accounts/mutations.js";
+import type * as accounts_queries from "../accounts/queries.js";
 import type * as accounts_validators from "../accounts/validators.js";
 import type * as auth from "../auth.js";
 import type * as cron from "../cron.js";
@@ -54,7 +56,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "accounts/domain": typeof accounts_domain;
   "accounts/mutations": typeof accounts_mutations;
+  "accounts/queries": typeof accounts_queries;
   "accounts/validators": typeof accounts_validators;
   auth: typeof auth;
   cron: typeof cron;

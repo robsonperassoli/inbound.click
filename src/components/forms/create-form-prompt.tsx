@@ -1,4 +1,5 @@
 import { api } from "@convex/_generated/api"
+import type { Id } from "@convex/_generated/dataModel"
 import { Sparkles } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useNavigate } from "@tanstack/react-router"
@@ -15,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { useSelectedProfileId } from "@/stores/profiles"
 
 const DEFAULT_PROMPT_EXAMPLES = [
   {
@@ -48,6 +50,7 @@ export function CreateFormPrompt({
   const createFormBuilder = useMutation(
     api.threads.mutations.createFormBuilderThread,
   )
+  const profileId = useSelectedProfileId()
 
   const trimmedPrompt = prompt.trim()
   const isEmpty = trimmedPrompt.length === 0
@@ -68,6 +71,7 @@ export function CreateFormPrompt({
 
       const { threadId } = await createFormBuilder({
         message: prompt.trim(),
+        profileId: profileId as Id<"profiles">,
       })
 
       navigate({
