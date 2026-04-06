@@ -641,8 +641,8 @@ function RouteComponent() {
     return null
   }
 
-  const totalViews = stats.overview.total_page_views ?? 0
-  const totalClicks = stats.overview.total_link_clicks ?? 0
+  const totalViews = stats.overview?.total_page_views ?? 0
+  const totalClicks = stats.overview?.total_link_clicks ?? 0
 
   return (
     <ScrollableContainer className="mx-auto w-full max-w-350 space-y-6">
