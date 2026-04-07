@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import { getUserDetails } from "../auth"
-import { teamAdminMutation } from "../custom"
+import { teamAdminMutation, userMutation } from "../custom"
 import { sendInvitationEmail } from "../emails"
-import { generateInvitationToken } from "./domain"
+import { generateInvitationToken, getInvitationByToken } from "./domain"
 import { memberRole } from "./validators"
 
 const INVITATION_EXPIRY_DAYS = 7
@@ -130,6 +130,56 @@ export const revokeInvitation = teamAdminMutation({
     await ctx.db.patch("invitations", args.invitationId, {
       status: "revoked",
       revokedAt: Date.now(),
+    })
+
+    return { success: true }
+  },
+})
+
+export const acceptInvitation = userMutation({
+  args: {
+    token: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const invitation = await getInvitationByToken(ctx, args.token)
+
+    if (!invitation) {
+      throw new Error("Invitation not found")
+    }
+
+    if (invitation.status !== "pending") {
+      throw new Error(
+        invitation.status === "accepted"
+          ? "Invitation already accepted"
+          : "Invitation is no longer available",
+      )
+    }
+
+    if (invitation.expiresAt < Date.now()) {
+      throw new Error("Invitation has expired")
+    }
+
+    const memberships = await ctx.db
+      .query("accountMembers")
+      .withIndex("by_user", (q) => q.eq("userId", ctx.user._id))
+      .collect()
+
+    for (const membership of memberships) {
+      await ctx.db.delete(membership._id)
+    }
+
+    await ctx.db.insert("accountMembers", {
+      accountId: invitation.accountId,
+      userId: ctx.user._id,
+      role: invitation.role,
+      profiles: invitation.profiles,
+      joinedAt: Date.now(),
+    })
+
+    await ctx.db.patch(invitation._id, {
+      status: "accepted",
+      acceptedByUserId: ctx.user._id,
+      acceptedAt: Date.now(),
     })
 
     return { success: true }

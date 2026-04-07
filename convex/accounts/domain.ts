@@ -30,8 +30,20 @@ export async function getAccountInvitations(
 export async function getInvitationByToken(ctx: MutationCtx, token: string) {
   const invitation = await ctx.db
     .query("invitations")
-    .filter((q) => q.eq(q.field("token"), token))
-    .first()
+    .withIndex("by_token", (q) => q.eq("token", token))
+    .unique()
+
+  return invitation
+}
+
+export async function getInvitationByTokenForRead(
+  ctx: QueryCtx,
+  token: string,
+) {
+  const invitation = await ctx.db
+    .query("invitations")
+    .withIndex("by_token", (q) => q.eq("token", token))
+    .unique()
 
   return invitation
 }

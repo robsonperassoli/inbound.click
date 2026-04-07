@@ -1,16 +1,19 @@
 import { components } from "../_generated/api"
+import type { Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 
-export async function getUserActiveSubscription(
+export async function getAccountActiveSubscription(
   ctx: MutationCtx | QueryCtx,
-  userId: string,
+  accountId: Id<"accounts">,
 ) {
-  const subscriptions = await ctx.runQuery(
-    components.stripe.public.listSubscriptionsByUserId,
-    { userId },
+  const subscription = await ctx.runQuery(
+    components.stripe.public.getSubscriptionByOrgId,
+    { orgId: accountId },
   )
 
-  const activeSubscription = subscriptions.find((s) => s.status === "active")
+  if (!subscription || subscription.status !== "active") {
+    return null
+  }
 
-  return activeSubscription
+  return subscription
 }

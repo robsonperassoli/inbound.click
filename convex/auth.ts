@@ -9,7 +9,7 @@ import {
   type QueryCtx,
   query,
 } from "./_generated/server"
-import { getUserActiveSubscription } from "./stripe/domain"
+import { getAccountActiveSubscription } from "./stripe/domain"
 import { getAuthenticatedUser, getAuthUser, getUserScope } from "./users/domain"
 
 const authFunctions: AuthFunctions = internal.auth
@@ -140,7 +140,10 @@ export const getSession = query({
       getAuthenticatedUser(ctx),
       getUserScope(ctx),
     ])
-    const subscription = await getUserActiveSubscription(ctx, scope.user._id)
+    const subscription = await getAccountActiveSubscription(
+      ctx,
+      scope.account._id,
+    )
 
     return {
       _id: scope.user._id,
@@ -150,11 +153,10 @@ export const getSession = query({
       email: scope.user.email ?? authUser?.email ?? "",
       image:
         scope.user.profilePictureUrl ?? authUser?.profilePictureUrl ?? null,
-      username: "",
-      phoneNumber: "",
       accountType: scope.account.type,
       subscribed: Boolean(subscription),
       subscriptionPriceId: subscription?.priceId,
+      role: scope.role,
     }
   },
 })
