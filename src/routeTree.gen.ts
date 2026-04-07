@@ -15,7 +15,6 @@ import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
-import { Route as SigninCompleteRouteImport } from './routes/signin.complete'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -24,7 +23,6 @@ import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bi
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthenticatedInvitesTokenRouteImport } from './routes/_authenticated/invites.$token'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
@@ -69,11 +67,6 @@ const UsernameIndexRoute = UsernameIndexRouteImport.update({
   path: '/$username/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SigninCompleteRoute = SigninCompleteRouteImport.update({
-  id: '/complete',
-  path: '/complete',
-  getParentRoute: () => SigninRoute,
-} as any)
 const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
   id: '/upgrade',
   path: '/upgrade',
@@ -113,11 +106,6 @@ const AuthenticatedBioIndexRoute = AuthenticatedBioIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedBioRoute,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedInvitesTokenRoute =
   AuthenticatedInvitesTokenRouteImport.update({
@@ -206,20 +194,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
+  '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/logout': typeof AuthenticatedLogoutRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
-  '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
   '/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/invites/$token': typeof AuthenticatedInvitesTokenRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -237,17 +223,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
+  '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/logout': typeof AuthenticatedLogoutRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
-  '/signin/complete': typeof SigninCompleteRoute
   '/$username': typeof UsernameIndexRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/invites/$token': typeof AuthenticatedInvitesTokenRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -267,20 +251,18 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
+  '/signin': typeof SigninRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/logout': typeof AuthenticatedLogoutRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
-  '/signin/complete': typeof SigninCompleteRoute
   '/$username/': typeof UsernameIndexRoute
   '/_authenticated/bio/appearance': typeof AuthenticatedBioAppearanceRouteWithChildren
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/_authenticated/invites/$token': typeof AuthenticatedInvitesTokenRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/_authenticated/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -307,13 +289,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/team'
     | '/upgrade'
-    | '/signin/complete'
     | '/$username/'
     | '/bio/appearance'
     | '/bio/settings'
     | '/forms/$id'
     | '/invites/$token'
-    | '/api/auth/$'
     | '/bio/'
     | '/forms/'
     | '/bio/appearance/customize'
@@ -337,11 +317,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/team'
     | '/upgrade'
-    | '/signin/complete'
     | '/$username'
     | '/bio/settings'
     | '/invites/$token'
-    | '/api/auth/$'
     | '/bio'
     | '/forms'
     | '/bio/appearance/customize'
@@ -367,13 +345,11 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/team'
     | '/_authenticated/upgrade'
-    | '/signin/complete'
     | '/$username/'
     | '/_authenticated/bio/appearance'
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
     | '/_authenticated/invites/$token'
-    | '/api/auth/$'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
     | '/_authenticated/bio/appearance/customize'
@@ -393,9 +369,8 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CallbackRoute: typeof CallbackRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
-  SigninRoute: typeof SigninRouteWithChildren
+  SigninRoute: typeof SigninRoute
   UsernameIndexRoute: typeof UsernameIndexRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
 }
 
@@ -442,13 +417,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/$username/'
       preLoaderRoute: typeof UsernameIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/signin/complete': {
-      id: '/signin/complete'
-      path: '/complete'
-      fullPath: '/signin/complete'
-      preLoaderRoute: typeof SigninCompleteRouteImport
-      parentRoute: typeof SigninRoute
     }
     '/_authenticated/upgrade': {
       id: '/_authenticated/upgrade'
@@ -505,13 +473,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/bio/'
       preLoaderRoute: typeof AuthenticatedBioIndexRouteImport
       parentRoute: typeof AuthenticatedBioRoute
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/invites/$token': {
       id: '/_authenticated/invites/$token'
@@ -713,25 +674,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface SigninRouteChildren {
-  SigninCompleteRoute: typeof SigninCompleteRoute
-}
-
-const SigninRouteChildren: SigninRouteChildren = {
-  SigninCompleteRoute: SigninCompleteRoute,
-}
-
-const SigninRouteWithChildren =
-  SigninRoute._addFileChildren(SigninRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CallbackRoute: CallbackRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
-  SigninRoute: SigninRouteWithChildren,
+  SigninRoute: SigninRoute,
   UsernameIndexRoute: UsernameIndexRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
   UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
 }
 export const routeTree = rootRouteImport
