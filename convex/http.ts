@@ -3,12 +3,12 @@ import { httpRouter } from "convex/server"
 import type Stripe from "stripe"
 import { components } from "./_generated/api"
 import { httpAction } from "./_generated/server"
-import { authComponent, createAuth } from "./auth"
+import { authKit } from "./auth"
 import { resend } from "./emails"
 
 const http = httpRouter()
 
-authComponent.registerRoutes(http, createAuth)
+authKit.registerRoutes(http)
 
 // Register Stripe webhook handler at /stripe/webhook
 registerRoutes(http, components.stripe, {

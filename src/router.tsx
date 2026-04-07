@@ -2,6 +2,13 @@ import { ConvexQueryClient } from "@convex-dev/react-query"
 import { QueryClient } from "@tanstack/react-query"
 import { createRouter } from "@tanstack/react-router"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
+import {
+  AuthKitProvider,
+  useAccessToken,
+  useAuth,
+} from "@workos/authkit-tanstack-react-start/client"
+import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react"
+import { useCallback, useMemo } from "react"
 import { NotFoundPage } from "@/components/not-found-page"
 import { routeTree } from "./routeTree.gen"
 
@@ -10,20 +17,15 @@ export function getRouter() {
   if (!CONVEX_URL) {
     console.error("missing envar CONVEX_URL")
   }
-  // expectAuth was causing problem on public pages like the user profile.
-  // since users are not expected to be authenticated on those pages,
-  // the chat would not work due to hanging (expecting auth) queries
-  // const convexQueryClient = new ConvexQueryClient(CONVEX_URL, {
-  //   expectAuth: true,
-  // })
+  const convex = new ConvexReactClient(CONVEX_URL)
+  const convexQueryClient = new ConvexQueryClient(convex)
 
-  const convexQueryClient = new ConvexQueryClient(CONVEX_URL)
-
-  const queryClient: QueryClient = new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         queryKeyHashFn: convexQueryClient.hashFn(),
         queryFn: convexQueryClient.queryFn(),
+        gcTime: 5000,
       },
     },
   })
@@ -31,21 +33,53 @@ export function getRouter() {
 
   const router = createRouter({
     routeTree,
-    scrollRestoration: true,
     defaultPreload: "intent",
-    context: {
-      convexQueryClient: convexQueryClient,
-      convex: convexQueryClient.convexClient,
-      queryClient,
-    },
+    scrollRestoration: true,
+    defaultPreloadStaleTime: 0, // Let React Query handle all caching
     defaultErrorComponent: (err) => <p>{err.error.stack}</p>,
-    defaultNotFoundComponent: NotFoundPage,
+    defaultNotFoundComponent: () => <NotFoundPage />,
+    context: { queryClient, convexClient: convex, convexQueryClient },
+    Wrap: ({ children }) => (
+      <AuthKitProvider>
+        <ConvexProviderWithAuth
+          client={convexQueryClient.convexClient}
+          useAuth={useAuthFromWorkOS}
+        >
+          {children}
+        </ConvexProviderWithAuth>
+      </AuthKitProvider>
+    ),
   })
-
-  setupRouterSsrQueryIntegration({
-    router,
-    queryClient,
-  })
+  setupRouterSsrQueryIntegration({ router, queryClient })
 
   return router
+}
+
+function useAuthFromWorkOS() {
+  const { loading, user } = useAuth()
+  const { getAccessToken, refresh } = useAccessToken()
+
+  const fetchAccessToken = useCallback(
+    async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
+      if (!user) {
+        return null
+      }
+
+      if (forceRefreshToken) {
+        return (await refresh()) ?? null
+      }
+
+      return (await getAccessToken()) ?? null
+    },
+    [user, refresh, getAccessToken],
+  )
+
+  return useMemo(
+    () => ({
+      isLoading: loading,
+      isAuthenticated: !!user,
+      fetchAccessToken,
+    }),
+    [loading, user, fetchAccessToken],
+  )
 }

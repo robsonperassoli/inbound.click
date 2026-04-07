@@ -1,18 +1,22 @@
-import type { GenericCtx } from "@convex-dev/better-auth"
-import type { DataModel } from "../_generated/dataModel"
-import type { QueryCtx } from "../_generated/server"
-import { authComponent } from "../auth"
+import type { ActionCtx, MutationCtx, QueryCtx } from "../_generated/server"
+import { authKit } from "../auth"
 
-export async function getAuthenticatedUser(ctx: GenericCtx<DataModel>) {
-  return await authComponent.getAuthUser(ctx)
+export async function getAuthenticatedUser(
+  ctx: QueryCtx | ActionCtx | MutationCtx,
+) {
+  return await authKit.getAuthUser(ctx)
 }
 
 export async function getAuthUser(ctx: QueryCtx) {
-  const { _id: authId } = await getAuthenticatedUser(ctx)
+  const authKitUser = await getAuthenticatedUser(ctx)
+
+  if (!authKitUser) {
+    throw new Error("Not authenticated")
+  }
 
   const user = await ctx.db
     .query("users")
-    .withIndex("by_auth", (q) => q.eq("authId", authId))
+    .withIndex("by_auth", (q) => q.eq("authId", authKitUser.id))
     .unique()
 
   if (!user) {
