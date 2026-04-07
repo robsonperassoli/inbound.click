@@ -41,7 +41,7 @@ export function NavUser() {
   const signOut = async () => {
     posthog.reset()
 
-    navigate({ to: "/logout" })
+    navigate({ to: "/logout", reloadDocument: true })
   }
 
   const { isMobile } = useSidebar()

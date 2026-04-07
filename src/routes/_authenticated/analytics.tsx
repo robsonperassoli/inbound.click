@@ -1,4 +1,3 @@
-import { api } from "@convex/_generated/api"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -616,6 +615,7 @@ function RouteComponent() {
     enabled: !!profileData,
     queryFn: async () => {
       const profileId = profile?._id
+
       if (!profileId) {
         throw new Error("Profile not selected")
       }
@@ -628,6 +628,7 @@ function RouteComponent() {
           end: formatToTinybirdDateTime(dateRange.end.toInstant()),
         },
       })
+      console.log(stats)
 
       return stats
     },
