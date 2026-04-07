@@ -242,7 +242,12 @@ export const submitSalesLead = userAction({
         "A new sales lead was submitted.",
         "",
         formatLine("Lead email", args.email),
-        formatLine("Lead name", authUser.name || authUser.username),
+        formatLine(
+          "Lead name",
+          [authUser?.firstName ?? "", authUser?.lastName ?? ""]
+            .join(" ")
+            .trim(),
+        ),
         formatLine("Phone", args.phone),
         formatLine("Company name", args.companyName),
         formatLine("Subject", "Team pricing inquiry"),

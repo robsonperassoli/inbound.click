@@ -9,9 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SigninRouteImport } from './routes/signin'
 import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
-import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
@@ -19,6 +18,7 @@ import { Route as SigninCompleteRouteImport } from './routes/signin.complete'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedLogoutRouteImport } from './routes/_authenticated/logout'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
@@ -39,19 +39,14 @@ import { Route as AuthenticatedBioAppearanceThemesRouteImport } from './routes/_
 import { Route as AuthenticatedBioAppearanceCustomizeRouteImport } from './routes/_authenticated/bio/appearance/customize'
 import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
-const SigninRoute = SigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
   id: '/real-estate-agents',
   path: '/real-estate-agents',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LogoutRoute = LogoutRouteImport.update({
-  id: '/logout',
-  path: '/logout',
+const CallbackRoute = CallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -86,6 +81,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedLogoutRoute = AuthenticatedLogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedBioRoute = AuthenticatedBioRouteImport.update({
@@ -198,11 +198,11 @@ const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/logout': typeof LogoutRoute
+  '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
+  '/logout': typeof AuthenticatedLogoutRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
@@ -228,10 +228,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/logout': typeof LogoutRoute
+  '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/logout': typeof AuthenticatedLogoutRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
@@ -257,11 +257,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/logout': typeof LogoutRoute
+  '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
-  '/signin': typeof SigninRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
+  '/_authenticated/logout': typeof AuthenticatedLogoutRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
@@ -289,11 +289,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/logout'
+    | '/callback'
     | '/real-estate-agents'
-    | '/signin'
     | '/analytics'
     | '/bio'
+    | '/logout'
     | '/onboarding'
     | '/team'
     | '/upgrade'
@@ -319,10 +319,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/logout'
+    | '/callback'
     | '/real-estate-agents'
-    | '/signin'
     | '/analytics'
+    | '/logout'
     | '/onboarding'
     | '/team'
     | '/upgrade'
@@ -347,11 +347,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/logout'
+    | '/callback'
     | '/real-estate-agents'
-    | '/signin'
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
+    | '/_authenticated/logout'
     | '/_authenticated/onboarding'
     | '/_authenticated/team'
     | '/_authenticated/upgrade'
@@ -379,9 +379,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  LogoutRoute: typeof LogoutRoute
+  CallbackRoute: typeof CallbackRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
-  SigninRoute: typeof SigninRouteWithChildren
   UsernameIndexRoute: typeof UsernameIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
@@ -389,13 +388,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signin': {
-      id: '/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/real-estate-agents': {
       id: '/real-estate-agents'
       path: '/real-estate-agents'
@@ -403,11 +395,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RealEstateAgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/logout': {
-      id: '/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof LogoutRouteImport
+    '/callback': {
+      id: '/callback'
+      path: '/callback'
+      fullPath: '/callback'
+      preLoaderRoute: typeof CallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -457,6 +449,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/logout': {
+      id: '/_authenticated/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof AuthenticatedLogoutRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/bio': {
@@ -664,6 +663,7 @@ const AuthenticatedFormsIdRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
+  AuthenticatedLogoutRoute: typeof AuthenticatedLogoutRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
@@ -677,6 +677,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
+  AuthenticatedLogoutRoute: AuthenticatedLogoutRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
@@ -692,23 +693,11 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface SigninRouteChildren {
-  SigninCompleteRoute: typeof SigninCompleteRoute
-}
-
-const SigninRouteChildren: SigninRouteChildren = {
-  SigninCompleteRoute: SigninCompleteRoute,
-}
-
-const SigninRouteWithChildren =
-  SigninRoute._addFileChildren(SigninRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  LogoutRoute: LogoutRoute,
+  CallbackRoute: CallbackRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
-  SigninRoute: SigninRouteWithChildren,
   UsernameIndexRoute: UsernameIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
@@ -718,10 +707,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

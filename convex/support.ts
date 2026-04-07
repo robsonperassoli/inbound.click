@@ -36,7 +36,9 @@ export const submit = userAction({
 
     await ctx.runMutation(internal.emails.sendSupportEmail, {
       ...args,
-      requesterName: authUser?.name,
+      requesterName: [authUser?.firstName ?? "", authUser?.lastName ?? ""]
+        .join(" ")
+        .trim(),
       requesterUserId: ctx.user._id,
       requesterUsername: profile?.username ?? undefined,
     })

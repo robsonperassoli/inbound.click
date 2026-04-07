@@ -1,4 +1,3 @@
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react"
 import type { ConvexQueryClient } from "@convex-dev/react-query"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import type { QueryClient } from "@tanstack/react-query"
@@ -10,21 +9,24 @@ import {
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { createServerFn } from "@tanstack/react-start"
+import { getAuth } from "@workos/authkit-tanstack-react-start"
 import type { ConvexReactClient } from "convex/react"
 import { PostHogProvider } from "posthog-js/react"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { authClient } from "@/lib/auth-client"
-import { getToken } from "@/lib/auth-server"
-
 import appCss from "../styles.css?url"
 
-// Get auth information for SSR using available cookies
-const getAuth = createServerFn({ method: "GET" }).handler(async () => {
-  return await getToken()
+const fetchWorkosAuth = createServerFn({ method: "GET" }).handler(async () => {
+  const auth = await getAuth()
+  const { user } = auth
+
+  return {
+    userId: user?.id ?? null,
+    token: user ? auth.accessToken : null,
+  }
 })
 
 interface AppContext {
-  convex: ConvexReactClient
+  convexClient: ConvexReactClient
   convexQueryClient: ConvexQueryClient
   queryClient: QueryClient
 }
@@ -84,17 +86,15 @@ export const Route = createRootRouteWithContext<AppContext>()({
     ],
   }),
   beforeLoad: async (ctx) => {
-    // server
-    if (ctx.context.convexQueryClient.serverHttpClient) {
-      const token = await getAuth()
-      if (token) {
-        ctx.context.convexQueryClient.serverHttpClient.setAuth(token)
-      }
-      return { isAuthenticated: !!token, token }
+    const { userId, token } = await fetchWorkosAuth()
+
+    // During SSR only (the only time serverHttpClient exists),
+    // set the WorkOS auth token to make HTTP queries with.
+    if (token) {
+      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
     }
 
-    // client
-    return {}
+    return { userId, token }
   },
   shellComponent: RootDocument,
 })
@@ -103,37 +103,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const context = useRouteContext({ from: Route.id })
 
   return (
-    <ConvexBetterAuthProvider
-      client={context.convexQueryClient.convexClient}
-      authClient={authClient}
-      initialToken={context.token}
-    >
-      <html lang="en">
-        <head>
-          <HeadContent />
-        </head>
-        <body>
-          <PostHogProvider
-            apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-            options={options}
-          >
-            <TooltipProvider>{children}</TooltipProvider>
-          </PostHogProvider>
-          <TanStackDevtools
-            config={{
-              position: "bottom-left",
-            }}
-            plugins={[
-              {
-                name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          />
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <PostHogProvider
+          apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+          options={options}
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+        </PostHogProvider>
+        <TanStackDevtools
+          config={{
+            position: "bottom-left",
+          }}
+          plugins={[
+            {
+              name: "Tanstack Router",
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
 
-          <Scripts />
-        </body>
-      </html>
-    </ConvexBetterAuthProvider>
+        <Scripts />
+      </body>
+    </html>
   )
 }

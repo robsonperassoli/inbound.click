@@ -1,7 +1,4 @@
-import type { AuthFunctions, GenericCtx } from "@convex-dev/better-auth"
-import { createClient } from "@convex-dev/better-auth"
-import { convex } from "@convex-dev/better-auth/plugins"
-import { betterAuth } from "better-auth/minimal"
+import { AuthKit } from "@convex-dev/workos-authkit"
 import { v } from "convex/values"
 import { components, internal } from "./_generated/api"
 import type { DataModel, Doc, Id } from "./_generated/dataModel"
@@ -12,60 +9,10 @@ import {
   type QueryCtx,
   query,
 } from "./_generated/server"
-import authConfig from "./auth.config"
-import { SITE_URL } from "./frontend"
 import { getUserActiveSubscription } from "./stripe/domain"
 import { getAuthenticatedUser, getAuthUser, getUserScope } from "./users/domain"
 
-const authFunctions: AuthFunctions = internal.auth
-
-// The component client has methods needed for integrating Convex with Better Auth,
-// as well as helper methods for general use.
-export const authComponent = createClient<DataModel>(components.betterAuth, {
-  authFunctions,
-  triggers: {
-    user: {
-      onCreate: async (ctx, doc) => {
-        await ctx.db.insert("users", {
-          authId: doc._id,
-        })
-        // is there an invite for this email? If so link user to the account
-      },
-      onUpdate: async (ctx, newDoc, oldDoc) => {
-        // Both old and new documents are available so you can compare and detect
-        // changes - you can ignore oldDoc if you don't need it.
-      },
-      onDelete: async (ctx, doc) => {
-        // The entire deleted document is available
-      },
-    },
-  },
-})
-
-export const createAuth = (ctx: GenericCtx<DataModel>) => {
-  return betterAuth({
-    baseURL: SITE_URL,
-    database: authComponent.adapter(ctx),
-    // Configure simple, non-verified email/password to get started
-    emailAndPassword: {
-      enabled: true,
-      requireEmailVerification: false,
-    },
-    socialProviders: {
-      google: {
-        enabled: true,
-        clientId: process.env.AUTH_GOOGLE_ID!,
-        clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-      },
-    },
-    plugins: [
-      // The Convex plugin is required for Convex compatibility
-      convex({ authConfig }),
-    ],
-  })
-}
-
-export const { onCreate, onUpdate, onDelete } = authComponent.triggersApi()
+export const authKit = new AuthKit<DataModel>(components.workOSAuthKit)
 
 export const getCurrentUser = query({
   args: {},
@@ -85,11 +32,13 @@ export const getSession = query({
 
     return {
       _id: scope.user._id,
-      name: authUser.name,
-      email: authUser.email,
-      image: authUser.image,
-      username: authUser.username,
-      phoneNumber: authUser.phoneNumber,
+      name: [authUser?.firstName ?? "", authUser?.lastName ?? ""]
+        .join(" ")
+        .trim(),
+      email: authUser!.email,
+      image: authUser!.profilePictureUrl,
+      username: "",
+      phoneNumber: "",
       accountType: scope.account.type,
       subscribed: Boolean(subscription),
       subscriptionPriceId: subscription?.priceId,
@@ -141,14 +90,16 @@ export const getUserDetails = async (
     throw new Error("User not found")
   }
 
-  const authUser = await authComponent.getAnyUserById(ctx, user.authId!)
+  //const u = await authKit.getAuthUser(ctx)
+
+  const authUser = null // TODO: fix it: await authComponent.getAnyUserById(ctx, user.authId!)
 
   if (!authUser) {
     throw new Error("Auth User not found")
   }
 
   return {
-    name: authUser.name,
-    email: authUser.email,
+    name: "",
+    email: "",
   }
 }
