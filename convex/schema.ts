@@ -41,7 +41,12 @@ export default defineSchema({
 
   users: defineTable({
     authId: v.optional(v.string()),
-  }).index("by_auth", ["authId"]),
+    email: v.optional(v.string()),
+    name: v.optional(v.string()),
+    profilePictureUrl: v.optional(v.string()),
+  })
+    .index("by_auth", ["authId"])
+    .index("by_email", ["email"]),
 
   profiles: defineTable({
     accountId: v.optional(v.id("accounts")),

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -39,6 +40,11 @@ import { Route as AuthenticatedBioAppearanceThemesRouteImport } from './routes/_
 import { Route as AuthenticatedBioAppearanceCustomizeRouteImport } from './routes/_authenticated/bio/appearance/customize'
 import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
   id: '/real-estate-agents',
   path: '/real-estate-agents',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
+  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/logout': typeof AuthenticatedLogoutRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
+  '/signin': typeof SigninRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/logout': typeof AuthenticatedLogoutRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/callback': typeof CallbackRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
+  '/signin': typeof SigninRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/logout': typeof AuthenticatedLogoutRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/real-estate-agents'
+    | '/signin'
     | '/analytics'
     | '/bio'
     | '/logout'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/real-estate-agents'
+    | '/signin'
     | '/analytics'
     | '/logout'
     | '/onboarding'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/callback'
     | '/real-estate-agents'
+    | '/signin'
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/logout'
@@ -381,6 +393,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CallbackRoute: typeof CallbackRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
+  SigninRoute: typeof SigninRouteWithChildren
   UsernameIndexRoute: typeof UsernameIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
@@ -388,6 +401,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/real-estate-agents': {
       id: '/real-estate-agents'
       path: '/real-estate-agents'
@@ -693,11 +713,23 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface SigninRouteChildren {
+  SigninCompleteRoute: typeof SigninCompleteRoute
+}
+
+const SigninRouteChildren: SigninRouteChildren = {
+  SigninCompleteRoute: SigninCompleteRoute,
+}
+
+const SigninRouteWithChildren =
+  SigninRoute._addFileChildren(SigninRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CallbackRoute: CallbackRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
+  SigninRoute: SigninRouteWithChildren,
   UsernameIndexRoute: UsernameIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
