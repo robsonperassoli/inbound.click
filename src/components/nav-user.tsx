@@ -124,7 +124,7 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {session?.accountType === "team" && (
+              {session?.accountType === "team" && session.role !== "member" && (
                 <DropdownMenuItem asChild>
                   <Link to="/team">
                     <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
@@ -133,7 +133,7 @@ export function NavUser() {
                 </DropdownMenuItem>
               )}
 
-              {session?.subscribed === true && (
+              {session?.subscribed === true && session.role !== "member" && (
                 <DropdownMenuItem onClick={goToStripeCustomerPortal}>
                   <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} />
                   Billing

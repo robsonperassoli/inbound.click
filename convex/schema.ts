@@ -37,7 +37,9 @@ export default defineSchema({
     acceptedAt: v.optional(v.number()),
     invitedByUserId: v.id("users"),
     revokedAt: v.optional(v.number()),
-  }).index("by_account", ["accountId"]),
+  })
+    .index("by_account", ["accountId"])
+    .index("by_token", ["token"]),
 
   users: defineTable({
     authId: v.optional(v.string()),

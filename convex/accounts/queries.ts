@@ -1,5 +1,7 @@
+import { v } from "convex/values"
 import { getUserDetails } from "../auth"
 import { userQuery } from "../custom"
+import { getInvitationByTokenForRead } from "./domain"
 
 export const listMembers = userQuery({
   args: {},
@@ -57,5 +59,47 @@ export const listInvitations = userQuery({
     )
 
     return invitationsWithInviter.sort((a, b) => b.expiresAt - a.expiresAt)
+  },
+})
+
+export const getInvitationByToken = userQuery({
+  args: {
+    token: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const invitation = await getInvitationByTokenForRead(ctx, args.token)
+
+    if (!invitation) {
+      return {
+        status: "invalid" as const,
+        message: "This invitation link is invalid.",
+      }
+    }
+
+    if (invitation.status !== "pending") {
+      return {
+        status: "invalid" as const,
+        message:
+          invitation.status === "accepted"
+            ? "This invitation has already been accepted."
+            : "This invitation is no longer available.",
+      }
+    }
+
+    if (invitation.expiresAt < Date.now()) {
+      return {
+        status: "invalid" as const,
+        message: "This invitation has expired.",
+      }
+    }
+
+    const inviterDetails = await getUserDetails(ctx, invitation.invitedByUserId)
+
+    return {
+      status: "valid" as const,
+      email: invitation.email,
+      role: invitation.role,
+      invitedByName: inviterDetails.name,
+    }
   },
 })

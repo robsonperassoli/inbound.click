@@ -14,16 +14,14 @@ export const createSubscriptionCheckout = userAction({
     url: v.union(v.string(), v.null()),
   }),
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
-    if (!identity) {
-      throw new Error("Not authenticated")
-    }
     const userId = ctx.user._id
+    const orgId = ctx.account._id
+
     // Get or create a Stripe customer
     const customer = await stripeClient.getOrCreateCustomer(ctx, {
       userId: userId,
-      email: identity.email,
-      name: identity.name,
+      email: ctx.user.email,
+      name: ctx.user.name,
     })
 
     // Create checkout session
@@ -33,7 +31,7 @@ export const createSubscriptionCheckout = userAction({
       mode: "subscription",
       successUrl: `${SITE_URL}/bio?success=true`,
       cancelUrl: `${SITE_URL}/bio?canceled=true`,
-      subscriptionMetadata: { userId },
+      subscriptionMetadata: { userId, orgId },
     })
   },
 })
@@ -47,24 +45,24 @@ export const getCustomerPortalUrl = userAction({
     v.null(),
   ),
   handler: async (ctx, _args) => {
-    const userId = ctx.user._id
+    const orgId = ctx.account._id
 
     // Find customer ID from subscriptions or payments
-    const subscriptions = await ctx.runQuery(
-      components.stripe.public.listSubscriptionsByUserId,
-      { userId },
+    const subscription = await ctx.runQuery(
+      components.stripe.public.getSubscriptionByOrgId,
+      { orgId },
     )
 
-    if (subscriptions.length > 0) {
+    if (subscription) {
       return await stripeClient.createCustomerPortalSession(ctx, {
-        customerId: subscriptions[0].stripeCustomerId,
+        customerId: subscription.stripeCustomerId,
         returnUrl: `${SITE_URL}/bio`,
       })
     }
 
     const payments = await ctx.runQuery(
-      components.stripe.public.listPaymentsByUserId,
-      { userId },
+      components.stripe.public.listPaymentsByOrgId,
+      { orgId },
     )
 
     if (payments.length > 0 && payments[0].stripeCustomerId) {

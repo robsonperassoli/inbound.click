@@ -106,9 +106,9 @@ export const publishProfile = userMutation({
     profileId: v.id("profiles"),
   },
   handler: async (ctx, { profileId }) => {
-    const activeSubscription = await stripe.getUserActiveSubscription(
+    const activeSubscription = await stripe.getAccountActiveSubscription(
       ctx,
-      ctx.user._id,
+      ctx.account._id,
     )
 
     if (!activeSubscription) {
