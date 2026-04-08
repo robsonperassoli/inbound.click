@@ -1,9 +1,13 @@
 import { type Infer, v } from "convex/values"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
+import { getFirstName } from "../utils/names"
 import { themeFields } from "./validators"
 
 const profileUsernameRegex = /^[a-zA-Z0-9_-]+$/
+const usernameSourceRegex = /[^a-z0-9_-]+/g
+const usernameBoundaryRegex = /^[-_]+|[-_]+$/g
+const repeatedSeparatorRegex = /[-_]{2,}/g
 
 export const assertValidProfileUsername = (username: string) => {
   const normalizedUsername = username.trim()
@@ -98,7 +102,7 @@ export const checkProfileUsernameAvailable = async (
 }
 
 export const isProfileUsernameAvailable = async (
-  ctx: QueryCtx,
+  ctx: QueryCtx | MutationCtx,
   username: string,
 ) => {
   const normalizedUsername = username.trim()
@@ -116,6 +120,117 @@ export const isProfileUsernameAvailable = async (
     .unique()
 
   return !profile
+}
+
+function getEmailHandle(email?: string) {
+  return email?.split("@")[0]?.trim() ?? ""
+}
+
+function formatTitleFromHandle(handle: string) {
+  const words = handle
+    .replace(/[._-]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+
+  if (words.length === 0) {
+    return "My Page"
+  }
+
+  return words
+    .map((word) => `${word[0]?.toUpperCase() ?? ""}${word.slice(1)}`)
+    .join(" ")
+}
+
+function normalizeUsernameSeed(value: string) {
+  const normalized = value
+    .normalize("NFKD")
+    .split("")
+    .filter((char) => char.charCodeAt(0) <= 0x7f)
+    .join("")
+    .trim()
+    .toLowerCase()
+    .replace(usernameSourceRegex, "-")
+    .replace(repeatedSeparatorRegex, "-")
+    .replace(usernameBoundaryRegex, "")
+    .slice(0, 30)
+
+  if (normalized.length >= 3) {
+    return normalized
+  }
+
+  if (normalized.length > 0) {
+    return `${normalized}${"page".slice(0, 3 - normalized.length)}`
+  }
+
+  return "page"
+}
+
+export async function getAvailableUsernameSuggestion(
+  ctx: QueryCtx | MutationCtx,
+  sources: string[],
+) {
+  const candidates = new Set(
+    sources.map(normalizeUsernameSeed).filter((value) => value.length >= 3),
+  )
+
+  if (candidates.size === 0) {
+    candidates.add("page")
+  }
+
+  for (const candidate of candidates) {
+    const available = await isProfileUsernameAvailable(ctx, candidate)
+    if (available) {
+      return candidate
+    }
+
+    for (let suffix = 1; suffix <= 100; suffix++) {
+      const suffixText = `-${suffix}`
+      const suffixedCandidate = `${candidate.slice(0, 30 - suffixText.length)}${suffixText}`
+
+      if (await isProfileUsernameAvailable(ctx, suffixedCandidate)) {
+        return suffixedCandidate
+      }
+    }
+  }
+
+  throw new Error("Could not generate an available username")
+}
+
+export async function getOnboardingProfileDraftData(
+  ctx: QueryCtx,
+  {
+    accountId,
+    userName,
+    userEmail,
+  }: {
+    accountId: Id<"accounts">
+    userName?: string
+    userEmail?: string
+  },
+) {
+  const existingProfiles = await ctx.db
+    .query("profiles")
+    .withIndex("by_account", (q) => q.eq("accountId", accountId))
+    .take(1)
+
+  const emailHandle = getEmailHandle(userEmail)
+  const defaultTitle = userName?.trim() || formatTitleFromHandle(emailHandle)
+
+  return {
+    hasExistingProfiles: existingProfiles.length > 0,
+    greetingName: getFirstName(defaultTitle) || "there",
+    draft: {
+      title: defaultTitle,
+      username: await getAvailableUsernameSuggestion(ctx, [
+        emailHandle,
+        userName?.trim() ?? "",
+        defaultTitle,
+        "page",
+      ]),
+      bio: "",
+    },
+  }
 }
 
 const themeFieldsObject = v.object(themeFields)

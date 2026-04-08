@@ -1,7 +1,7 @@
+import { api } from "@convex/_generated/api"
 import { ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { createFileRoute, Outlet } from "@tanstack/react-router"
-
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { useSiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,18 +15,18 @@ import { useSelectedProfile } from "@/hooks/use-selected-profile"
 export const Route = createFileRoute("/_authenticated/bio")({
   component: RouteComponent,
   ssr: false,
-  // loader: async ({ context }) => {
-  //   const profiles = await context.convex.query(
-  //     api.profiles.queries.getAvailableProfiles,
-  //     {},
-  //   )
+  loader: async ({ context }) => {
+    const profiles = await context.convexClient.query(
+      api.profiles.queries.getAvailableProfiles,
+      {},
+    )
 
-  //   if (profiles.length === 0) {
-  //     throw redirect({ to: "/onboarding" })
-  //   }
+    if (profiles.length === 0) {
+      throw redirect({ to: "/onboarding" })
+    }
 
-  //   return { profileId: profiles[0]._id }
-  // },
+    return { profileId: profiles[0]._id }
+  },
 })
 
 function RouteComponent() {

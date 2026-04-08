@@ -11,13 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsernameIndexRouteImport } from './routes/$username.index'
 import { Route as AuthenticatedUpgradeRouteImport } from './routes/_authenticated/upgrade'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
-import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedLogoutRouteImport } from './routes/_authenticated/logout'
 import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bio'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
@@ -48,6 +48,11 @@ const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
   path: '/real-estate-agents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CallbackRoute = CallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -75,11 +80,6 @@ const AuthenticatedUpgradeRoute = AuthenticatedUpgradeRouteImport.update({
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedLogoutRoute = AuthenticatedLogoutRouteImport.update({
@@ -193,12 +193,12 @@ const AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
+  '/onboarding': typeof OnboardingRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/logout': typeof AuthenticatedLogoutRoute
-  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username/': typeof UsernameIndexRoute
@@ -222,11 +222,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
+  '/onboarding': typeof OnboardingRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/logout': typeof AuthenticatedLogoutRoute
-  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/team': typeof AuthenticatedTeamRoute
   '/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username': typeof UsernameIndexRoute
@@ -250,12 +250,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/callback': typeof CallbackRoute
+  '/onboarding': typeof OnboardingRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/logout': typeof AuthenticatedLogoutRoute
-  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/upgrade': typeof AuthenticatedUpgradeRoute
   '/$username/': typeof UsernameIndexRoute
@@ -281,12 +281,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/callback'
+    | '/onboarding'
     | '/real-estate-agents'
     | '/signin'
     | '/analytics'
     | '/bio'
     | '/logout'
-    | '/onboarding'
     | '/team'
     | '/upgrade'
     | '/$username/'
@@ -310,11 +310,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/callback'
+    | '/onboarding'
     | '/real-estate-agents'
     | '/signin'
     | '/analytics'
     | '/logout'
-    | '/onboarding'
     | '/team'
     | '/upgrade'
     | '/$username'
@@ -337,12 +337,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/callback'
+    | '/onboarding'
     | '/real-estate-agents'
     | '/signin'
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/logout'
-    | '/_authenticated/onboarding'
     | '/_authenticated/team'
     | '/_authenticated/upgrade'
     | '/$username/'
@@ -368,6 +368,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CallbackRoute: typeof CallbackRoute
+  OnboardingRoute: typeof OnboardingRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
   SigninRoute: typeof SigninRoute
   UsernameIndexRoute: typeof UsernameIndexRoute
@@ -388,6 +389,13 @@ declare module '@tanstack/react-router' {
       path: '/real-estate-agents'
       fullPath: '/real-estate-agents'
       preLoaderRoute: typeof RealEstateAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/callback': {
@@ -430,13 +438,6 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/onboarding': {
-      id: '/_authenticated/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/logout': {
@@ -645,7 +646,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedBioRoute: typeof AuthenticatedBioRouteWithChildren
   AuthenticatedLogoutRoute: typeof AuthenticatedLogoutRoute
-  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
@@ -659,7 +659,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedBioRoute: AuthenticatedBioRouteWithChildren,
   AuthenticatedLogoutRoute: AuthenticatedLogoutRoute,
-  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
@@ -678,6 +677,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CallbackRoute: CallbackRoute,
+  OnboardingRoute: OnboardingRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
   SigninRoute: SigninRoute,
   UsernameIndexRoute: UsernameIndexRoute,
