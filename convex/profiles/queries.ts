@@ -7,6 +7,7 @@ import {
   checkProfileOwnership,
   getAccountProfiles,
   getAccountProfilesByIds,
+  getOnboardingProfileDraftData,
   getProfileById,
   isProfileUsernameAvailable,
 } from "./domain"
@@ -68,5 +69,16 @@ export const isUsernameAvailable = userQuery({
   },
   handler: async (ctx, args) => {
     return await isProfileUsernameAvailable(ctx, args.username)
+  },
+})
+
+export const getOnboardingProfileDraft = userQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await getOnboardingProfileDraftData(ctx, {
+      accountId: ctx.account._id,
+      userName: ctx.user.name,
+      userEmail: ctx.user.email,
+    })
   },
 })
