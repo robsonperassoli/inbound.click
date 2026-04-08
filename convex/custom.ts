@@ -27,6 +27,23 @@ export const userQuery = customQuery(query, {
   },
 })
 
+export const teamAdminQuery = customQuery(query, {
+  args: {},
+  input: async (ctx, args) => {
+    const scope = await getUserScope(ctx)
+
+    if (scope.account.type !== "team") {
+      throw new Error("Only team accounts can perform this action")
+    }
+
+    if (!TEAM_ADMIN_ROLES.includes(scope.role as "owner" | "admin")) {
+      throw new Error("Only owners and admins can perform this action")
+    }
+
+    return { ctx: scope, args }
+  },
+})
+
 export const userAction = customAction(action, {
   args: {},
   input: async (ctx, args) => {

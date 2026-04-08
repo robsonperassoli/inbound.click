@@ -44,6 +44,7 @@ export const createProfile = userMutation({
 
     const profileId = await ctx.db.insert("profiles", {
       userId,
+      accountId: ctx.account._id,
       title: args.title,
       username: normalizedUsername,
       bio: args.bio,

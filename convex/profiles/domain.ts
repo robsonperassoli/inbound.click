@@ -146,7 +146,7 @@ export const checkProfileOwnership = async (
 }
 
 export const getAccountProfiles = async (
-  ctx: QueryCtx,
+  ctx: QueryCtx | MutationCtx,
   accountId: Id<"accounts">,
 ) => {
   return await ctx.db
@@ -156,7 +156,7 @@ export const getAccountProfiles = async (
 }
 
 export const getAccountProfilesByIds = async (
-  ctx: QueryCtx,
+  ctx: QueryCtx | MutationCtx,
   accountId: Id<"accounts">,
   profileIds: Array<Id<"profiles">>,
 ) => {
