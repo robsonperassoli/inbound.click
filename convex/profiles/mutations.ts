@@ -26,18 +26,19 @@ export const createProfile = userMutation({
     ),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
     const normalizedUsername = domain.assertValidProfileUsername(args.username)
 
     const userId = ctx.user._id
 
-    const profile = await ctx.db
-      .query("profiles")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .unique()
+    if (ctx.account.type !== "team") {
+      const profile = await ctx.db
+        .query("profiles")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .unique()
 
-    if (profile) {
-      throw new Error("Profile already exists for user")
+      if (profile) {
+        throw new Error("Profile already exists for user")
+      }
     }
 
     await domain.checkProfileUsernameAvailable(ctx, normalizedUsername)
@@ -65,7 +66,7 @@ export const createProfile = userMutation({
       userId: ctx.user._id,
       profileId,
       active: true,
-      type: "url",
+      type: "form",
       title: "Get In Touch",
       formId,
       order: 0,
@@ -84,15 +85,15 @@ export const createProfile = userMutation({
       })
     }
 
-    if (identity?.email) {
+    if (ctx.user?.email) {
       const tenMinutes = 10 * 60 * 1000
 
       await ctx.scheduler.runAfter(
         tenMinutes,
         internal.emails.sendActivationEmail,
         {
-          to: identity.email,
-          firstName: identity?.name ? getFirstName(identity.name) : args.title,
+          to: ctx.user.email,
+          firstName: ctx.user?.name ? getFirstName(ctx.user.name) : args.title,
           username: args.username,
         },
       )

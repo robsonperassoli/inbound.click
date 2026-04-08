@@ -1,6 +1,6 @@
 import type { Doc } from "@convex/_generated/dataModel"
 
-const defaultThemeName = "Midnight Slate"
+const defaultThemeName = "Pearl White"
 
 export const fonts = [
   // 🧼 Modern Sans-Serif
