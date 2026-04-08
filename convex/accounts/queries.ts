@@ -1,9 +1,10 @@
 import { v } from "convex/values"
 import { getUserDetails } from "../auth"
-import { userQuery } from "../custom"
+import { teamAdminQuery, userQuery } from "../custom"
+import { getAccountProfiles } from "../profiles/domain"
 import { getInvitationByTokenForRead } from "./domain"
 
-export const listMembers = userQuery({
+export const listMembers = teamAdminQuery({
   args: {},
   handler: async (ctx) => {
     const members = await ctx.db
@@ -16,6 +17,7 @@ export const listMembers = userQuery({
         const userDetails = await getUserDetails(ctx, member.userId)
 
         return {
+          membershipId: member._id,
           userId: member.userId,
           email: userDetails.email,
           name: userDetails.name,
@@ -30,7 +32,7 @@ export const listMembers = userQuery({
   },
 })
 
-export const listInvitations = userQuery({
+export const listInvitations = teamAdminQuery({
   args: {},
   handler: async (ctx) => {
     const allInvitations = await ctx.db
@@ -59,6 +61,21 @@ export const listInvitations = userQuery({
     )
 
     return invitationsWithInviter.sort((a, b) => b.expiresAt - a.expiresAt)
+  },
+})
+
+export const listManageableProfiles = teamAdminQuery({
+  args: {},
+  handler: async (ctx) => {
+    const profiles = await getAccountProfiles(ctx, ctx.account._id)
+
+    return profiles
+      .map((profile) => ({
+        _id: profile._id,
+        title: profile.title,
+        username: profile.username,
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title))
   },
 })
 

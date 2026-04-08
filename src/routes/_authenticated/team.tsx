@@ -33,12 +33,14 @@ import {
 } from "@/components/ui/dialog"
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -59,18 +61,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useSession } from "@/hooks/use-session"
 import { getInitials } from "@/lib/names"
 
 export const Route = createFileRoute("/_authenticated/team")({
   component: RouteComponent,
 })
 
+type TeamProfiles = Array<"all" | Id<"profiles">>
+
+type ProfileOption = {
+  _id: Id<"profiles">
+  title: string
+  username: string
+}
+
 type Member = {
+  membershipId: Id<"accountMembers">
   userId: Id<"users">
   email: string
   name: string
   role: "owner" | "admin" | "member"
-  profiles: string[]
+  profiles: TeamProfiles
   joinedAt: number
 }
 
@@ -78,7 +91,7 @@ type Invitation = {
   invitationId: Id<"invitations">
   email: string
   role: "owner" | "admin" | "member"
-  profiles: string[]
+  profiles: TeamProfiles
   expiresAt: number
   invitedByName: string
 }
@@ -105,42 +118,108 @@ type TeamInvitation = {
 
 type TeamRow = TeamMember | TeamInvitation
 
-const inviteSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  role: z.enum(["admin", "member"]),
+function addSelectedPagesValidation(
+  profiles: string[],
+  ctx: z.core.$RefinementCtx<unknown>,
+) {
+  if (profiles.length === 0) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Select at least one page",
+      input: profiles,
+    })
+  }
+
+  if (profiles.includes("all") && profiles.length > 1) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Choose all pages or selected pages",
+      input: profiles,
+    })
+  }
+}
+
+const inviteSchema = z
+  .object({
+    email: z.string().email("Please enter a valid email address"),
+    role: z.enum(["admin", "member"]),
+    profiles: z.array(z.string()),
+  })
+  .superRefine((value, ctx) => {
+    if (value.role === "member") {
+      addSelectedPagesValidation(value.profiles, ctx)
+    }
+  })
+
+const memberPermissionsSchema = z.object({
+  profiles: z.array(z.string()).superRefine(addSelectedPagesValidation),
 })
 
 function RouteComponent() {
   useSiteHeader({ title: "Team", titleMode: "append" })
 
-  const members = useQuery(api.accounts.queries.listMembers)
-  const invitations = useQuery(api.accounts.queries.listInvitations)
+  const session = useSession()
+  const isReadOnly = session?.role === "member"
+  const members = useQuery(
+    api.accounts.queries.listMembers,
+    isReadOnly ? "skip" : {},
+  )
+  const invitations = useQuery(
+    api.accounts.queries.listInvitations,
+    isReadOnly ? "skip" : {},
+  )
+  const profileOptions = useQuery(
+    api.accounts.queries.listManageableProfiles,
+    isReadOnly ? "skip" : {},
+  )
 
-  if (members === undefined || invitations === undefined) {
+  if (
+    session === undefined ||
+    (!isReadOnly &&
+      (members === undefined ||
+        invitations === undefined ||
+        profileOptions === undefined))
+  ) {
     return <div className="text-sm text-muted-foreground">Loading team...</div>
   }
 
+  if (isReadOnly) {
+    return (
+      <ScrollableContainer className="max-w-3xl">
+        <Card>
+          <CardContent className="py-8 text-sm text-muted-foreground">
+            You do not have access to team management.
+          </CardContent>
+        </Card>
+      </ScrollableContainer>
+    )
+  }
+
+  const teamMembers = members ?? []
+  const pendingInvitations = invitations ?? []
+  const manageableProfileOptions = profileOptions ?? []
+
   const rows: TeamRow[] = [
-    ...members.map(
-      (m): TeamMember => ({
-        id: m.userId,
+    ...teamMembers.map(
+      (member): TeamMember => ({
+        id: member.membershipId,
         type: "member",
-        email: m.email,
-        name: m.name,
-        role: m.role,
-        date: m.joinedAt,
-        member: m,
+        email: member.email,
+        name: member.name,
+        role: member.role,
+        date: member.joinedAt,
+        member,
       }),
     ),
-    ...invitations.map(
-      (i): TeamInvitation => ({
-        id: i.invitationId,
+    ...pendingInvitations.map(
+      (invitation): TeamInvitation => ({
+        id: invitation.invitationId,
         type: "invitation",
-        email: i.email,
-        name: i.email,
-        role: i.role,
-        date: i.expiresAt,
-        invitation: i,
+        email: invitation.email,
+        name: invitation.email,
+        role: invitation.role,
+        date: invitation.expiresAt,
+        invitation,
       }),
     ),
   ].sort((a, b) => {
@@ -153,8 +232,8 @@ function RouteComponent() {
   })
 
   return (
-    <ScrollableContainer className="max-w-3xl">
-      <TeamCard rows={rows} />
+    <ScrollableContainer className="max-w-5xl">
+      <TeamCard profileOptions={manageableProfileOptions} rows={rows} />
     </ScrollableContainer>
   )
 }
@@ -185,6 +264,41 @@ function formatExpiresAt(timestamp: number) {
   return `Expires in ${diffDays} days`
 }
 
+function isAllPages(profiles: TeamProfiles) {
+  return profiles.length === 1 && profiles[0] === "all"
+}
+
+function getSelectedProfileIds(profiles: TeamProfiles) {
+  return profiles.filter(
+    (profile): profile is Id<"profiles"> => profile !== "all",
+  )
+}
+
+function toggleSelectedProfile(
+  profiles: TeamProfiles,
+  profileId: Id<"profiles">,
+  checked: boolean,
+): TeamProfiles {
+  const selectedProfiles = getSelectedProfileIds(profiles)
+
+  if (checked) {
+    return [...selectedProfiles, profileId]
+  }
+
+  return selectedProfiles.filter(
+    (selectedProfileId) => selectedProfileId !== profileId,
+  )
+}
+
+function getSelectedProfiles(
+  profiles: TeamProfiles,
+  profileOptions: ProfileOption[],
+) {
+  const selectedProfileIds = new Set(getSelectedProfileIds(profiles))
+
+  return profileOptions.filter((profile) => selectedProfileIds.has(profile._id))
+}
+
 function RoleBadge({ role }: { role: "owner" | "admin" | "member" }) {
   const variant =
     role === "owner" ? "default" : role === "admin" ? "secondary" : "outline"
@@ -203,7 +317,54 @@ function StatusBadge({ row }: { row: TeamRow }) {
   return <Badge variant="secondary">Pending</Badge>
 }
 
-function TeamCard({ rows }: { rows: TeamRow[] }) {
+function PermissionsSummary({
+  profiles,
+  profileOptions,
+}: {
+  profiles: TeamProfiles
+  profileOptions: ProfileOption[]
+}) {
+  if (isAllPages(profiles)) {
+    return <span className="text-sm text-muted-foreground">All Pages</span>
+  }
+
+  const selectedProfiles = getSelectedProfiles(profiles, profileOptions)
+
+  if (selectedProfiles.length === 0) {
+    const pageCount = getSelectedProfileIds(profiles).length
+
+    return (
+      <span className="text-sm text-muted-foreground">
+        {pageCount} {pageCount === 1 ? "page" : "pages"}
+      </span>
+    )
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {selectedProfiles.slice(0, 2).map((profile) => (
+        <Badge
+          key={profile._id}
+          variant="outline"
+          className="max-w-32 truncate"
+        >
+          {profile.title}
+        </Badge>
+      ))}
+      {selectedProfiles.length > 2 ? (
+        <Badge variant="outline">+{selectedProfiles.length - 2} more</Badge>
+      ) : null}
+    </div>
+  )
+}
+
+function TeamCard({
+  profileOptions,
+  rows,
+}: {
+  profileOptions: ProfileOption[]
+  rows: TeamRow[]
+}) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (
@@ -223,7 +384,10 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <InviteDialogContent onSuccess={() => setIsDialogOpen(false)} />
+              <InviteDialogContent
+                onSuccess={() => setIsDialogOpen(false)}
+                profileOptions={profileOptions}
+              />
             </DialogContent>
           </Dialog>
         </CardAction>
@@ -235,6 +399,7 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
             <TableRow>
               <TableHead className="pl-6">Member</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Permissions</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="pr-16">Date</TableHead>
             </TableRow>
@@ -243,8 +408,8 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
             {rows.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={4}
-                  className="text-center py-8 text-muted-foreground"
+                  colSpan={5}
+                  className="py-8 text-center text-muted-foreground"
                 >
                   No team members yet
                 </TableCell>
@@ -261,8 +426,8 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
-                          <p className="font-medium truncate">{row.name}</p>
-                          <p className="text-muted-foreground text-xs truncate">
+                          <p className="truncate font-medium">{row.name}</p>
+                          <p className="truncate text-xs text-muted-foreground">
                             {row.email}
                           </p>
                         </div>
@@ -275,18 +440,33 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
                     <RoleBadge role={row.role} />
                   </TableCell>
                   <TableCell>
+                    <PermissionsSummary
+                      profiles={
+                        row.type === "member"
+                          ? row.member.profiles
+                          : row.invitation.profiles
+                      }
+                      profileOptions={profileOptions}
+                    />
+                  </TableCell>
+                  <TableCell>
                     <StatusBadge row={row} />
                   </TableCell>
                   <TableCell className="pr-16">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground text-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm text-muted-foreground">
                         {row.type === "member"
                           ? formatDate(row.date)
                           : formatExpiresAt(row.date)}
                       </span>
-                      {row.type === "invitation" && (
+                      {row.type === "invitation" ? (
                         <InvitationActions invitation={row.invitation} />
-                      )}
+                      ) : row.member.role === "member" ? (
+                        <MemberActions
+                          member={row.member}
+                          profileOptions={profileOptions}
+                        />
+                      ) : null}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -296,6 +476,40 @@ function TeamCard({ rows }: { rows: TeamRow[] }) {
         </Table>
       </CardContent>
     </Card>
+  )
+}
+
+function MemberActions({
+  member,
+  profileOptions,
+}: {
+  member: Member
+  profileOptions: ProfileOption[]
+}) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  return (
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" size="sm" variant="ghost" className="pl-2!">
+            <HugeiconsIcon icon={MoreHorizontal} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+            Edit permissions
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DialogContent>
+        <MemberPermissionsDialogContent
+          member={member}
+          onSuccess={() => setIsDialogOpen(false)}
+          profileOptions={profileOptions}
+        />
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -355,7 +569,118 @@ function InvitationActions({ invitation }: { invitation: Invitation }) {
   )
 }
 
-function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
+function PermissionsField({
+  errors,
+  onChange,
+  profileOptions,
+  profiles,
+}: {
+  errors?: Array<{ message?: string } | undefined>
+  onChange: (profiles: TeamProfiles) => void
+  profileOptions: ProfileOption[]
+  profiles: TeamProfiles
+}) {
+  const selectedProfiles = getSelectedProfiles(profiles, profileOptions)
+  const selectionMode = isAllPages(profiles) ? "all" : "selected"
+
+  return (
+    <Field data-invalid={Boolean(errors?.length)}>
+      <FieldLabel>Permissions</FieldLabel>
+      <FieldDescription>
+        Choose whether this member can manage every page or only selected pages.
+      </FieldDescription>
+
+      <Tabs
+        value={selectionMode}
+        onValueChange={(value) => {
+          onChange(value === "all" ? ["all"] : [])
+        }}
+      >
+        <TabsList className="w-full">
+          <TabsTrigger value="all">All Pages</TabsTrigger>
+          <TabsTrigger value="selected">Selected Pages</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {selectionMode === "selected" ? (
+        <div className="space-y-3">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-between"
+              >
+                {selectedProfiles.length === 0
+                  ? "Select pages"
+                  : `${selectedProfiles.length} ${selectedProfiles.length === 1 ? "page" : "pages"} selected`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-80">
+              {profileOptions.length === 0 ? (
+                <DropdownMenuItem disabled>No pages available</DropdownMenuItem>
+              ) : (
+                profileOptions.map((profile) => (
+                  <DropdownMenuCheckboxItem
+                    key={profile._id}
+                    checked={profiles.includes(profile._id)}
+                    onSelect={(event) => event.preventDefault()}
+                    onCheckedChange={(checked) => {
+                      onChange(
+                        toggleSelectedProfile(
+                          profiles,
+                          profile._id,
+                          checked === true,
+                        ),
+                      )
+                    }}
+                  >
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate font-medium">
+                        {profile.title}
+                      </span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {profile.username}
+                      </span>
+                    </div>
+                  </DropdownMenuCheckboxItem>
+                ))
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {selectedProfiles.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No pages selected yet.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {selectedProfiles.map((profile) => (
+                <Badge key={profile._id} variant="outline">
+                  {profile.title}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          This member can manage every page in the team.
+        </p>
+      )}
+
+      <FieldError errors={errors} />
+    </Field>
+  )
+}
+
+function InviteDialogContent({
+  onSuccess,
+  profileOptions,
+}: {
+  onSuccess: () => void
+  profileOptions: ProfileOption[]
+}) {
   const createInvitation = useMutation(api.accounts.mutations.createInvitation)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -365,6 +690,7 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
     defaultValues: {
       email: "",
       role: "member" as "admin" | "member",
+      profiles: ["all"] as string[],
     },
     validators: {
       onSubmit: inviteSchema,
@@ -377,7 +703,8 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
         await createInvitation({
           email: value.email.trim().toLowerCase(),
           role: value.role,
-          profiles: ["all"],
+          profiles:
+            value.role === "admin" ? ["all"] : (value.profiles as TeamProfiles),
         })
         onSuccess()
       } catch (error) {
@@ -397,9 +724,10 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
       </DialogHeader>
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          form.handleSubmit()
+        onSubmit={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          void form.handleSubmit()
         }}
       >
         <FieldGroup className="py-6">
@@ -417,11 +745,13 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
                     type="email"
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(event) => field.handleChange(event.target.value)}
                     placeholder="colleague@example.com"
                     autoComplete="off"
                   />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  {isInvalid ? (
+                    <FieldError errors={field.state.meta.errors} />
+                  ) : null}
                 </Field>
               )
             }}
@@ -433,9 +763,9 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
                 <FieldLabel>Role</FieldLabel>
                 <Select
                   value={field.state.value}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
                     field.handleChange(value as "admin" | "member")
-                  }
+                  }}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a role" />
@@ -449,11 +779,36 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
             )}
           </form.Field>
 
-          {submitError && (
+          <form.Subscribe selector={(state) => state.values.role}>
+            {(role) =>
+              role === "member" ? (
+                <form.Field name="profiles">
+                  {(field) => (
+                    <PermissionsField
+                      errors={field.state.meta.errors}
+                      onChange={(profiles) => field.handleChange(profiles)}
+                      profileOptions={profileOptions}
+                      profiles={field.state.value as TeamProfiles}
+                    />
+                  )}
+                </form.Field>
+              ) : (
+                <Field>
+                  <FieldLabel>Permissions</FieldLabel>
+                  <FieldDescription>
+                    Admins always have access to all pages.
+                  </FieldDescription>
+                  <Badge variant="outline">All Pages</Badge>
+                </Field>
+              )
+            }
+          </form.Subscribe>
+
+          {submitError ? (
             <p className="text-sm text-destructive" role="alert">
               {submitError}
             </p>
-          )}
+          ) : null}
         </FieldGroup>
 
         <DialogFooter>
@@ -467,6 +822,109 @@ function InviteDialogContent({ onSuccess }: { onSuccess: () => void }) {
           </Button>
           <Button type="submit" disabled={isSubmitting} className="flex-1">
             {isSubmitting ? "Sending..." : "Send invite"}
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
+  )
+}
+
+function MemberPermissionsDialogContent({
+  member,
+  onSuccess,
+  profileOptions,
+}: {
+  member: Member
+  onSuccess: () => void
+  profileOptions: ProfileOption[]
+}) {
+  const updateMemberPermissions = useMutation(
+    api.accounts.mutations.updateMemberPermissions,
+  )
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const form = useForm({
+    defaultValues: {
+      profiles: member.profiles as string[],
+    },
+    validators: {
+      onSubmit: memberPermissionsSchema,
+    },
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true)
+      setSubmitError(null)
+
+      try {
+        await updateMemberPermissions({
+          membershipId: member.membershipId,
+          profiles: value.profiles as TeamProfiles,
+        })
+        onSuccess()
+      } catch (error) {
+        setSubmitError(
+          error instanceof Error
+            ? error.message
+            : "Failed to update permissions",
+        )
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+  })
+
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>Edit member permissions</DialogTitle>
+      </DialogHeader>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          void form.handleSubmit()
+        }}
+      >
+        <FieldGroup className="py-6">
+          <Field>
+            <FieldLabel>Member</FieldLabel>
+            <div className="text-sm">
+              <p className="font-medium">{member.name}</p>
+              <p className="text-muted-foreground">{member.email}</p>
+            </div>
+          </Field>
+
+          <form.Field name="profiles">
+            {(field) => (
+              <PermissionsField
+                errors={field.state.meta.errors}
+                onChange={(profiles) => field.handleChange(profiles)}
+                profileOptions={profileOptions}
+                profiles={field.state.value as TeamProfiles}
+              />
+            )}
+          </form.Field>
+
+          {submitError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {submitError}
+            </p>
+          ) : null}
+        </FieldGroup>
+
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onSuccess}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSubmitting} className="flex-1">
+            {isSubmitting ? "Saving..." : "Save changes"}
           </Button>
         </DialogFooter>
       </form>
