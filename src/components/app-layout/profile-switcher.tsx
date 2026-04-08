@@ -1,8 +1,9 @@
 import { api } from "@convex/_generated/api"
+import type { Doc } from "@convex/_generated/dataModel"
 import { Plus, UnfoldMoreIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "convex/react"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,10 +19,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useSession } from "@/hooks/use-session"
 import { getInitials } from "@/lib/names"
 import { setSelectedProfile, useSelectedProfileId } from "@/stores/profiles"
 import { Avatar, AvatarFallback } from "../ui/avatar"
-import type { Doc } from "@convex/_generated/dataModel"
+import { CreateProfileModal } from "./create-profile-modal"
 
 export function useProfileSwitcher() {
   const profiles = useQuery(api.profiles.queries.getAvailableProfiles)
@@ -41,10 +43,18 @@ export function useProfileSwitcher() {
   return { profile, profiles: profiles ?? [] }
 }
 
-
-
-export function ProfileSwitcher({ profiles, profile }: { profiles: Array<Doc<"profiles">> ; profile: Doc<"profiles"> | null }) {
+export function ProfileSwitcher({
+  profiles,
+  profile,
+}: {
+  profiles: Array<Doc<"profiles">>
+  profile: Doc<"profiles"> | null
+}) {
   const { isMobile } = useSidebar()
+  const session = useSession()
+  const [isCreateProfileOpen, setIsCreateProfileOpen] = useState(false)
+  const canCreateProfile =
+    session?.role === "owner" || session?.role === "admin"
 
   if (!profile) {
     return null
@@ -95,15 +105,31 @@ export function ProfileSwitcher({ profiles, profile }: { profiles: Array<Doc<"pr
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <HugeiconsIcon icon={Plus} className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">Add page</div>
-            </DropdownMenuItem>
+            {canCreateProfile ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="gap-2 p-2"
+                  onClick={() => setIsCreateProfileOpen(true)}
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                    <HugeiconsIcon icon={Plus} className="size-4" />
+                  </div>
+                  <div className="font-medium text-muted-foreground">
+                    Add page
+                  </div>
+                </DropdownMenuItem>
+              </>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
+        <CreateProfileModal
+          open={isCreateProfileOpen}
+          onOpenChange={setIsCreateProfileOpen}
+          onCreated={(profileId) => {
+            setSelectedProfile(profileId)
+          }}
+        />
       </SidebarMenuItem>
     </SidebarMenu>
   )
