@@ -29,6 +29,7 @@ type NavMainItemData = {
   url: string
   icon: React.ReactNode
   items?: NavMainSubItem[]
+  exact?: boolean
 }
 
 function isPathActive(pathname: string, url: string, exact = false) {
@@ -48,7 +49,7 @@ function NavMainItem({
 }) {
   const { isMobile, setOpenMobile } = useSidebar()
   const hasSubItems = Boolean(item.items?.length)
-  const isItemActive = isPathActive(pathname, item.url)
+  const isItemActive = isPathActive(pathname, item.url, item.exact)
   const isSubItemActive =
     item.items?.some((subItem) => isPathActive(pathname, subItem.url, true)) ??
     false

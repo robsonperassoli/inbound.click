@@ -3,10 +3,11 @@
 import {
   ArrowRight01Icon,
   Chart03Icon,
-  DatabaseLightningIcon,
   LifeBuoy,
   ListViewIcon,
+  PaintBoardIcon,
   Send,
+  SlidersHorizontal,
   SparklesIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -25,42 +26,36 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/hooks/use-session"
-import { ProfileSwitcher, useProfileSwitcher } from "./app-layout/profile-switcher"
+import {
+  ProfileSwitcher,
+  useProfileSwitcher,
+} from "./app-layout/profile-switcher"
 import { Skeleton } from "./ui/skeleton"
 
 const data = {
   navMain: [
     {
-      title: "Bio",
+      title: "Links",
       url: "/bio",
       icon: <HugeiconsIcon icon={ListViewIcon} strokeWidth={2} />,
-      items: [
-        {
-          title: "Links",
-          url: "/bio",
-        },
-        {
-          title: "Appearance",
-          url: "/bio/appearance",
-        },
-        {
-          title: "Settings",
-          url: "/bio/settings",
-        },
-      ],
+      exact: true,
     },
     {
-      title: "Forms",
-      url: "/forms",
-      icon: <HugeiconsIcon icon={DatabaseLightningIcon} strokeWidth={2} />,
-      items: [],
+      title: "Appearance",
+      url: "/bio/appearance",
+      icon: <HugeiconsIcon icon={PaintBoardIcon} strokeWidth={2} />,
+    },
+    {
+      title: "Profile",
+      url: "/bio/settings",
+      icon: <HugeiconsIcon icon={SlidersHorizontal} strokeWidth={2} />,
+      exact: true,
     },
     {
       title: "Analytics",
