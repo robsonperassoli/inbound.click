@@ -7,8 +7,8 @@ import {
   ListViewIcon,
   PaintBoardIcon,
   Send,
-  SlidersHorizontal,
   SparklesIcon,
+  UserIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
@@ -54,7 +54,7 @@ const data = {
     {
       title: "Profile",
       url: "/bio/settings",
-      icon: <HugeiconsIcon icon={SlidersHorizontal} strokeWidth={2} />,
+      icon: <HugeiconsIcon icon={UserIcon} strokeWidth={2} />,
       exact: true,
     },
     {
