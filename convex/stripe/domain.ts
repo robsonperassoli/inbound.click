@@ -6,14 +6,12 @@ export async function getAccountActiveSubscription(
   ctx: MutationCtx | QueryCtx,
   accountId: Id<"accounts">,
 ) {
-  const subscription = await ctx.runQuery(
-    components.stripe.public.getSubscriptionByOrgId,
-    { orgId: accountId },
+  const subscriptions = await ctx.runQuery(
+    components.stripe.public.listSubscriptionsByOrgId,
+    {
+      orgId: accountId,
+    },
   )
 
-  if (!subscription || subscription.status !== "active") {
-    return null
-  }
-
-  return subscription
+  return subscriptions.filter((s) => s.status === "active")[0]
 }
