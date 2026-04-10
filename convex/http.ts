@@ -1,7 +1,8 @@
 import { registerRoutes } from "@convex-dev/stripe"
 import { httpRouter } from "convex/server"
 import type Stripe from "stripe"
-import { components } from "./_generated/api"
+import { components, internal } from "./_generated/api"
+import type { Id } from "./_generated/dataModel"
 import { httpAction } from "./_generated/server"
 import { authKit } from "./auth"
 import { resend } from "./emails"
@@ -19,6 +20,14 @@ registerRoutes(http, components.stripe, {
       event: Stripe.CustomerSubscriptionCreatedEvent,
     ) => {
       const subscription = event.data.object
+      const isTeamSubscription = subscription.metadata.planType === "teams"
+      const accountId = subscription.metadata.orgId as Id<"accounts">
+      if (isTeamSubscription) {
+        await ctx.runMutation(internal.accounts.mutations.updateToTeamAccount, {
+          accountId,
+        })
+      }
+
       console.log("Subscription created:", subscription.id, subscription.status)
     },
 

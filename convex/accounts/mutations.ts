@@ -1,6 +1,6 @@
 import { v } from "convex/values"
 import type { Id } from "../_generated/dataModel"
-import type { MutationCtx } from "../_generated/server"
+import { internalMutation, type MutationCtx } from "../_generated/server"
 import { getUserDetails } from "../auth"
 import { teamAdminMutation, userMutation } from "../custom"
 import { sendInvitationEmail } from "../emails"
@@ -264,5 +264,16 @@ export const acceptInvitation = userMutation({
     })
 
     return { success: true }
+  },
+})
+
+export const updateToTeamAccount = internalMutation({
+  args: {
+    accountId: v.id("accounts"),
+  },
+  handler: async (ctx, { accountId }) => {
+    await ctx.db.patch("accounts", accountId, {
+      type: "team",
+    })
   },
 })
