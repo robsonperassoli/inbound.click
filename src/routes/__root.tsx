@@ -5,13 +5,12 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Scripts,
-  useRouteContext,
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { createServerFn } from "@tanstack/react-start"
 import { getAuth } from "@workos/authkit-tanstack-react-start"
 import type { ConvexReactClient } from "convex/react"
-import { PostHogProvider } from "posthog-js/react"
+import { PostHogErrorBoundary, PostHogProvider } from "posthog-js/react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import appCss from "../styles.css?url"
 
@@ -100,8 +99,6 @@ export const Route = createRootRouteWithContext<AppContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const context = useRouteContext({ from: Route.id })
-
   return (
     <html lang="en">
       <head>
@@ -112,7 +109,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
           options={options}
         >
-          <TooltipProvider>{children}</TooltipProvider>
+          <PostHogErrorBoundary>
+            <TooltipProvider>{children}</TooltipProvider>
+          </PostHogErrorBoundary>
         </PostHogProvider>
         <TanStackDevtools
           config={{
