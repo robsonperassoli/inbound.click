@@ -36,6 +36,7 @@ import type * as public_ from "../public.js";
 import type * as stripe from "../stripe.js";
 import type * as stripe_domain from "../stripe/domain.js";
 import type * as support from "../support.js";
+import type * as system from "../system.js";
 import type * as threads_actions from "../threads/actions.js";
 import type * as threads_agents from "../threads/agents.js";
 import type * as threads_agents_designer from "../threads/agents/designer.js";
@@ -84,6 +85,7 @@ declare const fullApi: ApiFromModules<{
   stripe: typeof stripe;
   "stripe/domain": typeof stripe_domain;
   support: typeof support;
+  system: typeof system;
   "threads/actions": typeof threads_actions;
   "threads/agents": typeof threads_agents;
   "threads/agents/designer": typeof threads_agents_designer;

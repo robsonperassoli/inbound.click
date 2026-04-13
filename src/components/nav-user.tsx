@@ -124,6 +124,15 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              {session?.isSuperUser && (
+                <DropdownMenuItem asChild>
+                  <Link to="/system/users">
+                    <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
+                    Users
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
               {session?.accountType === "team" && session.role !== "member" && (
                 <DropdownMenuItem asChild>
                   <Link to="/team">

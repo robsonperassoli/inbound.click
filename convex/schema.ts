@@ -7,6 +7,10 @@ import { themeFields } from "./profiles/validators"
 import { threadsFields } from "./threads/validators"
 
 export default defineSchema({
+  superUsers: defineTable({
+    userId: v.id("users"),
+  }).index("by_user", ["userId"]),
+
   accounts: defineTable({
     type: v.union(v.literal("team"), v.literal("individual")),
   }),

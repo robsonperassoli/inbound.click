@@ -23,6 +23,7 @@ import { Route as AuthenticatedBioRouteImport } from './routes/_authenticated/bi
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms.index'
 import { Route as AuthenticatedBioIndexRouteImport } from './routes/_authenticated/bio/index'
+import { Route as AuthenticatedSystemUsersRouteImport } from './routes/_authenticated/system.users'
 import { Route as AuthenticatedInvitesTokenRouteImport } from './routes/_authenticated/invites.$token'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms/$id'
 import { Route as AuthenticatedBioSettingsRouteImport } from './routes/_authenticated/bio/settings'
@@ -107,6 +108,12 @@ const AuthenticatedBioIndexRoute = AuthenticatedBioIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedBioRoute,
 } as any)
+const AuthenticatedSystemUsersRoute =
+  AuthenticatedSystemUsersRouteImport.update({
+    id: '/system/users',
+    path: '/system/users',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInvitesTokenRoute =
   AuthenticatedInvitesTokenRouteImport.update({
     id: '/invites/$token',
@@ -206,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/invites/$token': typeof AuthenticatedInvitesTokenRoute
+  '/system/users': typeof AuthenticatedSystemUsersRoute
   '/bio/': typeof AuthenticatedBioIndexRoute
   '/forms/': typeof AuthenticatedFormsIndexRoute
   '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -232,6 +240,7 @@ export interface FileRoutesByTo {
   '/$username': typeof UsernameIndexRoute
   '/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/invites/$token': typeof AuthenticatedInvitesTokenRoute
+  '/system/users': typeof AuthenticatedSystemUsersRoute
   '/bio': typeof AuthenticatedBioIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -263,6 +272,7 @@ export interface FileRoutesById {
   '/_authenticated/bio/settings': typeof AuthenticatedBioSettingsRoute
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRouteWithChildren
   '/_authenticated/invites/$token': typeof AuthenticatedInvitesTokenRoute
+  '/_authenticated/system/users': typeof AuthenticatedSystemUsersRoute
   '/_authenticated/bio/': typeof AuthenticatedBioIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/_authenticated/bio/appearance/customize': typeof AuthenticatedBioAppearanceCustomizeRoute
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/bio/settings'
     | '/forms/$id'
     | '/invites/$token'
+    | '/system/users'
     | '/bio/'
     | '/forms/'
     | '/bio/appearance/customize'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/$username'
     | '/bio/settings'
     | '/invites/$token'
+    | '/system/users'
     | '/bio'
     | '/forms'
     | '/bio/appearance/customize'
@@ -350,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bio/settings'
     | '/_authenticated/forms/$id'
     | '/_authenticated/invites/$token'
+    | '/_authenticated/system/users'
     | '/_authenticated/bio/'
     | '/_authenticated/forms/'
     | '/_authenticated/bio/appearance/customize'
@@ -474,6 +487,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/bio/'
       preLoaderRoute: typeof AuthenticatedBioIndexRouteImport
       parentRoute: typeof AuthenticatedBioRoute
+    }
+    '/_authenticated/system/users': {
+      id: '/_authenticated/system/users'
+      path: '/system/users'
+      fullPath: '/system/users'
+      preLoaderRoute: typeof AuthenticatedSystemUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/invites/$token': {
       id: '/_authenticated/invites/$token'
@@ -650,6 +670,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUpgradeRoute: typeof AuthenticatedUpgradeRoute
   AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRouteWithChildren
   AuthenticatedInvitesTokenRoute: typeof AuthenticatedInvitesTokenRoute
+  AuthenticatedSystemUsersRoute: typeof AuthenticatedSystemUsersRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
   AuthenticatedDesignThemeThreadIdRoute: typeof AuthenticatedDesignThemeThreadIdRoute
   AuthenticatedFormsBuilderThreadIdRoute: typeof AuthenticatedFormsBuilderThreadIdRoute
@@ -663,6 +684,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUpgradeRoute: AuthenticatedUpgradeRoute,
   AuthenticatedFormsIdRoute: AuthenticatedFormsIdRouteWithChildren,
   AuthenticatedInvitesTokenRoute: AuthenticatedInvitesTokenRoute,
+  AuthenticatedSystemUsersRoute: AuthenticatedSystemUsersRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
   AuthenticatedDesignThemeThreadIdRoute: AuthenticatedDesignThemeThreadIdRoute,
   AuthenticatedFormsBuilderThreadIdRoute:

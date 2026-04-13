@@ -1,3 +1,4 @@
+import type { Id } from "../_generated/dataModel"
 import type { ActionCtx, MutationCtx, QueryCtx } from "../_generated/server"
 import { authKit } from "../auth"
 
@@ -26,13 +27,26 @@ export async function getAuthUser(ctx: QueryCtx) {
   return user
 }
 
-export async function getUserScope(ctx: QueryCtx) {
+async function getSuperUserRecord(
+  ctx: QueryCtx | MutationCtx,
+  userId: Id<"users">,
+) {
+  return await ctx.db
+    .query("superUsers")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .unique()
+}
+
+export async function getUserScope(ctx: QueryCtx | MutationCtx) {
   const user = await getAuthUser(ctx)
 
-  const membership = await ctx.db
-    .query("accountMembers")
-    .withIndex("by_user", (q) => q.eq("userId", user?._id))
-    .unique()
+  const [membership, superUserRecord] = await Promise.all([
+    ctx.db
+      .query("accountMembers")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .unique(),
+    getSuperUserRecord(ctx, user._id),
+  ])
 
   if (!membership) {
     throw new Error("Not a member of any account")
@@ -48,5 +62,6 @@ export async function getUserScope(ctx: QueryCtx) {
     account,
     role: membership.role,
     profiles: membership.profiles,
+    isSuperUser: Boolean(superUserRecord),
   }
 }

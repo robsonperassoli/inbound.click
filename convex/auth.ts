@@ -157,6 +157,7 @@ export const getSession = query({
       subscribed: Boolean(subscription),
       subscriptionPriceId: subscription?.priceId,
       role: scope.role,
+      isSuperUser: scope.isSuperUser,
     }
   },
 })

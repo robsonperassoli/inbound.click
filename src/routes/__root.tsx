@@ -113,6 +113,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <TooltipProvider>{children}</TooltipProvider>
           </PostHogErrorBoundary>
         </PostHogProvider>
+
         <TanStackDevtools
           config={{
             position: "bottom-left",
