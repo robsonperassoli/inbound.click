@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -39,6 +41,11 @@ import { Route as AuthenticatedBioAppearanceThemesRouteImport } from './routes/_
 import { Route as AuthenticatedBioAppearanceCustomizeRouteImport } from './routes/_authenticated/bio/appearance/customize'
 import { Route as AuthenticatedFormsIdSubmissionsSubmissionIdTranscriptRouteImport } from './routes/_authenticated/forms/$id.submissions.$submissionId.transcript'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
@@ -47,6 +54,11 @@ const SigninRoute = SigninRouteImport.update({
 const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
   id: '/real-estate-agents',
   path: '/real-estate-agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -201,8 +213,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
+  '/terms': typeof TermsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/bio': typeof AuthenticatedBioRouteWithChildren
   '/logout': typeof AuthenticatedLogoutRoute
@@ -231,8 +245,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
+  '/terms': typeof TermsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/logout': typeof AuthenticatedLogoutRoute
   '/team': typeof AuthenticatedTeamRoute
@@ -260,8 +276,10 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/bio': typeof AuthenticatedBioRouteWithChildren
   '/_authenticated/logout': typeof AuthenticatedLogoutRoute
@@ -292,8 +310,10 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/onboarding'
+    | '/privacy'
     | '/real-estate-agents'
     | '/signin'
+    | '/terms'
     | '/analytics'
     | '/bio'
     | '/logout'
@@ -322,8 +342,10 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/onboarding'
+    | '/privacy'
     | '/real-estate-agents'
     | '/signin'
+    | '/terms'
     | '/analytics'
     | '/logout'
     | '/team'
@@ -350,8 +372,10 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/callback'
     | '/onboarding'
+    | '/privacy'
     | '/real-estate-agents'
     | '/signin'
+    | '/terms'
     | '/_authenticated/analytics'
     | '/_authenticated/bio'
     | '/_authenticated/logout'
@@ -382,14 +406,23 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CallbackRoute: typeof CallbackRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrivacyRoute: typeof PrivacyRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
   SigninRoute: typeof SigninRoute
+  TermsRoute: typeof TermsRoute
   UsernameIndexRoute: typeof UsernameIndexRoute
   UsernameLinkLinkIdIndexRoute: typeof UsernameLinkLinkIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
@@ -402,6 +435,13 @@ declare module '@tanstack/react-router' {
       path: '/real-estate-agents'
       fullPath: '/real-estate-agents'
       preLoaderRoute: typeof RealEstateAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -700,8 +740,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CallbackRoute: CallbackRoute,
   OnboardingRoute: OnboardingRoute,
+  PrivacyRoute: PrivacyRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
   SigninRoute: SigninRoute,
+  TermsRoute: TermsRoute,
   UsernameIndexRoute: UsernameIndexRoute,
   UsernameLinkLinkIdIndexRoute: UsernameLinkLinkIdIndexRoute,
 }

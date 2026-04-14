@@ -128,6 +128,12 @@ function LandingPage() {
             <Link to="/signin" className="text-[#2D2E2C]/72">
               Start Free
             </Link>
+            <Link to="/terms" className="text-[#2D2E2C]/72">
+              Terms
+            </Link>
+            <Link to="/privacy" className="text-[#2D2E2C]/72">
+              Privacy
+            </Link>
           </div>
         </div>
       </footer>
