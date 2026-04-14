@@ -8,13 +8,6 @@ import { useSiteHeader } from "@/components/site-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -67,59 +60,72 @@ function RouteComponent() {
 
   return (
     <ScrollableContainer className="max-w-6xl">
-      <Card>
-        <CardHeader>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>
-            Super-user only access to users across every account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-hidden rounded-2xl border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead className="w-32">Actions</TableHead>
+      <div className="overflow-hidden rounded-2xl border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Account type</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead className="w-32">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <TableRow key={user.userId}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email || "No email"}
+                  </TableCell>
+                  <TableCell>
+                    <AccountTypeBadge accountType={user.accountType} />
+                  </TableCell>
+                  <TableCell>
+                    <RoleBadge role={user.role} />
+                  </TableCell>
+                  <TableCell>
+                    {user.canSetupStripe ? (
+                      <SetupStripeDialog
+                        accountId={user.accountId}
+                        userId={user.userId}
+                        userName={user.name}
+                      />
+                    ) : null}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <TableRow key={user.userId}>
-                      <TableCell className="font-medium">{user.name}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {user.email || "No email"}
-                      </TableCell>
-                      <TableCell>
-                        <RoleBadge role={user.role} />
-                      </TableCell>
-                      <TableCell>
-                        {user.canSetupStripe ? (
-                          <SetupStripeDialog
-                            accountId={user.accountId}
-                            userId={user.userId}
-                            userName={user.name}
-                          />
-                        ) : null}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
-                      No users found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  No users found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </ScrollableContainer>
+  )
+}
+
+function AccountTypeBadge({
+  accountType,
+}: {
+  accountType: "team" | "individual" | null
+}) {
+  if (accountType === null) {
+    return <Badge variant="outline">Unknown</Badge>
+  }
+
+  return (
+    <Badge
+      className="capitalize"
+      variant={accountType === "team" ? "default" : "secondary"}
+    >
+      {accountType}
+    </Badge>
   )
 }
 
