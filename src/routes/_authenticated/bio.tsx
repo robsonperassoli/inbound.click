@@ -1,4 +1,5 @@
 import { api } from "@convex/_generated/api"
+import { convexQuery } from "@convex-dev/react-query"
 import { ViewIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
@@ -16,10 +17,10 @@ export const Route = createFileRoute("/_authenticated/bio")({
   component: RouteComponent,
   ssr: false,
   loader: async ({ context }) => {
-    const profiles = await context.convexClient.query(
-      api.profiles.queries.getAvailableProfiles,
-      {},
-    )
+    const profiles =
+      await context.convexQueryClient.queryClient.ensureQueryData(
+        convexQuery(api.profiles.queries.getAvailableProfiles),
+      )
 
     if (profiles.length === 0) {
       throw redirect({ to: "/onboarding" })

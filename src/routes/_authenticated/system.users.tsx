@@ -1,4 +1,5 @@
 import { api } from "@convex/_generated/api"
+import { convexQuery } from "@convex-dev/react-query"
 import { Copy01Icon, Tick01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, redirect } from "@tanstack/react-router"
@@ -40,7 +41,9 @@ import { useCopyToClipboard } from "@/hooks/copy-to-clipboard"
 
 export const Route = createFileRoute("/_authenticated/system/users")({
   loader: async ({ context }) => {
-    const session = await context.convexClient.query(api.auth.getSession, {})
+    const session = await context.convexQueryClient.queryClient.ensureQueryData(
+      convexQuery(api.auth.getSession),
+    )
 
     if (!session.isSuperUser) {
       throw redirect({ to: "/bio" })
