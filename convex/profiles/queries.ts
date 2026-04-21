@@ -29,10 +29,10 @@ export const getAvailableProfiles = userQuery({
   args: {},
   handler: async (ctx, _args) => {
     if (ctx.profiles[0] === "all") {
-      return getAccountProfiles(ctx, ctx.account._id)
+      return await getAccountProfiles(ctx, ctx.account._id)
     }
 
-    return getAccountProfilesByIds(
+    return await getAccountProfilesByIds(
       ctx,
       ctx.account._id,
       ctx.profiles as Array<Id<"profiles">>,
