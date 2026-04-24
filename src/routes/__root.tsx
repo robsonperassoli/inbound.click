@@ -35,6 +35,17 @@ const options = {
   defaults: "2026-01-30",
 } as const
 
+function applyConvexAuth(context: AppContext, token: string | null) {
+  if (token) {
+    context.convexClient.setAuth(async () => token)
+    context.convexQueryClient.serverHttpClient?.setAuth(token)
+    return
+  }
+
+  context.convexClient.clearAuth()
+  context.convexQueryClient.serverHttpClient?.clearAuth()
+}
+
 export const Route = createRootRouteWithContext<AppContext>()({
   head: () => ({
     meta: [
@@ -87,11 +98,9 @@ export const Route = createRootRouteWithContext<AppContext>()({
   beforeLoad: async (ctx) => {
     const { userId, token } = await fetchWorkosAuth()
 
-    // During SSR only (the only time serverHttpClient exists),
-    // set the WorkOS auth token to make HTTP queries with.
-    if (token) {
-      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token)
-    }
+    // Seed the shared Convex clients before child loaders run so loader-based
+    // queries use the same auth context as in-component Convex hooks.
+    applyConvexAuth(ctx.context, token)
 
     return { userId, token }
   },
