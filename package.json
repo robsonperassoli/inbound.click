@@ -26,7 +26,7 @@
     "@convex-dev/react-query": "0.1.0",
     "@convex-dev/resend": "^0.2.3",
     "@convex-dev/stripe": "^0.1.4",
-    "@convex-dev/workos-authkit": "^0.2.2",
+    "@convex-dev/workos-authkit": "^0.2.5",
     "@dnd-kit/helpers": "^0.3.2",
     "@dnd-kit/react": "^0.3.2",
     "@faker-js/faker": "^10.0.0",

@@ -28,12 +28,12 @@ export const submit = userAction({
     submittedAt: v.string(),
     profileId: v.id("profiles"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { profileId, ...args }) => {
     const authUser = await getAuthenticatedUser(ctx)
     const profile = await ctx.runQuery(
       internal.profiles.queries.getProfileByIdInternal,
       {
-        profileId: args.profileId,
+        profileId: profileId,
       },
     )
 
