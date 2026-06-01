@@ -43,7 +43,7 @@ export const getProfileByUsername = async (ctx: QueryCtx, username: string) => {
     .unique()
 
   if (!profile) {
-    throw new Error("Profile not found")
+    return null
   }
 
   return {
@@ -55,6 +55,19 @@ export const getProfileByUsername = async (ctx: QueryCtx, username: string) => {
       ? await ctx.storage.getUrl(profile.backgroundImage)
       : null,
   }
+}
+
+export const getProfileByUsernameOrThrow = async (
+  ctx: QueryCtx,
+  username: string,
+) => {
+  const profile = await getProfileByUsername(ctx, username)
+
+  if (!profile) {
+    throw new Error("Profile not found")
+  }
+
+  return profile
 }
 
 export const getProfileById = async (

@@ -12,10 +12,13 @@ export const getProfile = query({
     username: v.string(),
   },
   handler: async (ctx, args) => {
-    const { userId: _, ...profile } = await profiles.getProfileByUsername(
-      ctx,
-      args.username,
-    )
+    const fullProfile = await profiles.getProfileByUsername(ctx, args.username)
+
+    if (!fullProfile) {
+      return null
+    }
+
+    const { userId: _, ...profile } = fullProfile
 
     const profileLinks = await links.getProfileLinks(ctx, profile._id)
 

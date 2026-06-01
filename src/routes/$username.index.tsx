@@ -26,28 +26,23 @@ const trackPageView = createMiddleware().server(
     const segments = pathname.split("/")
     const username = segments[segments.length - 1]
 
-    try {
-      const viewPageData = await convexHttpClient.query(api.public.getProfile, {
-        username,
-      })
+    const viewPageData = await convexHttpClient.query(api.public.getProfile, {
+      username,
+    })
 
-      if (!isBot) {
-        await tinybird.pageViews.ingest({
-          profile_id: viewPageData.profile._id,
-          visitor_id: visitorId,
-          timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
-          referrer: request.headers.get("referer") ?? null,
-          referrer_name: extractReferrerName(request.headers.get("referer")),
-          device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
-        })
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      if (errorMessage.toLowerCase().includes("profile not found")) {
-        return await next()
-      }
-      throw error
+    if (!viewPageData) {
+      return await next()
+    }
+
+    if (!isBot) {
+      await tinybird.pageViews.ingest({
+        profile_id: viewPageData.profile._id,
+        visitor_id: visitorId,
+        timestamp: formatToTinybirdDateTime(Temporal.Now.instant()),
+        referrer: request.headers.get("referer") ?? null,
+        referrer_name: extractReferrerName(request.headers.get("referer")),
+        device: /mobile/i.test(userAgent) ? "mobile" : "desktop",
+      })
     }
 
     return await next()
@@ -60,29 +55,26 @@ export const Route = createFileRoute("/$username/")({
     middleware: [trackPageView],
   },
   loader: async ({ context, params }) => {
-    try {
-      const { profile, links } = await context.queryClient.ensureQueryData(
-        convexQuery(api.public.getProfile, {
-          username: params.username,
-        }),
-      )
+    const data = await context.queryClient.ensureQueryData(
+      convexQuery(api.public.getProfile, {
+        username: params.username,
+      }),
+    )
 
-      const linksWithRedirect = links.map((l) => ({
-        ...l,
-        url: `/${profile.username}/link/${l._id}`,
-      }))
+    if (!data) {
+      throw notFound()
+    }
 
-      return {
-        profile,
-        links: linksWithRedirect,
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      if (errorMessage.toLowerCase().includes("profile not found")) {
-        throw notFound()
-      }
-      throw error
+    const { profile, links } = data
+
+    const linksWithRedirect = links.map((l) => ({
+      ...l,
+      url: `/${profile.username}/link/${l._id}`,
+    }))
+
+    return {
+      profile,
+      links: linksWithRedirect,
     }
   },
   head: ({ loaderData }) => {
