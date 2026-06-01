@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as RealEstateAgentsRouteImport } from './routes/real-estate-agents'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -59,6 +60,11 @@ const RealEstateAgentsRoute = RealEstateAgentsRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/callback': typeof CallbackRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate-agents': typeof RealEstateAgentsRoute
   '/signin': typeof SigninRoute
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/onboarding'
+    | '/pricing'
     | '/privacy'
     | '/real-estate-agents'
     | '/signin'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/'
     | '/callback'
     | '/onboarding'
+    | '/pricing'
     | '/privacy'
     | '/real-estate-agents'
     | '/signin'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/callback'
     | '/onboarding'
+    | '/pricing'
     | '/privacy'
     | '/real-estate-agents'
     | '/signin'
@@ -406,6 +418,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CallbackRoute: typeof CallbackRoute
   OnboardingRoute: typeof OnboardingRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RealEstateAgentsRoute: typeof RealEstateAgentsRoute
   SigninRoute: typeof SigninRoute
@@ -442,6 +455,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -740,6 +760,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CallbackRoute: CallbackRoute,
   OnboardingRoute: OnboardingRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RealEstateAgentsRoute: RealEstateAgentsRoute,
   SigninRoute: SigninRoute,

@@ -178,6 +178,12 @@ function PrivacyPage() {
           </p>
           <div className="flex flex-wrap items-center gap-4 text-sm font-semibold">
             <Link
+              to="/pricing"
+              className="text-[#2D2E2C]/72 hover:text-[#2D2E2C]"
+            >
+              Pricing
+            </Link>
+            <Link
               to="/terms"
               className="text-[#2D2E2C]/72 hover:text-[#2D2E2C]"
             >

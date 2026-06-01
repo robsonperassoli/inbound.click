@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { Authenticated, Unauthenticated } from "convex/react"
+import { MarketingFooter } from "@/components/marketing-footer"
+import { MarketingHeader } from "@/components/marketing-header"
 import { useEffect, useMemo, useState } from "react"
-import logo from "../assets/logo.svg"
 
 export const Route = createFileRoute("/")({
   head: () => {
@@ -66,41 +66,7 @@ function LandingPage() {
     <div className="min-h-screen overflow-x-hidden bg-white text-[#2D2E2C]">
       <SpeedLinesBackground />
 
-      <header className="sticky top-0 z-50 border-b border-[#2D2E2C]/8 bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <img src={logo} alt="Inbound.click" className="h-5 md:h-7 w-auto" />
-            <span className="text-sm font-semibold tracking-tight sm:text-base sr-only">
-              Inbound.click
-            </span>
-          </a>
-
-          <Authenticated>
-            <Link
-              to="/bio"
-              className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
-            >
-              Dashboard
-            </Link>
-          </Authenticated>
-          <Unauthenticated>
-            <div className="flex items-center gap-3">
-              <Link
-                to="/signin"
-                className="w-20 text-center text-sm font-semibold text-[#2D2E2C]/72 transition-colors hover:text-[#2D2E2C]"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/signin"
-                className="rounded-full bg-[#2D2E2C] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(45,46,44,0.24)] transition-transform hover:-translate-y-0.5"
-              >
-                Start Free
-              </Link>
-            </div>
-          </Unauthenticated>
-        </div>
-      </header>
+      <MarketingHeader anchorLogoToTop />
 
       {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves deep links for the landing page */}
       <main
@@ -116,27 +82,7 @@ function LandingPage() {
         <WorkflowSection />
       </main>
 
-      <footer className="border-t border-[#2D2E2C]/8 bg-white/75">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <p className="text-sm text-[#2D2E2C]/62">
-            Inbound.click turns social traffic into qualified leads.
-          </p>
-          <div className="flex flex-wrap items-center gap-4 text-sm font-semibold">
-            <Link to="/real-estate-agents" className="text-[#2D2E2C]">
-              For Realtors
-            </Link>
-            <Link to="/signin" className="text-[#2D2E2C]/72">
-              Start Free
-            </Link>
-            <Link to="/terms" className="text-[#2D2E2C]/72">
-              Terms
-            </Link>
-            <Link to="/privacy" className="text-[#2D2E2C]/72">
-              Privacy
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   )
 }
