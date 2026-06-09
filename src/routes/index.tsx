@@ -1,17 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { useEffect, useMemo, useState } from "react"
+import logo from "@/assets/logo.svg"
 import { MarketingFooter } from "@/components/marketing-footer"
 import { MarketingHeader } from "@/components/marketing-header"
-import { useEffect, useMemo, useState } from "react"
 
 export const Route = createFileRoute("/")({
   head: () => {
     const title =
       "Inbound.click | AI Link in Bio for Lead Capture, Qualification, and Conversion"
     const description =
-      "Inbound.click turns your link in bio into an AI lead capture funnel that qualifies prospects, collects contact details, and sends instant SMS or WhatsApp alerts."
+      "Inbound.click is the platform behind s.uper.bio. Turn your link in bio into an AI lead capture funnel that qualifies prospects, collects contact details, and sends instant SMS or WhatsApp alerts."
     const keywords = [
       "link in bio",
       "ai link in bio",
+      "s.uper.bio",
+      "inbound.click",
       "lead capture",
       "ai lead capture",
       "lead generation",
@@ -63,23 +66,17 @@ const DYNAMIC_NAMES = [
 
 function LandingPage() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white text-[#2D2E2C]">
-      <SpeedLinesBackground />
-
-      <MarketingHeader anchorLogoToTop />
+    <div className="min-h-screen overflow-x-hidden bg-[#FBF8F3] text-[#2D2D2D]">
+      <MarketingHeader anchorLogoToTop tone="paper" />
 
       {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves deep links for the landing page */}
-      <main
-        id="top"
-        className="relative mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8"
-      >
+      <main id="top" className="relative">
         <HeroSection />
-        <SpeedDivider />
+        <DomainSection />
         <ProblemSection />
-        <SpeedDivider />
         <AiArchitectSection />
-        <SpeedDivider />
         <WorkflowSection />
+        <FinalCtaSection />
       </main>
 
       <MarketingFooter />
@@ -87,46 +84,101 @@ function LandingPage() {
   )
 }
 
+/* ------------------------------------------------------------------ */
+/* Shared bits                                                         */
+/* ------------------------------------------------------------------ */
+
+function Container({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10">
+      {children}
+    </div>
+  )
+}
+
+/** The three right-aligned pills from the logo mark, used as a recurring motif. */
+function PillMark({ className = "" }: { className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`inline-flex flex-col items-end gap-[3px] ${className}`}
+    >
+      <span className="h-[5px] w-8 rounded-full bg-[#EE775F]" />
+      <span className="h-[5px] w-6 rounded-full bg-[#F8C751]" />
+      <span className="h-[5px] w-4 rounded-full bg-[#69D0B2]" />
+    </span>
+  )
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#2D2D2D]/55">
+      <PillMark />
+      {children}
+    </p>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero                                                                */
+/* ------------------------------------------------------------------ */
+
 function HeroSection() {
   return (
-    <section className="pt-12 pb-14 sm:pt-16 sm:pb-16 lg:pt-20">
-      <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.03fr] lg:items-start">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-[#2D2E2C]/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/70 shadow-[0_6px_20px_rgba(45,46,44,0.08)]">
-            <SpeedLines />
-            AI Link in Bio for Lead Capture
-          </p>
+    <section className="pt-16 pb-20 sm:pt-24 sm:pb-24">
+      <Container>
+        <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <Eyebrow>AI link in bio for lead capture</Eyebrow>
 
-          <h1 className="mt-6 text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl">
-            Turn Your Link in Bio Traffic into Qualified Leads, Automatically.
-          </h1>
+            <h1 className="mt-7 text-balance text-[2.75rem] font-black leading-[1.02] tracking-tight sm:text-6xl lg:text-[4.25rem]">
+              Your link in bio, rebuilt as a{" "}
+              <span className="relative inline-block whitespace-nowrap">
+                <span className="relative z-10">lead engine</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-x-[-2px] bottom-[0.08em] z-0 h-[0.32em] -rotate-1 rounded-sm bg-[#F8C751]/80"
+                />
+              </span>
+              .
+            </h1>
 
-          <TypewriterUrl />
+            <p className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-[#2D2D2D]/70">
+              Inbound.click gives you a conversational page at{" "}
+              <strong className="font-semibold text-[#2D2D2D]">
+                s.uper.bio/you
+              </strong>{" "}
+              that greets every visitor, asks the right questions, and pings you
+              on WhatsApp the moment a high-intent lead answers.
+            </p>
 
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#2D2E2C]/75 sm:text-lg">
-            Built for Instagram, TikTok, YouTube, and creator bio links. Stop
-            leaking social traffic and start capturing high-intent leads with
-            conversational AI forms that qualify prospects in real time.
-          </p>
+            <div className="mt-9 flex flex-wrap items-center gap-5">
+              <Link
+                to="/signin"
+                className="rounded-full bg-[#2D2D2D] px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#EE775F]"
+              >
+                Claim Your s.uper.bio Link
+              </Link>
+              <a
+                href="#ai-architect"
+                className="group text-sm font-semibold text-[#2D2D2D]/75 transition-colors hover:text-[#2D2D2D] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#EE775F]"
+              >
+                See the AI build one{" "}
+                <span
+                  aria-hidden
+                  className="inline-block transition-transform duration-200 group-hover:translate-y-0.5 motion-reduce:transition-none"
+                >
+                  ↓
+                </span>
+              </a>
+            </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/signin"
-              className="rounded-full bg-[#EE7A64] px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_14px_30px_rgba(238,122,100,0.34)] transition-transform hover:-translate-y-0.5"
-            >
-              Launch Your Capture Engine
-            </Link>
-            <a
-              href="#ai-architect"
-              className="rounded-full border border-[#2D2E2C]/16 bg-white px-6 py-3.5 text-sm font-semibold text-[#2D2E2C] shadow-[0_10px_24px_rgba(45,46,44,0.08)]"
-            >
-              See AI Architect
-            </a>
+            <TypewriterUrl />
           </div>
-        </div>
 
-        <HeroMockup />
-      </div>
+          <HeroPhone />
+        </div>
+      </Container>
     </section>
   )
 }
@@ -135,14 +187,26 @@ function TypewriterUrl() {
   const [nameIndex, setNameIndex] = useState(0)
   const [typedLength, setTypedLength] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [reduceMotion, setReduceMotion] = useState(false)
 
   const activeName = DYNAMIC_NAMES[nameIndex]
 
   useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setReduceMotion(query.matches)
+    const onChange = (event: MediaQueryListEvent) =>
+      setReduceMotion(event.matches)
+    query.addEventListener("change", onChange)
+    return () => query.removeEventListener("change", onChange)
+  }, [])
+
+  useEffect(() => {
+    if (reduceMotion) return
+
     const typingDelay = isDeleting ? 45 : 95
 
     if (!isDeleting && typedLength === activeName.length) {
-      const holdTimer = window.setTimeout(() => setIsDeleting(true), 1200)
+      const holdTimer = window.setTimeout(() => setIsDeleting(true), 1400)
       return () => window.clearTimeout(holdTimer)
     }
 
@@ -157,311 +221,417 @@ function TypewriterUrl() {
     }, typingDelay)
 
     return () => window.clearTimeout(timer)
-  }, [activeName, isDeleting, typedLength])
+  }, [activeName, isDeleting, typedLength, reduceMotion])
 
   const typedName = useMemo(
-    () => activeName.slice(0, typedLength),
-    [activeName, typedLength],
+    () => (reduceMotion ? activeName : activeName.slice(0, typedLength)),
+    [activeName, typedLength, reduceMotion],
   )
 
   return (
-    <div className="mt-6 rounded-3xl border border-[#2D2E2C]/12 bg-[#2D2E2C] px-5 py-4 shadow-[0_18px_36px_rgba(45,46,44,0.26)] sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
-        Your brand at
+    <div className="mt-12">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#2D2D2D]/45">
+        Your address
       </p>
-      <p className="mt-2 text-lg font-semibold text-white sm:text-xl">
-        s.uper.bio/
-        <span className="text-[#71D0AC]">{typedName || "\u00a0"}</span>
+      <p
+        className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl"
+        translate="no"
+      >
+        <span className="text-[#2D2D2D]/55">s.uper.bio/</span>
+        <span className="text-[#EE775F]">{typedName || "\u00a0"}</span>
         <span
           aria-hidden
-          className="ml-0.5 inline-block h-5 w-0.5 animate-[blink_1s_steps(1,end)_infinite] bg-[#F7C664] align-middle"
+          className="ml-1 inline-block h-[0.85em] w-[3px] animate-[blink_1s_steps(1,end)_infinite] rounded-full bg-[#F8C751] align-middle motion-reduce:animate-none"
         />
       </p>
     </div>
   )
 }
 
-function HeroMockup() {
+function HeroPhone() {
   return (
-    <section className="mx-auto w-full max-w-[520px] lg:pt-3">
-      <div className="relative rounded-[2rem] border border-[#2D2E2C]/10 bg-[linear-gradient(140deg,rgba(255,255,255,0.92),rgba(241,251,246,0.82))] p-4 shadow-[0_24px_50px_rgba(45,46,44,0.12)] sm:p-5">
-        <div className="mx-auto w-full max-w-[340px] rounded-[2rem] border border-[#2D2E2C]/20 bg-[#1F201F] p-2 shadow-[0_20px_40px_rgba(45,46,44,0.45)]">
-          <div className="overflow-hidden rounded-[1.6rem] bg-white">
-            <div className="flex items-center justify-between bg-[#2D2E2C] px-4 py-3 text-white">
-              <p className="text-sm font-semibold">@fitness-coach</p>
-              <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold">
-                LIVE
-              </span>
-            </div>
+    <figure className="mx-auto w-full max-w-[330px]">
+      <div className="rounded-[2.4rem] border-[6px] border-[#2D2D2D] bg-white shadow-[0_30px_60px_-24px_rgba(45,45,45,0.4)]">
+        <div className="flex items-center justify-between rounded-t-[1.9rem] bg-[#2D2D2D] px-5 pt-3 pb-3.5 text-white">
+          <p className="text-sm font-semibold" translate="no">
+            s.uper.bio/realtor_josh
+          </p>
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[#69D0B2]">
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 rounded-full bg-[#69D0B2]"
+            />
+            live
+          </span>
+        </div>
 
-            <div className="space-y-3 px-4 pt-4 pb-5">
-              <MockPill bg="#EE7A64" label="Start your intake" />
-              <MockPill bg="#F7C664" label="Tell me your struggle" />
-              <MockPill bg="#71D0AC" label="Drop your email" />
+        <div className="space-y-3 px-4 pt-5 pb-4">
+          <ChatBubble side="ai">
+            Hey, I&rsquo;m Josh&rsquo;s assistant. Buying or selling?
+          </ChatBubble>
+          <ChatBubble side="visitor">Buying</ChatBubble>
+          <ChatBubble side="ai">
+            Nice. What budget are you working with?
+          </ChatBubble>
+          <ChatBubble side="visitor">$400&ndash;500k</ChatBubble>
+          <ChatBubble side="ai">
+            Got it. Best number to text you a shortlist?
+          </ChatBubble>
 
-              <button
-                type="button"
-                className="mt-3 w-full rounded-full bg-[#71D0AC] px-4 py-3 text-sm font-bold text-[#12382c] shadow-[0_10px_24px_rgba(113,208,172,0.45)]"
-              >
-                Open AI Capture Flow {"->"}
-              </button>
-            </div>
+          <div className="flex gap-2 pt-1" aria-hidden>
+            <span className="rounded-full bg-[#EE775F]/16 px-3 py-1.5 text-xs font-semibold text-[#B14B36]">
+              555&hellip;
+            </span>
+            <span className="rounded-full bg-[#F8C751]/22 px-3 py-1.5 text-xs font-semibold text-[#8a6a12]">
+              Call me instead
+            </span>
           </div>
         </div>
 
-        <div className="pointer-events-none absolute -left-2 bottom-5 rounded-2xl border border-white/45 bg-white/48 px-4 py-2 backdrop-blur-xl shadow-[0_12px_24px_rgba(45,46,44,0.15)] sm:-left-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#2D2E2C]/65">
-            Funnel quality
-          </p>
-          <p className="text-sm font-extrabold text-[#3AAE86]">
-            87% completion
+        <div className="mx-4 mb-4 flex items-center justify-between rounded-full border border-[#2D2D2D]/12 px-4 py-2.5">
+          <span className="text-sm text-[#2D2D2D]/40">
+            Type a reply&hellip;
+          </span>
+          <span
+            aria-hidden
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-[#69D0B2] text-sm font-bold text-[#12382c]"
+          >
+            ↑
+          </span>
+        </div>
+      </div>
+
+      <figcaption className="mt-5 text-center text-sm text-[#2D2D2D]/55">
+        Every tap becomes a conversation that qualifies the lead for you.
+      </figcaption>
+    </figure>
+  )
+}
+
+function ChatBubble({
+  side,
+  children,
+}: {
+  side: "ai" | "visitor"
+  children: React.ReactNode
+}) {
+  if (side === "visitor") {
+    return (
+      <p className="ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-md bg-[#2D2D2D] px-4 py-2 text-sm font-medium text-white">
+        {children}
+      </p>
+    )
+  }
+  return (
+    <p className="w-fit max-w-[85%] rounded-2xl rounded-bl-md bg-[#F4EEE3] px-4 py-2 text-sm text-[#2D2D2D]">
+      {children}
+    </p>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Two domains, one product                                            */
+/* ------------------------------------------------------------------ */
+
+function DomainSection() {
+  return (
+    <section className="bg-white py-20 sm:py-24">
+      <Container>
+        <div className="mx-auto max-w-3xl text-center">
+          <img
+            src={logo}
+            alt="Inbound.click"
+            width={2909}
+            height={399}
+            className="mx-auto h-8 w-auto sm:h-10"
+          />
+
+          <h2 className="mt-8 text-balance text-3xl font-black tracking-tight sm:text-5xl">
+            s.uper.bio is made by Inbound.click.
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-[#2D2D2D]/70">
+            Same product, two addresses. You design and manage your capture
+            flows on Inbound.click &mdash; your audience visits the short,
+            memorable link in your bio. If a lead lands on{" "}
+            <strong className="font-semibold text-[#2D2D2D]">s.uper.bio</strong>
+            , Inbound.click is doing the work behind it.
           </p>
         </div>
 
-        <div className="pointer-events-none absolute -right-2 top-[70%] rounded-2xl border border-white/45 bg-white/48 px-4 py-2 backdrop-blur-xl shadow-[0_12px_24px_rgba(45,46,44,0.15)] sm:-right-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#2D2E2C]/65">
-            Live signal
-          </p>
-          <p className="text-sm font-extrabold text-[#B47C04]">+3 new leads</p>
+        <div className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-8 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="text-center sm:flex-1 sm:text-left">
+            <p
+              className="text-2xl font-extrabold tracking-tight"
+              translate="no"
+            >
+              inbound.click
+            </p>
+            <p className="mt-1.5 text-sm text-[#2D2D2D]/55">
+              Where you build &mdash; the dashboard, the AI architect, your
+              leads and alerts.
+            </p>
+          </div>
+
+          <div
+            aria-hidden
+            className="flex items-center gap-2.5 pt-1 sm:mt-3 sm:flex-1 sm:px-4"
+          >
+            <span className="hidden h-px flex-1 bg-[#2D2D2D]/15 sm:block" />
+            <span className="h-2 w-2 rounded-full bg-[#EE775F]" />
+            <span className="h-2 w-2 rounded-full bg-[#F8C751]" />
+            <span className="h-2 w-2 rounded-full bg-[#69D0B2]" />
+            <span className="text-sm text-[#2D2D2D]/40">→</span>
+            <span className="hidden h-px flex-1 bg-[#2D2D2D]/15 sm:block" />
+          </div>
+
+          <div className="text-center sm:flex-1 sm:text-right">
+            <p
+              className="text-2xl font-extrabold tracking-tight"
+              translate="no"
+            >
+              s.uper.bio/<span className="text-[#EE775F]">you</span>
+            </p>
+            <p className="mt-1.5 text-sm text-[#2D2D2D]/55">
+              Where your audience lands &mdash; the short link you put in every
+              social bio.
+            </p>
+          </div>
         </div>
-      </div>
+      </Container>
     </section>
   )
 }
+
+/* ------------------------------------------------------------------ */
+/* Problem                                                             */
+/* ------------------------------------------------------------------ */
 
 function ProblemSection() {
   return (
-    <section className="py-12 sm:py-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
-        The Problem
-      </p>
-      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        Traditional link-in-bio tools are just menus. Inbound.click is a lead
-        capture engine.
-      </h2>
+    <section className="py-20 sm:py-24">
+      <Container>
+        <Eyebrow>The problem</Eyebrow>
+        <h2 className="mt-4 max-w-3xl text-balance text-3xl font-black tracking-tight sm:text-5xl">
+          Most bio links are menus. Menus don&rsquo;t follow up.
+        </h2>
 
-      <div className="mt-7 grid gap-4 md:grid-cols-3">
-        <ProblemCard
-          title="One tap, no intent"
-          body="Most bio links force people to hunt through options, dropping intent before they ever speak to you."
-          tone="bg-[#EE7A64]/20"
-        />
-        <ProblemCard
-          title="No qualification"
-          body="Traffic volume looks good, but there is no fast way to separate curious visitors from ready-to-buy leads."
-          tone="bg-[#F7C664]/20"
-        />
-        <ProblemCard
-          title="Slow follow-up"
-          body="By the time you notice activity, your hottest prospects already moved on to the next profile."
-          tone="bg-[#71D0AC]/20"
-        />
-      </div>
+        <div className="mt-14 grid gap-x-10 gap-y-12 md:grid-cols-3">
+          <ProblemItem
+            number="01"
+            color="#EE775F"
+            title="One tap, zero intent"
+            body="A wall of buttons makes visitors hunt for the next step. Most drop off before they ever tell you what they want."
+          />
+          <ProblemItem
+            number="02"
+            color="#F8C751"
+            title="No qualification"
+            body="Click counts look great, but there’s no way to tell a curious scroller from a ready-to-buy lead."
+          />
+          <ProblemItem
+            number="03"
+            color="#69D0B2"
+            title="Slow follow-up"
+            body="By the time you check your inbox, your hottest prospect has already moved on to the next profile."
+          />
+        </div>
+      </Container>
     </section>
   )
 }
 
-function AiArchitectSection() {
-  return (
-    <>
-      {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */}
-      <section id="ai-architect" className="py-12 sm:py-14">
-        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
-              AI Architect
-            </p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Prompt the flow. Ship an AI lead capture form instantly.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-[#2D2E2C]/73">
-              Describe what you need in one sentence and Inbound.click generates
-              a complete conversational lead capture flow with the right fields,
-              sequencing, and qualification logic for your business.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_18px_42px_rgba(45,46,44,0.1)] sm:p-6">
-            <div className="rounded-2xl border border-[#2D2E2C]/8 bg-[#f8f9f8] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
-                You
-              </p>
-              <p className="mt-2 inline-flex rounded-2xl rounded-bl-md bg-[#2D2E2C] px-4 py-2 text-sm font-medium text-white">
-                Collect name and budget
-              </p>
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-[#2D2E2C]/8 bg-[linear-gradient(145deg,rgba(113,208,172,0.25),rgba(255,255,255,0.95))] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/58">
-                AI Architect
-              </p>
-              <div className="mt-3 space-y-2">
-                <GeneratedField name="Full name" />
-                <GeneratedField name="Budget range" />
-                <GeneratedField name="Preferred callback time" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
-
-function WorkflowSection() {
-  return (
-    <>
-      {/* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */}
-      <section id="workflow" className="py-12 sm:py-14">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2E2C]/55 sm:text-sm">
-          The Workflow
-        </p>
-        <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Three steps from social media click to qualified sales pipeline.
-        </h2>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <WorkflowStep
-            step="1"
-            title="Link your bio"
-            description="Swap your bio URL with your Inbound.click page and turn every tap into a guided entry point."
-            accent="bg-[#EE7A64]"
-          />
-          <WorkflowStep
-            step="2"
-            title="AI builds your flow"
-            description="Define your intake once. The AI creates the conversational funnel around your lead criteria."
-            accent="bg-[#F7C664]"
-          />
-          <WorkflowStep
-            step="3"
-            title="Get instant SMS/WhatsApp alerts"
-            description="High-intent responses trigger real-time notifications so your follow-up happens while urgency is high."
-            accent="bg-[#71D0AC]"
-          />
-        </div>
-
-        <div className="mt-10 rounded-[2rem] border border-[#2D2E2C]/10 bg-[#2D2E2C] px-6 py-7 text-white shadow-[0_22px_44px_rgba(45,46,44,0.24)]">
-          <h3 className="text-2xl font-bold tracking-tight">
-            Ready to stop leaking high-intent traffic?
-          </h3>
-          <p className="mt-2 max-w-2xl text-sm text-white/78 sm:text-base">
-            Replace static bio links with AI capture flows that qualify leads,
-            increase conversions, and notify you in real time.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              to="/signin"
-              className="rounded-full bg-[#71D0AC] px-6 py-3 text-sm font-bold text-[#12382c] shadow-[0_12px_28px_rgba(113,208,172,0.4)]"
-            >
-              Build My Lead Engine
-            </Link>
-            <a
-              href="#ai-architect"
-              className="rounded-full border border-white/24 px-6 py-3 text-sm font-semibold text-white"
-            >
-              Watch It Work
-            </a>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
-
-function SpeedLinesBackground() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_18%,rgba(238,122,100,0.24),transparent_28%),radial-gradient(circle_at_90%_12%,rgba(247,198,100,0.24),transparent_24%),radial-gradient(circle_at_74%_84%,rgba(113,208,172,0.2),transparent_26%)]" />
-      <span className="absolute top-[16%] -left-28 h-[5px] w-60 animate-[speedline_6s_linear_infinite] rounded-full bg-[#EE7A64]/36" />
-      <span className="absolute top-[32%] -left-36 h-[5px] w-80 animate-[speedline_7.4s_linear_infinite] rounded-full bg-[#F7C664]/34" />
-      <span className="absolute top-[68%] -left-32 h-[5px] w-72 animate-[speedline_6.6s_linear_infinite] rounded-full bg-[#71D0AC]/32" />
-    </div>
-  )
-}
-
-function SpeedDivider() {
-  return (
-    <div className="relative h-10 sm:h-12" aria-hidden>
-      <span className="absolute top-1/2 left-0 h-[3px] w-20 -translate-y-1/2 rounded-full bg-[#EE7A64]/60" />
-      <span className="absolute top-1/2 left-8 h-[3px] w-28 -translate-y-1/2 rounded-full bg-[#F7C664]/58" />
-      <span className="absolute top-1/2 left-[4.5rem] h-[3px] w-36 -translate-y-1/2 rounded-full bg-[#71D0AC]/56" />
-    </div>
-  )
-}
-
-function SpeedLines() {
-  return (
-    <span aria-hidden className="inline-flex items-center gap-1.5">
-      <span className="h-1 w-2.5 rounded-full bg-[#EE7A64]" />
-      <span className="h-1 w-3.5 rounded-full bg-[#F7C664]" />
-      <span className="h-1 w-5 rounded-full bg-[#71D0AC]" />
-    </span>
-  )
-}
-
-function MockPill({ bg, label }: { bg: string; label: string }) {
-  return (
-    <button
-      type="button"
-      className="w-full rounded-full border border-[#2D2E2C]/12 px-4 py-3 text-left text-sm font-semibold text-[#2D2E2C] shadow-[0_8px_18px_rgba(45,46,44,0.11)]"
-      style={{ backgroundColor: bg }}
-    >
-      {label}
-    </button>
-  )
-}
-
-function ProblemCard({
+function ProblemItem({
+  number,
+  color,
   title,
   body,
-  tone,
 }: {
+  number: string
+  color: string
   title: string
   body: string
-  tone: string
 }) {
   return (
-    <article className="rounded-3xl border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_14px_32px_rgba(45,46,44,0.09)]">
-      <div className={`mb-4 h-2.5 w-16 rounded-full ${tone}`} />
-      <h3 className="text-lg font-bold">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-[#2D2E2C]/72">{body}</p>
+    <article className="border-t-2 pt-6" style={{ borderTopColor: color }}>
+      <p
+        className="text-sm font-extrabold tabular-nums"
+        style={{ color }}
+        aria-hidden
+      >
+        {number}
+      </p>
+      <h3 className="mt-3 text-xl font-bold tracking-tight">{title}</h3>
+      <p className="mt-3 text-pretty text-base leading-relaxed text-[#2D2D2D]/65">
+        {body}
+      </p>
     </article>
   )
 }
 
-function GeneratedField({ name }: { name: string }) {
+/* ------------------------------------------------------------------ */
+/* AI Architect                                                        */
+/* ------------------------------------------------------------------ */
+
+function AiArchitectSection() {
   return (
-    <div className="rounded-xl border border-[#2D2E2C]/12 bg-white px-3 py-2 text-sm font-semibold text-[#2D2E2C]/78">
-      {name}
+    /* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */
+    <section id="ai-architect" className="scroll-mt-24 bg-white py-20 sm:py-24">
+      <Container>
+        <div className="grid items-center gap-14 lg:grid-cols-2">
+          <div>
+            <Eyebrow>AI architect</Eyebrow>
+            <h2 className="mt-4 text-balance text-3xl font-black tracking-tight sm:text-5xl">
+              Describe your ideal lead. The AI builds the funnel.
+            </h2>
+            <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-[#2D2D2D]/70">
+              One sentence is all it takes. Inbound.click turns it into a
+              complete conversational flow &mdash; the right questions, in the
+              right order, with qualification logic tuned to your business.
+            </p>
+          </div>
+
+          <div className="mx-auto w-full max-w-md">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#2D2D2D]/45">
+              You
+            </p>
+            <p className="mt-3 w-fit rounded-2xl rounded-bl-md bg-[#2D2D2D] px-5 py-3 text-sm font-medium text-white">
+              &ldquo;Collect name, budget, and when they want to start.&rdquo;
+            </p>
+
+            <p className="mt-8 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#2D2D2D]/45">
+              AI architect
+              <PillMark />
+            </p>
+            <div className="mt-4 space-y-5">
+              <GeneratedField label="Full name" hint="Maria Souza" />
+              <GeneratedField label="Budget range" hint="$2,000 – $5,000" />
+              <GeneratedField label="Start date" hint="Within 30 days" />
+            </div>
+            <p className="mt-6 text-sm text-[#2D2D2D]/55">
+              <span aria-hidden className="mr-1.5 text-[#69D0B2]">
+                ✓
+              </span>
+              Flow published to your bio link &mdash; ready in seconds.
+            </p>
+          </div>
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+function GeneratedField({ label, hint }: { label: string; hint: string }) {
+  return (
+    <div className="border-b border-[#2D2D2D]/20 pb-2">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2D2D]/50">
+        {label}
+      </p>
+      <p className="mt-1 text-base text-[#2D2D2D]/35">{hint}</p>
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Workflow                                                            */
+/* ------------------------------------------------------------------ */
+
+function WorkflowSection() {
+  return (
+    /* biome-ignore lint/correctness/useUniqueElementIds: stable anchor ID improves landing-page SEO and shareable section links */
+    <section id="workflow" className="scroll-mt-24 py-20 sm:py-24">
+      <Container>
+        <Eyebrow>How it works</Eyebrow>
+        <h2 className="mt-4 max-w-3xl text-balance text-3xl font-black tracking-tight sm:text-5xl">
+          Live in three steps.
+        </h2>
+
+        <ol className="mt-14 grid gap-x-10 gap-y-12 md:grid-cols-3">
+          <WorkflowStep
+            color="#EE775F"
+            step="1"
+            title="Point your bio at it"
+            description="Swap the URL in your Instagram, TikTok, or YouTube bio for your s.uper.bio link. That’s the only change your audience sees."
+          />
+          <WorkflowStep
+            color="#F8C751"
+            step="2"
+            title="Tell the AI what counts"
+            description="Describe your ideal lead once on Inbound.click. The AI builds the conversation that qualifies every visitor against it."
+          />
+          <WorkflowStep
+            color="#69D0B2"
+            step="3"
+            title="Get pinged while it’s hot"
+            description="High-intent answers trigger instant SMS or WhatsApp alerts, so you follow up in minutes — not days."
+          />
+        </ol>
+      </Container>
+    </section>
   )
 }
 
 function WorkflowStep({
+  color,
   step,
   title,
   description,
-  accent,
 }: {
+  color: string
   step: string
   title: string
   description: string
-  accent: string
 }) {
   return (
-    <article className="rounded-3xl border border-[#2D2E2C]/10 bg-white p-5 shadow-[0_14px_32px_rgba(45,46,44,0.09)]">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#2D2E2C]/55">
-        Step {step}
-      </p>
-      <h3 className="mt-2 text-xl font-bold tracking-tight">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-[#2D2E2C]/72">
+    <li className="list-none">
+      <span
+        className="flex h-10 w-10 items-center justify-center rounded-full text-base font-extrabold text-[#2D2D2D]"
+        style={{ backgroundColor: color }}
+        aria-hidden
+      >
+        {step}
+      </span>
+      <h3 className="mt-5 text-xl font-bold tracking-tight">{title}</h3>
+      <p className="mt-3 text-pretty text-base leading-relaxed text-[#2D2D2D]/65">
         {description}
       </p>
-      <div className={`mt-4 h-2.5 w-24 rounded-full ${accent}`} />
-    </article>
+    </li>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Final CTA                                                           */
+/* ------------------------------------------------------------------ */
+
+function FinalCtaSection() {
+  return (
+    <section className="bg-[#2D2D2D] py-20 text-white sm:py-24">
+      <Container>
+        <div className="mx-auto max-w-3xl text-center">
+          <PillMark className="scale-125" />
+          <h2 className="mt-7 text-balance text-3xl font-black tracking-tight sm:text-5xl">
+            Stop leaking high-intent traffic.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-pretty text-lg leading-relaxed text-white/70">
+            Replace your static bio link with a conversation that qualifies
+            leads and notifies you in real time. Free to start &mdash; and your
+            s.uper.bio name might still be available.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-5">
+            <Link
+              to="/signin"
+              className="rounded-full bg-[#69D0B2] px-7 py-3.5 text-sm font-bold text-[#12382c] transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F8C751]"
+            >
+              Start Free on Inbound.click
+            </Link>
+            <Link
+              to="/pricing"
+              className="text-sm font-semibold text-white/75 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F8C751]"
+            >
+              See Pricing
+            </Link>
+          </div>
+        </div>
+      </Container>
+    </section>
   )
 }
